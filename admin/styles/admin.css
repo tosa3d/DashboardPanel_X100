@@ -267,6 +267,7 @@ input, select, textarea, button { font-family: inherit; }
 
 /* ========== بازی‌ها ========== */
 .games-layout { display: grid; grid-template-columns: 440px 1fr; gap: 20px; align-items: start; }
+.games-layout--single { grid-template-columns: 1fr; }
 .games-list-col { display: flex; flex-direction: column; gap: 0; }
 .games-list-col .toolbar { margin-bottom: 14px; }
 .game-form { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -563,6 +564,114 @@ input, select, textarea, button { font-family: inherit; }
 .umodal-row b { color: var(--text); font-weight: 600; }
 .umodal-actions { display: flex; gap: 10px; margin-top: 18px; }
 .umodal-actions .btn-ghost, .umodal-actions .btn-danger { flex: 1; text-align: center; }
+
+/* ===== بنر صفحهٔ بازی‌ها ===== */
+.btn-primary--sm {
+  padding: 7px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;
+  width: auto; flex: none;
+}
+.btn-primary--sm .material-icons-outlined { font-size: 17px; }
+.banner-games {
+  padding: 14px; display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+}
+.banner-game {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px; overflow: hidden;
+}
+.banner-game__cover { width: 64px; height: 40px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: var(--surface-2); }
+.banner-game__info { flex: 1; min-width: 0; }
+.banner-game__name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.banner-game__genre { font-size: 11px; color: var(--primary); margin-top: 2px; }
+.banner-game__del {
+  width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-faint); cursor: pointer; transition: all .15s;
+}
+.banner-game__del:hover { color: var(--red); border-color: var(--red); }
+.banner-game__del .material-icons-outlined { font-size: 16px; }
+
+/* ===== مودال انتخاب بازی ===== */
+.modal--wide { width: 640px; max-width: 100%; }
+.modal__title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+.picker-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px; max-height: 60vh; overflow-y: auto;
+}
+.picker-card {
+  position: relative; text-align: center; cursor: pointer;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0 0 10px; overflow: hidden;
+  font-family: inherit; color: var(--text); transition: border-color .15s, transform .15s;
+}
+.picker-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.picker-card img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: var(--surface-2); }
+.picker-card__name { font-size: 13px; font-weight: 700; margin-top: 8px; padding: 0 8px; }
+.picker-card__genre { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.picker-card__add {
+  position: absolute; top: 6px; left: 6px; color: var(--primary);
+  background: rgba(0,0,0,.55); border-radius: 50%; line-height: 0;
+}
+.picker-card__add .material-icons-outlined { font-size: 22px; }
+
+/* ===== آکاردئون بنر خانه ===== */
+.acc { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.acc__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid transparent;
+}
+.acc--open .acc__head { border-bottom-color: var(--border); }
+.acc__toggle {
+  display: flex; align-items: center; gap: 10px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text); font-size: 15px; font-weight: 700; font-family: inherit;
+}
+.acc__chevron { transition: transform .2s; color: var(--text-dim); }
+.acc--open .acc__chevron { transform: rotate(180deg); }
+.acc__body { display: none; padding: 14px; }
+.acc--open .acc__body { display: block; }
+
+/* کارت بنر (مستطیلی، باز/بسته‌شو) */
+.banner-cards { display: flex; flex-direction: column; gap: 10px; }
+.bnr-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.bnr-card__head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; }
+.bnr-card__toggle {
+  display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;
+  background: none; border: none; cursor: pointer; color: var(--text);
+  font-family: inherit; text-align: right;
+}
+.bnr-card__chevron { transition: transform .2s; color: var(--text-dim); flex-shrink: 0; }
+.bnr-card--open .bnr-card__chevron { transform: rotate(180deg); }
+.bnr-card__thumb {
+  width: 56px; height: 34px; border-radius: 6px; flex-shrink: 0; overflow: hidden;
+  background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+}
+.bnr-card__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.bnr-card__thumb .material-icons-outlined { font-size: 18px; color: var(--text-faint); }
+.bnr-card__title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bnr-card__del {
+  width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-faint); cursor: pointer; transition: all .15s;
+}
+.bnr-card__del:hover { color: var(--red); border-color: var(--red); }
+.bnr-card__del .material-icons-outlined { font-size: 17px; }
+.bnr-card__body { display: none; padding: 14px; border-top: 1px solid var(--border); flex-direction: column; gap: 12px; }
+.bnr-card--open .bnr-card__body { display: flex; }
+
+.bnr-img-preview { position: relative; border-radius: 10px; overflow: hidden; }
+.bnr-img-preview img { width: 100%; max-height: 180px; object-fit: cover; display: block; }
+.bnr-img-del {
+  position: absolute; bottom: 8px; left: 8px;
+  background: rgba(0,0,0,.7); color: #fff; border: none; border-radius: 7px;
+  padding: 6px 12px; font-size: 12px; font-family: inherit; cursor: pointer;
+}
+.bnr-img-del:hover { background: rgba(0,0,0,.9); }
+.bnr-target-wrap { flex: 1; }
+.bnr-target-wrap:empty { display: none; }
 
 /* بخش کشویی مشخصات سیستم */
 .umodal-accordion { border-bottom: 1px solid var(--border); }

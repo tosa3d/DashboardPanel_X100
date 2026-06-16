@@ -41,13 +41,13 @@
     <nav class="admin-nav">
       <button class="admin-nav__item admin-nav__item--active" data-view="overview"><span class="material-icons-outlined">dashboard</span>داشبورد</button>
       <button class="admin-nav__item" data-view="users"><span class="material-icons-outlined">group</span>کاربران</button>
-      <button class="admin-nav__item" data-view="games"><span class="material-icons-outlined">sports_esports</span>بازی‌ها</button>
+      <button class="admin-nav__item" data-view="games"><span class="material-icons-outlined">sports_esports</span>انتشار بازی</button>
       <button class="admin-nav__item" data-view="launcher"><span class="material-icons-outlined">rocket_launch</span>لانچر</button>
       <button class="admin-nav__item" data-view="servers"><span class="material-icons-outlined">dns</span>سرورها</button>
-      <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">campaign</span>انتشار<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
+      <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">campaign</span>انتشار محتوا<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
       <div class="admin-nav__sub" hidden>
         <button class="admin-nav__subitem" data-view="publish" data-pub="home"><span class="material-icons-outlined">home</span>خانه</button>
-        <button class="admin-nav__subitem" data-view="publish" data-pub="game"><span class="material-icons-outlined">sports_esports</span>صفحهٔ بازی‌ها</button>
+        <button class="admin-nav__subitem" data-view="publish" data-pub="game"><span class="material-icons-outlined">sports_esports</span>بازی</button>
       </div>
     </nav>
     <button class="admin-logout" id="logout-btn"><span class="material-icons-outlined">logout</span>خروج</button>
@@ -357,9 +357,35 @@
 
     <!-- ===== انتشار ===== -->
     <section class="admin-view" data-view="publish">
-      <div class="games-layout">
+      <!-- بخش خانه: بنر خانه (آکاردئونی) -->
+      <div class="pub-home-canvas" id="pub-home-canvas" hidden>
+        <div class="acc acc--open" id="home-banner-acc">
+          <div class="acc__head">
+            <button type="button" class="acc__toggle" id="home-banner-toggle">
+              <span class="material-icons-outlined acc__chevron">expand_more</span>
+              <span>بنر خانه</span>
+              <span class="badge-count" id="home-banner-count">۰</span>
+            </button>
+            <button type="button" class="btn-primary btn-primary--sm" id="home-banner-add"><span class="material-icons-outlined">add</span>افزودن بنر</button>
+          </div>
+          <div class="acc__body">
+            <div class="banner-cards" id="home-banner-cards"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- سکشن بنر صفحهٔ بازی‌ها (فقط در حالت صفحهٔ بازی‌ها) -->
+      <div class="panel" id="pub-banner-section" hidden style="margin-bottom:20px">
+        <div class="panel__head">
+          <h2>بنر صفحهٔ بازی‌ها <span class="badge-count" id="banner-count">۰</span></h2>
+          <button class="btn-primary btn-primary--sm" id="banner-add-btn"><span class="material-icons-outlined">add</span>افزودن بازی به بنر</button>
+        </div>
+        <div class="banner-games" id="banner-games"></div>
+      </div>
+
+      <div class="games-layout" id="pub-layout">
         <!-- فرم انتشار محتوا -->
-        <div class="panel">
+        <div class="panel" id="pub-form-panel">
           <div class="panel__head"><h2 id="pub-form-title">انتشار محتوا در خانهٔ لانچر</h2></div>
           <form id="pub-form" class="game-form">
             <label class="field"><span>عنوان محتوا</span><input type="text" id="pub-title" required placeholder="مثلاً VALORANT یا جشنوارهٔ تخفیف"></label>
@@ -410,6 +436,15 @@
     </section>
 
   </main>
+</div>
+
+<!-- ========== مودال انتخاب بازی برای بنر ========== -->
+<div class="modal-overlay" id="game-picker" hidden>
+  <div class="modal modal--wide">
+    <button class="modal__close" id="game-picker-close"><span class="material-icons-outlined">close</span></button>
+    <h3 class="modal__title">انتخاب بازی برای بنر</h3>
+    <div class="picker-grid" id="picker-grid"></div>
+  </div>
 </div>
 
 <!-- ========== مودال جزئیات کاربر ========== -->

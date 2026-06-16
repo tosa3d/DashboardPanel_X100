@@ -114,7 +114,7 @@ function initLogin() {
 // ============================================
 // ناوبری بین نماها
 // ============================================
-const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'بازی‌ها', launcher: 'لانچر', servers: 'سرورها', publish: 'انتشار' };
+const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'انتشار بازی', launcher: 'لانچر', servers: 'سرورها', publish: 'انتشار محتوا' };
 function initNav() {
   const showView = (view) => {
     document.querySelectorAll('.admin-view').forEach((v) => {
@@ -875,9 +875,223 @@ function setPubTarget(t) {
   document.getElementById('pub-form-title').textContent = PUB_TITLE[t];
   document.getElementById('pub-subtitle-field').hidden = (t !== 'home'); // زیرعنوان فقط در انتشار خانه
   document.getElementById('pub-game-field').hidden = (t === 'game');     // بازی مرتبط فقط در انتشار خانه
+  // فرم انتشار فقط در حالت خانه؛ در صفحهٔ بازی‌ها فقط لیست نمایش داده می‌شود
+  document.getElementById('pub-form-panel').hidden = (t === 'game');
+  document.getElementById('pub-layout').classList.toggle('games-layout--single', t === 'game');
+  // سکشن بنر صفحهٔ بازی‌ها فقط در حالت بازی
+  document.getElementById('pub-banner-section').hidden = (t !== 'game');
+  if (t === 'game') renderBannerGames();
+  // بخش خانه آکاردئون بنر را نشان می‌دهد؛ لیست/فرم قدیمی در هر دو حالت مخفی است
+  document.getElementById('pub-home-canvas').hidden = (t !== 'home');
+  document.getElementById('pub-layout').hidden = true;
   pubFillSelects();
   pubResetForm();
   renderPublications();
+}
+
+// ============================================
+// بنر صفحهٔ بازی‌ها — افزودن/حذف بازی‌ها
+// ============================================
+let bannerGames = [1]; // شناسهٔ بازی‌های افزوده‌شده به بنر (پیش‌فرض: CS2)
+
+function renderBannerGames() {
+  const wrap = document.getElementById('banner-games');
+  const items = bannerGames.map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
+  document.getElementById('banner-count').textContent = faNum(items.length);
+  if (!items.length) {
+    wrap.innerHTML = '<div class="empty-state">هنوز بازی‌ای به بنر اضافه نشده — روی «افزودن بازی به بنر» بزنید</div>';
+    return;
+  }
+  wrap.innerHTML = items.map((g) => {
+    const cover = (g.media && g.media[0]) ? g.media[0].url : '';
+    return `
+    <div class="banner-game" data-gid="${g.id}">
+      <img class="banner-game__cover" src="${cover}" alt="">
+      <div class="banner-game__info">
+        <div class="banner-game__name">${g.name}</div>
+        <div class="banner-game__genre">${g.genre}</div>
+      </div>
+      <button class="banner-game__del" data-gid="${g.id}" title="حذف از بنر"><span class="material-icons-outlined">close</span></button>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('.banner-game__del').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      bannerGames = bannerGames.filter((id) => id !== Number(btn.dataset.gid));
+      renderBannerGames();
+    });
+  });
+}
+
+function openGamePicker() {
+  const grid = document.getElementById('picker-grid');
+  const available = GAMES.filter((g) => !bannerGames.includes(g.id));
+  if (!available.length) {
+    grid.innerHTML = '<div class="empty-state">همهٔ بازی‌ها قبلاً به بنر اضافه شده‌اند</div>';
+  } else {
+    grid.innerHTML = available.map((g) => {
+      const cover = (g.media && g.media[0]) ? g.media[0].url : '';
+      return `
+      <button class="picker-card" data-gid="${g.id}">
+        <img src="${cover}" alt="">
+        <div class="picker-card__name">${g.name}</div>
+        <div class="picker-card__genre">${g.genre}</div>
+        <span class="picker-card__add"><span class="material-icons-outlined">add_circle</span></span>
+      </button>`;
+    }).join('');
+    grid.querySelectorAll('.picker-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        bannerGames.push(Number(card.dataset.gid));
+        renderBannerGames();
+        openGamePicker(); // به‌روزرسانی لیست انتخاب
+      });
+    });
+  }
+  document.getElementById('game-picker').hidden = false;
+}
+
+// ============================================
+// بنر خانه — کارت‌های آکاردئونی با مشخصات کامل
+// ============================================
+let homeBanners = [];
+let homeBannerSeq = 1;
+
+const BNR_ACTIONS = {
+  none: 'بدون عملکرد',
+  game: 'باز کردن صفحهٔ بازی',
+  url: 'باز کردن لینک',
+  shop: 'رفتن به فروشگاه',
+  discount: 'صفحهٔ تخفیف',
+};
+
+function bannerActionTargetHTML(b) {
+  if (b.actionType === 'game') {
+    const opts = GAMES.map((g) => `<option ${b.actionValue === g.name ? 'selected' : ''}>${g.name}</option>`).join('');
+    return `<label class="field"><span>بازی مقصد</span><select class="bnr-target">${opts}</select></label>`;
+  }
+  if (b.actionType === 'url') {
+    return `<label class="field"><span>آدرس لینک</span><input type="text" class="bnr-target" value="${b.actionValue || ''}" placeholder="https://..."></label>`;
+  }
+  return '';
+}
+
+function bannerCardHTML(b) {
+  return `
+  <div class="bnr-card ${b.open ? 'bnr-card--open' : ''}" data-bid="${b.id}">
+    <div class="bnr-card__head">
+      <button type="button" class="bnr-card__toggle">
+        <span class="material-icons-outlined bnr-card__chevron">expand_more</span>
+        <span class="bnr-card__thumb">${b.img ? `<img src="${b.img}" alt="">` : '<span class="material-icons-outlined">image</span>'}</span>
+        <span class="bnr-card__title">${b.title || 'بنر بدون عنوان'}</span>
+      </button>
+      <button type="button" class="bnr-card__del" title="حذف بنر"><span class="material-icons-outlined">delete</span></button>
+    </div>
+    <div class="bnr-card__body">
+      <div class="bnr-img-uploader">
+        <input type="file" class="bnr-img-input" accept="image/*" hidden>
+        ${b.img
+          ? `<div class="bnr-img-preview"><img src="${b.img}" alt=""><button type="button" class="bnr-img-del">تغییر عکس</button></div>`
+          : `<button type="button" class="media-add-btn bnr-img-add"><span class="material-icons-outlined">add_photo_alternate</span>افزودن عکس بنر</button>`}
+      </div>
+      <label class="field"><span>تایتل</span><input type="text" class="bnr-title" value="${b.title || ''}" placeholder="عنوان بنر"></label>
+      <label class="field"><span>ساب‌تایتل</span><input type="text" class="bnr-subtitle" value="${b.subtitle || ''}" placeholder="زیرعنوان / شعار"></label>
+      <label class="field"><span>متن</span><textarea class="bnr-text" rows="2" placeholder="توضیح بنر...">${b.text || ''}</textarea></label>
+      <div class="field-row">
+        <label class="field"><span>عملکرد کلیک</span>
+          <select class="bnr-action">${Object.entries(BNR_ACTIONS).map(([k, v]) => `<option value="${k}" ${b.actionType === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        </label>
+        <div class="bnr-target-wrap">${bannerActionTargetHTML(b)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHomeBanners() {
+  document.getElementById('home-banner-count').textContent = faNum(homeBanners.length);
+  const wrap = document.getElementById('home-banner-cards');
+  if (!homeBanners.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:30px">هنوز بنری اضافه نشده — روی «افزودن بنر» بزنید</div>';
+    return;
+  }
+  wrap.innerHTML = homeBanners.map((b) => bannerCardHTML(b)).join('');
+  homeBanners.forEach((b) => bindBannerCard(b));
+}
+
+function bindBannerCard(b) {
+  const card = document.querySelector(`.bnr-card[data-bid="${b.id}"]`);
+  if (!card) return;
+
+  card.querySelector('.bnr-card__toggle').addEventListener('click', () => {
+    b.open = !b.open;
+    card.classList.toggle('bnr-card--open', b.open);
+  });
+  card.querySelector('.bnr-card__del').addEventListener('click', () => {
+    if (confirm('این بنر حذف شود؟')) {
+      homeBanners = homeBanners.filter((x) => x.id !== b.id);
+      renderHomeBanners();
+    }
+  });
+
+  // ورودی‌های متنی — بدون رندر مجدد (حفظ فوکوس)
+  card.querySelector('.bnr-title').addEventListener('input', (e) => {
+    b.title = e.target.value;
+    card.querySelector('.bnr-card__title').textContent = b.title || 'بنر بدون عنوان';
+  });
+  card.querySelector('.bnr-subtitle').addEventListener('input', (e) => { b.subtitle = e.target.value; });
+  card.querySelector('.bnr-text').addEventListener('input', (e) => { b.text = e.target.value; });
+
+  // عملکرد کلیک
+  const actionSel = card.querySelector('.bnr-action');
+  actionSel.addEventListener('change', (e) => {
+    b.actionType = e.target.value;
+    b.actionValue = '';
+    card.querySelector('.bnr-target-wrap').innerHTML = bannerActionTargetHTML(b);
+    bindBannerTarget(b, card);
+  });
+  bindBannerTarget(b, card);
+
+  // آپلود عکس
+  const fileInput = card.querySelector('.bnr-img-input');
+  const addBtn = card.querySelector('.bnr-img-add');
+  const changeBtn = card.querySelector('.bnr-img-del');
+  if (addBtn) addBtn.addEventListener('click', () => fileInput.click());
+  if (changeBtn) changeBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    b.img = URL.createObjectURL(f);
+    renderHomeBanners();
+  });
+}
+
+function bindBannerTarget(b, card) {
+  const t = card.querySelector('.bnr-target');
+  if (t) t.addEventListener('input', (e) => { b.actionValue = e.target.value; });
+  if (t && t.tagName === 'SELECT') {
+    b.actionValue = t.value; // مقدار پیش‌فرض اولین بازی
+    t.addEventListener('change', (e) => { b.actionValue = e.target.value; });
+  }
+}
+
+function initHomeBanners() {
+  document.getElementById('home-banner-toggle').addEventListener('click', () => {
+    document.getElementById('home-banner-acc').classList.toggle('acc--open');
+  });
+  document.getElementById('home-banner-add').addEventListener('click', () => {
+    homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', actionType: 'none', actionValue: '', open: true });
+    document.getElementById('home-banner-acc').classList.add('acc--open');
+    renderHomeBanners();
+  });
+  renderHomeBanners();
+}
+
+function initBanner() {
+  document.getElementById('banner-add-btn').addEventListener('click', openGamePicker);
+  document.getElementById('game-picker-close').addEventListener('click', () => {
+    document.getElementById('game-picker').hidden = true;
+  });
+  document.getElementById('game-picker').addEventListener('click', (e) => {
+    if (e.target.id === 'game-picker') document.getElementById('game-picker').hidden = true;
+  });
 }
 
 function renderPublications() {
@@ -994,4 +1208,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initLauncher();
   initServers();
   initPublish();
+  initBanner();
+  initHomeBanners();
 });

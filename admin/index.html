@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت x100</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+  <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+<!-- ========== صفحه ورود ========== -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-brand">x100<span>Admin</span></div>
+    <p class="login-sub">ورود به پنل مدیریت</p>
+    <form id="login-form" class="login-form">
+      <label class="login-field">
+        <span class="material-icons-outlined">person</span>
+        <input type="text" id="login-user" placeholder="نام کاربری" autocomplete="off">
+      </label>
+      <label class="login-field">
+        <span class="material-icons-outlined">lock</span>
+        <input type="password" id="login-pass" placeholder="رمز عبور" autocomplete="off">
+      </label>
+      <div class="login-error" id="login-error" hidden></div>
+      <button type="submit" class="login-btn">ورود</button>
+      <p class="login-hint">هر نام کاربری و رمزی وارد کنید</p>
+    </form>
+  </div>
+</div>
+
+<!-- ========== داشبورد ========== -->
+<div class="admin" id="admin-app" hidden>
+
+  <!-- سایدبار -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">x100<span>Admin</span></div>
+    <nav class="admin-nav">
+      <button class="admin-nav__item admin-nav__item--active" data-view="overview"><span class="material-icons-outlined">dashboard</span>داشبورد</button>
+      <button class="admin-nav__item" data-view="users"><span class="material-icons-outlined">group</span>کاربران</button>
+      <button class="admin-nav__item" data-view="games"><span class="material-icons-outlined">sports_esports</span>بازی‌ها</button>
+      <button class="admin-nav__item" data-view="launcher"><span class="material-icons-outlined">rocket_launch</span>لانچر</button>
+      <button class="admin-nav__item" data-view="servers"><span class="material-icons-outlined">dns</span>سرورها</button>
+    </nav>
+    <button class="admin-logout" id="logout-btn"><span class="material-icons-outlined">logout</span>خروج</button>
+  </aside>
+
+  <!-- محتوا -->
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <h1 class="admin-topbar__title" id="view-title">داشبورد</h1>
+      <div class="admin-topbar__user">
+        <div class="admin-topbar__avatar">A</div>
+        <span>مدیر سیستم</span>
+      </div>
+    </header>
+
+    <!-- ===== نمای کلی ===== -->
+    <section class="admin-view admin-view--active" data-view="overview">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--blue"><span class="material-icons-outlined">group</span></div>
+          <div><div class="stat-card__num" id="stat-users">۰</div><div class="stat-card__lbl">کل کاربران</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--green"><span class="material-icons-outlined">circle</span></div>
+          <div><div class="stat-card__num" id="stat-online">۰</div><div class="stat-card__lbl">آنلاین</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--purple"><span class="material-icons-outlined">sports_esports</span></div>
+          <div><div class="stat-card__num" id="stat-games">۰</div><div class="stat-card__lbl">بازی‌ها</div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__icon stat-card__icon--gold"><span class="material-icons-outlined">paid</span></div>
+          <div><div class="stat-card__num" id="stat-coins">۰</div><div class="stat-card__lbl">مجموع سکه X</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h2>آخرین کاربران</h2></div>
+        <div id="overview-recent" class="overview-recent"></div>
+      </div>
+    </section>
+
+    <!-- ===== کاربران ===== -->
+    <section class="admin-view" data-view="users">
+      <div class="toolbar">
+        <div class="toolbar__search">
+          <span class="material-icons-outlined">search</span>
+          <input type="text" id="user-search" placeholder="جستجوی نام، نام کاربری یا شماره تلفن...">
+        </div>
+        <select class="toolbar__select" id="filter-status">
+          <option value="all">وضعیت: همه</option>
+          <option value="online">آنلاین</option>
+          <option value="offline">آفلاین</option>
+          <option value="banned">مسدود</option>
+        </select>
+        <select class="toolbar__select" id="filter-role">
+          <option value="all">نقش: همه</option>
+          <option value="player">بازیکن</option>
+          <option value="creator">تولید کننده محتوا</option>
+          <option value="streamer">استریمر</option>
+          <option value="admin">ادمین کانال</option>
+        </select>
+        <select class="toolbar__select" id="sort-by">
+          <option value="name">مرتب‌سازی: نام</option>
+          <option value="joined">تاریخ عضویت</option>
+          <option value="coins">سکه (بیشترین)</option>
+          <option value="status">وضعیت</option>
+        </select>
+        <span class="toolbar__count" id="user-count"></span>
+      </div>
+      <div class="panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>کاربر</th>
+              <th>شماره تلفن</th>
+              <th>وضعیت</th>
+              <th>سکه X</th>
+              <th>عضویت</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="users-empty" hidden>کاربری با این فیلتر یافت نشد</div>
+      </div>
+    </section>
+
+    <!-- ===== بازی‌ها ===== -->
+    <section class="admin-view" data-view="games">
+      <div class="games-layout">
+        <!-- فرم تعریف بازی -->
+        <div class="panel game-form-panel">
+          <div class="panel__head"><h2 id="game-form-title">تعریف بازی جدید</h2></div>
+          <form id="game-form" class="game-form">
+
+            <!-- اطلاعات کلی -->
+            <div class="form-section__title">اطلاعات کلی</div>
+            <label class="field"><span>نام بازی</span><input type="text" id="g-name" required placeholder="مثلاً Counter-Strike 2"></label>
+            <div class="field-row">
+              <label class="field"><span>ژانر</span>
+                <select id="g-genre">
+                  <option>تیراندازی (FPS)</option>
+                  <option>بتل رویال</option>
+                  <option>نقش‌آفرینی (RPG)</option>
+                  <option>استراتژی</option>
+                  <option>اکشن</option>
+                  <option>ورزشی</option>
+                  <option>ترسناک</option>
+                  <option>ماجراجویی</option>
+                </select>
+              </label>
+              <label class="field"><span>اشتراک</span>
+                <select id="g-sub"><option>رایگان</option><option>پولی</option><option>اشتراکی</option></select>
+              </label>
+            </div>
+            <label class="toggle-field">
+              <input type="checkbox" id="g-own-server">
+              <span class="toggle-switch"></span>
+              <span class="toggle-label">
+                <b>دانلود و آپدیت از سرور خودمان</b>
+                <small id="g-own-server-hint">غیرفعال: دانلود و آپدیت از سمت سرور استیم</small>
+              </span>
+            </label>
+
+            <!-- رسانه بنر: عکس و ویدیو -->
+            <div class="form-section__title">رسانه بنر (عکس و ویدیو)</div>
+            <div class="media-uploader">
+              <input type="file" id="g-media-input" accept="image/*,video/*" multiple hidden>
+              <button type="button" class="media-add-btn" id="g-media-add">
+                <span class="material-icons-outlined">add_photo_alternate</span>
+                افزودن عکس یا ویدیو
+              </button>
+              <div class="media-grid" id="g-media-grid"></div>
+            </div>
+
+            <!-- حداقل سیستم مورد نیاز -->
+            <div class="form-section__title">حداقل سیستم مورد نیاز</div>
+            <div class="field-row">
+              <label class="field"><span>سیستم‌عامل</span><input type="text" id="g-os" placeholder="Windows 10"></label>
+              <label class="field"><span>DirectX</span><input type="text" id="g-dx" placeholder="Version 11"></label>
+            </div>
+            <div class="field-row">
+              <label class="field"><span>پردازنده</span><input type="text" id="g-cpu" placeholder="Core i5"></label>
+              <label class="field"><span>حافظه</span><input type="text" id="g-ram" placeholder="8 GB RAM"></label>
+            </div>
+            <div class="field-row">
+              <label class="field"><span>گرافیک</span><input type="text" id="g-gpu" placeholder="GTX 1060"></label>
+              <label class="field"><span>فضای ذخیره‌سازی</span><input type="text" id="g-size" placeholder="15 GB"></label>
+            </div>
+            <label class="field"><span>شبکه</span><input type="text" id="g-net" placeholder="Broadband Internet"></label>
+
+            <!-- اطلاعات نشر و بررسی -->
+            <div class="form-section__title">اطلاعات نشر و بررسی</div>
+            <div class="field-row">
+              <label class="field"><span>توسعه‌دهنده</span><input type="text" id="g-dev" placeholder="Valve Corporation"></label>
+              <label class="field"><span>ناشر</span><input type="text" id="g-pub" placeholder="Valve"></label>
+            </div>
+            <label class="field"><span>تاریخ عرضه</span><input type="text" id="g-release" placeholder="۶ شهریور ۱۴۰۲"></label>
+            <div class="field-row">
+              <label class="field"><span>بررسی‌های اخیر</span><input type="text" id="g-rev-recent" placeholder="مختلط"></label>
+              <label class="field"><span>مجموع بررسی‌ها</span><input type="text" id="g-rev-all" placeholder="عمدتاً مثبت (1.1M)"></label>
+            </div>
+
+            <!-- تگ و توضیحات -->
+            <div class="form-section__title">تگ و توضیحات</div>
+            <label class="field"><span>تگ‌های کاربری (با کاما جدا کنید)</span><input type="text" id="g-tags" placeholder="شوتر، تاکتیکال، FPS، اسپرت، رایگان، چندنفره"></label>
+            <label class="field"><span>توضیحات</span><textarea id="g-desc" rows="3" placeholder="توضیح کامل درباره بازی..."></textarea></label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="game-submit">افزودن بازی</button>
+              <button type="button" class="btn-ghost" id="game-reset">پاک کردن</button>
+              <button type="button" class="btn-danger" id="game-delete" hidden>حذف</button>
+            </div>
+          </form>
+        </div>
+        <!-- لیست بازی‌ها -->
+        <div class="games-list-col">
+          <div class="toolbar">
+            <div class="toolbar__search">
+              <span class="material-icons-outlined">search</span>
+              <input type="text" id="game-search" placeholder="جستجوی نام بازی، توسعه‌دهنده یا تگ...">
+            </div>
+            <select class="toolbar__select" id="game-filter-genre">
+              <option value="all">ژانر: همه</option>
+              <option>تیراندازی (FPS)</option>
+              <option>بتل رویال</option>
+              <option>نقش‌آفرینی (RPG)</option>
+              <option>استراتژی</option>
+              <option>اکشن</option>
+              <option>ورزشی</option>
+              <option>ترسناک</option>
+              <option>ماجراجویی</option>
+            </select>
+            <select class="toolbar__select" id="game-filter-sub">
+              <option value="all">اشتراک: همه</option>
+              <option>رایگان</option>
+              <option>پولی</option>
+              <option>اشتراکی</option>
+            </select>
+            <select class="toolbar__select" id="game-sort">
+              <option value="newest">مرتب‌سازی: جدیدترین</option>
+              <option value="name">نام (الفبا)</option>
+              <option value="genre">ژانر</option>
+            </select>
+          </div>
+          <div class="panel games-list-panel">
+            <div class="panel__head"><h2>بازی‌های تعریف‌شده <span class="badge-count" id="games-count">۰</span></h2></div>
+            <div class="games-list" id="games-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== لانچر ===== -->
+    <section class="admin-view" data-view="launcher">
+      <div class="games-layout">
+        <!-- فرم آپلود نسخه جدید -->
+        <div class="panel">
+          <div class="panel__head"><h2>آپلود نسخه جدید لانچر</h2></div>
+          <form id="launcher-form" class="game-form">
+            <div class="field-row">
+              <label class="field"><span>شماره نسخه</span><input type="text" id="l-version" required placeholder="مثلاً 1.4.0"></label>
+              <label class="field"><span>تاریخ انتشار</span><input type="text" id="l-date" placeholder="۲۵ خرداد ۱۴۰۴"></label>
+            </div>
+            <label class="field"><span>پلتفرم</span>
+              <select id="l-platform"><option>Windows (x64)</option><option>Windows (x86)</option><option>macOS</option><option>Linux</option></select>
+            </label>
+
+            <div class="form-section__title">فایل نصب (Setup)</div>
+            <div class="media-uploader">
+              <input type="file" id="l-file-input" accept=".exe,.msi,.dmg,.AppImage,.zip" hidden>
+              <button type="button" class="media-add-btn" id="l-file-add">
+                <span class="material-icons-outlined">upload_file</span>
+                انتخاب فایل ستاپ لانچر
+              </button>
+              <div class="setup-file" id="l-file-info" hidden>
+                <span class="material-icons-outlined">inventory_2</span>
+                <div class="setup-file__meta">
+                  <div class="setup-file__name" id="l-file-name"></div>
+                  <div class="setup-file__size" id="l-file-size"></div>
+                </div>
+                <button type="button" class="media-thumb__del" id="l-file-del" style="position:static"><span class="material-icons-outlined">close</span></button>
+              </div>
+            </div>
+
+            <div class="form-section__title">جزئیات انتشار</div>
+            <label class="toggle-field">
+              <input type="checkbox" id="l-mandatory">
+              <span class="toggle-switch"></span>
+              <span class="toggle-label">
+                <b>آپدیت اجباری</b>
+                <small id="l-mandatory-hint">غیرفعال: کاربر می‌تواند بعداً آپدیت کند</small>
+              </span>
+            </label>
+            <label class="field"><span>تغییرات این نسخه (Changelog)</span><textarea id="l-changelog" rows="4" placeholder="• رفع باگ‌ها&#10;• بهبود سرعت دانلود&#10;• افزودن قابلیت جدید..."></textarea></label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="launcher-submit">ثبت و انتشار نسخه</button>
+              <button type="button" class="btn-ghost" id="launcher-reset">پاک کردن</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- تاریخچه نسخه‌ها -->
+        <div class="panel">
+          <div class="panel__head"><h2>تاریخچه نسخه‌ها <span class="badge-count" id="launcher-count">۰</span></h2></div>
+          <div class="launcher-list" id="launcher-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== سرورها ===== -->
+    <section class="admin-view" data-view="servers">
+      <div class="games-layout">
+        <!-- فرم افزودن سرور -->
+        <div class="panel">
+          <div class="panel__head"><h2>افزودن سرور جدید</h2></div>
+          <form id="server-form" class="game-form">
+            <label class="field"><span>نام سرور</span><input type="text" id="s-name" required placeholder="مثلاً سرور دانلود تهران"></label>
+            <label class="field"><span>آدرس (IP / هاست)</span><input type="text" id="s-host" required placeholder="cdn1.x100.gg یا 185.x.x.x"></label>
+            <div class="field-row">
+              <label class="field"><span>نوع سرور</span>
+                <select id="s-type"><option>دانلود</option><option>بازی</option><option>تحریم‌شکن</option><option>وب / API</option></select>
+              </label>
+              <label class="field"><span>موقعیت</span><input type="text" id="s-location" placeholder="تهران، ایران"></label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">افزودن سرور</button>
+              <button type="button" class="btn-ghost" id="server-reset">پاک کردن</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- لیست سرورها -->
+        <div class="servers-col">
+          <div class="server-stats" id="server-stats"></div>
+          <div class="panel">
+            <div class="panel__head">
+              <h2>سرورهای ثبت‌شده <span class="badge-count" id="servers-count">۰</span></h2>
+              <button class="btn-ghost btn-ghost--sm" id="servers-refresh"><span class="material-icons-outlined">refresh</span>بررسی وضعیت</button>
+            </div>
+            <div class="servers-list" id="servers-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========== مودال جزئیات کاربر ========== -->
+<div class="modal-overlay" id="user-modal" hidden>
+  <div class="modal">
+    <button class="modal__close" id="user-modal-close"><span class="material-icons-outlined">close</span></button>
+    <div class="modal__body" id="user-modal-body"></div>
+  </div>
+</div>
+
+<script src="scripts/admin.js"></script>
+</body>
+</html>

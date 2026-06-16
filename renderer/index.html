@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https:; font-src https: data:; img-src 'self' https: data: file: blob:; script-src 'self'; media-src 'self' https: blob:; connect-src 'self' https:;">
+<title>x100 | Tahrim Shekan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="app-header">
+  <!-- Right: Brand & User -->
+  <div class="app-header__group">
+    <h1 class="app-header__brand">x100</h1>
+    <div class="app-header__user">
+      <div class="app-header__user-col" id="hdr-avatar-btn" style="cursor:pointer" title="پروفایل">
+        <div class="app-header__avatar">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhUP1O6W6OoKKw4Umv2fieIfdFZedKbKczzSjt0-0BzEoztx6QXtC9qSysKbt_YKeGsJeOoWzJReEzHt5__Wag1FfDKNsgk5i1j23-7BexQd4VgReH4h_QgH-L0lrIWcgqhkfSWfusZeGWXTgzyYCQaxkNMosEHHBo0PWOpE6Q7jWxKGT9JX32tZJiPjIh18HzGkXqpim15_UPUI7DWDZnu0_0Z9fyFxdC5pRUgaVh8yPQBEdBOkVS6iC1honbljcnW1Jylaz1g8o" alt="User">
+        </div>
+      </div>
+      <div class="header-currency">
+        <span class="app-header__user-name">احسان</span>
+        <div class="header-currency__row">
+          <span class="coin-x">X</span>
+          <span class="header-currency__amount" id="user-currency">۱٬۴۸۰</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left: Actions & Window Controls -->
+  <div class="flex items-center gap-4">
+    <div class="app-header__actions">
+      <button class="btn btn--success" id="hdr-connection-btn">
+        <span class="material-symbols-outlined" id="hdr-connection-icon" style="font-size:16px;vertical-align:-3px">link</span>
+        اتصال
+      </button>
+      <div class="flex items-center gap-1">
+        <button class="btn--icon-lg btn" id="hdr-downloads-btn" aria-label="دانلودها">
+          <span class="material-symbols-outlined">download</span>
+        </button>
+        <button class="btn--icon-lg btn" aria-label="نوتیفیکیشن" style="position:relative">
+          <span class="material-symbols-outlined">notifications</span>
+          <span style="position:absolute;top:10px;right:10px;width:8px;height:8px;background:var(--color-primary);border-radius:50%"></span>
+        </button>
+        <button class="btn--icon-lg btn" id="hdr-friends-btn" aria-label="دوستان" title="دوستان" style="position:relative">
+          <span class="material-symbols-outlined">group</span>
+          <span class="hdr-friends-badge">۲</span>
+        </button>
+      </div>
+    </div>
+    <div class="app-header__controls">
+      <button class="btn--icon btn" id="win-min" aria-label="کوچک کردن">
+        <span class="material-symbols-outlined" style="font-size:12px">remove</span>
+      </button>
+      <button class="btn--icon btn" id="win-max" aria-label="بزرگ کردن">
+        <span class="material-symbols-outlined" style="font-size:11px">check_box_outline_blank</span>
+      </button>
+      <button class="btn--icon btn--icon-danger btn" id="win-close" aria-label="بستن">
+        <span class="material-symbols-outlined" style="font-size:12px">close</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="app-sidebar">
+  <nav class="app-sidebar__nav scrollbar-thin" id="sidebar-nav">
+    <a class="nav-item nav-item--active" href="#" data-route="home">
+      <span class="material-symbols-outlined">home</span>
+      <span>خانه</span>
+    </a>
+    <a class="nav-item" href="#" data-route="games">
+      <span class="material-symbols-outlined">sports_esports</span>
+      <span>بازی‌ها</span>
+    </a>
+    <a class="nav-item" href="#" data-route="shop">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      <span>فروشگاه</span>
+    </a>
+    <div class="nav-section">
+      <a class="nav-item nav-item--sub" href="#" data-route="tournaments">
+        <span class="material-symbols-outlined">emoji_events</span>
+        <span>تورنومنت</span>
+      </a>
+      <a class="nav-item nav-item--sub" href="#" data-route="streaming">
+        <span class="material-symbols-outlined">sensors</span>
+        <span>استریمینگ</span>
+      </a>
+      <a class="nav-item nav-item--sub" href="#" data-route="community" data-commtab="community">
+        <span class="material-symbols-outlined">groups</span>
+        <span>دورهمی گیمرها</span>
+      </a>
+      <a class="nav-item nav-item--sub" href="#" data-route="community" data-commtab="posts">
+        <span class="material-symbols-outlined">feed</span>
+        <span>شبکه اجتماعی</span>
+      </a>
+    </div>
+
+  </nav>
+</aside>
+
+<!-- ========== FRIENDS PANEL ========== -->
+<div class="friends-panel" id="friends-panel">
+
+  <div class="friends-panel__bar">
+    <div class="friends-panel__title">
+      <span class="material-symbols-outlined">group</span>
+      دوستان
+      <span class="friends-panel__badge">۲</span>
+    </div>
+    <button class="friends-panel__close" id="friends-panel-close">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <div class="friends-panel__body">
+
+    <!-- ====== ستون چپ: لیست ====== -->
+    <div class="fr-sidebar">
+
+      <div class="fr-search-wrap">
+        <span class="material-symbols-outlined fr-search-icon">search</span>
+        <input class="fr-search-input" id="fr-search" type="text" placeholder="جستجوی دوستان...">
+      </div>
+
+      <div class="fr-ftabs">
+        <button class="fr-ftab fr-ftab--active" data-ft="online">آنلاین<span class="fr-ftab__badge">۳</span></button>
+        <button class="fr-ftab" data-ft="all">همه<span class="fr-ftab__badge">۶</span></button>
+        <button class="fr-ftab" data-ft="pending">در انتظار<span class="fr-ftab__badge fr-ftab__badge--red">۲</span></button>
+        <button class="fr-ftab fr-ftab--add-btn" data-ft="add" title="افزودن دوست">
+          <span class="material-symbols-outlined">person_add</span>
+        </button>
+      </div>
+
+      <!-- آنلاین -->
+      <div class="fr-list scrollbar-thin" id="fr-list-online">
+        <div class="fr-cat">آنلاین — ۳ نفر</div>
+        <div class="fr-item" data-uid="arash" data-name="ArashGG" data-game="Diablo IV" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=arash" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">ArashGG</span><span class="fr-sub">Diablo IV</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--msg" data-action="msg" title="پیام خصوصی"><span class="material-symbols-outlined">chat</span></button>
+            <button class="fr-btn fr-btn--del" data-action="remove" title="حذف دوست"><span class="material-symbols-outlined">person_remove</span></button>
+          </div>
+        </div>
+        <div class="fr-item" data-uid="sara" data-name="SaraPlay" data-game="Dota 2" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=sara" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">SaraPlay</span><span class="fr-sub">Dota 2</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--msg" data-action="msg" title="پیام خصوصی"><span class="material-symbols-outlined">chat</span></button>
+            <button class="fr-btn fr-btn--del" data-action="remove" title="حذف دوست"><span class="material-symbols-outlined">person_remove</span></button>
+          </div>
+        </div>
+        <div class="fr-item" data-uid="nightwolf" data-name="NightWolf_IR" data-game="آنلاین" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=wolf7" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">NightWolf_IR</span><span class="fr-sub">آنلاین</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--msg" data-action="msg" title="پیام خصوصی"><span class="material-symbols-outlined">chat</span></button>
+            <button class="fr-btn fr-btn--del" data-action="remove" title="حذف دوست"><span class="material-symbols-outlined">person_remove</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- همه -->
+      <div class="fr-list scrollbar-thin" id="fr-list-all" hidden>
+        <div class="fr-cat">آنلاین — ۳ نفر</div>
+        <div class="fr-item" data-uid="arash" data-name="ArashGG" data-game="Diablo IV" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=arash" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">ArashGG</span><span class="fr-sub">Diablo IV</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+        <div class="fr-item" data-uid="sara" data-name="SaraPlay" data-game="Dota 2" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=sara" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">SaraPlay</span><span class="fr-sub">Dota 2</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+        <div class="fr-item" data-uid="nightwolf" data-name="NightWolf_IR" data-game="آنلاین" data-status="online">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=wolf7" alt=""><span class="fr-dot fr-dot--online"></span></div>
+          <div class="fr-info"><span class="fr-name">NightWolf_IR</span><span class="fr-sub">آنلاین</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+        <div class="fr-cat" style="margin-top:6px">آفلاین — ۳ نفر</div>
+        <div class="fr-item fr-item--offline" data-uid="milad" data-name="MiladPro" data-game="۲ ساعت پیش" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=milad3" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">MiladPro</span><span class="fr-sub">۲ ساعت پیش</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+        <div class="fr-item fr-item--offline" data-uid="ghost" data-name="GhostSniper" data-game="دیروز" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=ghost9" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">GhostSniper</span><span class="fr-sub">دیروز</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+        <div class="fr-item fr-item--offline" data-uid="zirak" data-name="Zirak90" data-game="۳ روز پیش" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=zirak5" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">Zirak90</span><span class="fr-sub">۳ روز پیش</span></div>
+          <div class="fr-btns"><button class="fr-btn fr-btn--msg" data-action="msg"><span class="material-symbols-outlined">chat</span></button><button class="fr-btn fr-btn--del" data-action="remove"><span class="material-symbols-outlined">person_remove</span></button></div>
+        </div>
+      </div>
+
+      <!-- در انتظار -->
+      <div class="fr-list scrollbar-thin" id="fr-list-pending" hidden>
+        <div class="fr-cat">درخواست دریافتی — ۲</div>
+        <div class="fr-item fr-item--pending" data-uid="progamer" data-name="ProGamer_Ali" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=pro22" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">ProGamer_Ali</span><span class="fr-sub">درخواست دریافتی</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--accept" data-action="accept" title="قبول"><span class="material-symbols-outlined">check</span></button>
+            <button class="fr-btn fr-btn--del" data-action="decline" title="رد"><span class="material-symbols-outlined">close</span></button>
+          </div>
+        </div>
+        <div class="fr-item fr-item--pending" data-uid="xfight" data-name="XFighter99" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=xf99" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">XFighter99</span><span class="fr-sub">درخواست دریافتی</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--accept" data-action="accept" title="قبول"><span class="material-symbols-outlined">check</span></button>
+            <button class="fr-btn fr-btn--del" data-action="decline" title="رد"><span class="material-symbols-outlined">close</span></button>
+          </div>
+        </div>
+        <div class="fr-cat" style="margin-top:6px">درخواست ارسالی — ۱</div>
+        <div class="fr-item fr-item--offline" data-uid="sent1" data-name="K1ngSlayer" data-status="offline">
+          <div class="fr-ava-wrap"><img src="https://i.pravatar.cc/40?u=king11" alt=""><span class="fr-dot fr-dot--offline"></span></div>
+          <div class="fr-info"><span class="fr-name">K1ngSlayer</span><span class="fr-sub">در انتظار قبول</span></div>
+          <div class="fr-btns">
+            <button class="fr-btn fr-btn--del" data-action="cancel" title="لغو"><span class="material-symbols-outlined">cancel</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- افزودن دوست -->
+      <div class="fr-list" id="fr-list-add" hidden>
+        <div class="fr-add-panel">
+          <div class="fr-add-header">
+            <span class="material-symbols-outlined fr-add-icon">person_search</span>
+            <div>
+              <div class="fr-add-title">افزودن دوست</div>
+              <div class="fr-add-desc">نام کاربری دوستت رو وارد کن</div>
+            </div>
+          </div>
+          <div class="fr-add-input-row">
+            <input class="fr-add-input" id="fr-add-input" type="text" placeholder="نام کاربری...">
+            <button class="fr-add-submit" id="fr-add-submit">جستجو</button>
+          </div>
+          <div class="fr-add-results" id="fr-add-results"></div>
+        </div>
+      </div>
+
+    </div><!-- /fr-sidebar -->
+
+    <!-- ====== محتوا: خوش‌آمد یا DM ====== -->
+    <div class="fr-content" id="fr-content">
+
+      <!-- حالت پیش‌فرض -->
+      <div class="fr-welcome" id="fr-welcome">
+        <span class="material-symbols-outlined fr-welcome-icon">waving_hand</span>
+        <div class="fr-welcome-title">دوستت کجاست؟</div>
+        <div class="fr-welcome-sub">یکی از دوستات رو انتخاب کن یا با دکمه + دوست جدید اضافه کن</div>
+      </div>
+
+      <!-- DM panel -->
+      <div class="fr-dm" id="fr-dm" hidden>
+        <div class="fr-dm-header">
+          <div class="fr-dm-header-info">
+            <div class="fr-dm-ava-wrap">
+              <img class="fr-dm-ava" id="fr-dm-ava" src="" alt="">
+              <span class="fr-dm-dot" id="fr-dm-dot"></span>
+            </div>
+            <div>
+              <div class="fr-dm-name" id="fr-dm-name"></div>
+              <div class="fr-dm-status" id="fr-dm-status"></div>
+            </div>
+          </div>
+          <button class="fr-dm-hbtn" id="fr-dm-close" title="بستن">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="fr-dm-messages scrollbar-thin" id="fr-dm-messages"></div>
+        <div class="fr-dm-input-row">
+          <input class="fr-dm-input" id="fr-dm-input" type="text" placeholder="پیام خصوصی...">
+          <button class="fr-dm-send" id="fr-dm-send"><span class="material-symbols-outlined">send</span></button>
+        </div>
+      </div>
+
+    </div><!-- /fr-content -->
+
+  </div><!-- /friends-panel__body -->
+</div><!-- /friends-panel -->
+
+<!-- ========== MAIN ========== -->
+<main class="app-main">
+
+<!-- ============================================
+     PAGE: HOME (داشبورد)
+     ============================================ -->
+<div class="page page--active" data-page="home">
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero__bg">
+      <img id="hero-bg-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGecMXMN8YYF9xX6b1xeYKW6RHyktldnEuraMrdRkFVRCtoI7yRSBG8TN_t9vkxRiu6trez6jWkXpCcD_H9Um9tiBPJ2qcHLr_p7F-FkgUo-mn3Hxwbd-4iclFUzcJ9F2UWl62bcXGRY--hh2RuiXDlz8EjlW3inLUNs2l3FHtB_a10_CbbG0VNn60ao4LOhzjc0z_-_yrucNwuEjy4uqCASPcdq-rx3zzg9YPYjv35W1XdawStvhh6TJjvxZmHr7DEB_Wv96fPFl_qg" alt="">
+      <div class="hero__gradient-side"></div>
+      <div class="hero__gradient-bottom"></div>
+    </div>
+    <div class="hero__content">
+      <div class="hero__inner">
+        <h2 class="hero__title" id="hero-title">VALORANT</h2>
+        <h3 class="hero__subtitle" id="hero-subtitle">آمادگی، دقت، پیروزی</h3>
+        <p class="hero__desc" id="hero-desc">یک تیرانداز تاکتیکال ۵ در ۵ با قابلیت‌های منحصربه‌فرد هر عامل. تیم‌ات را بچین و دشمن را نابود کن.</p>
+        <div class="hero__cta-group">
+          <button class="btn btn--primary btn--lg">
+            مشاهده
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="hero__thumbs scrollbar-thin">
+      <div class="hero__thumbs-inner" id="hero-thumbs">
+        <div class="hero-thumb hero-thumb--active" data-thumb="0"
+          data-title="VALORANT"
+          data-subtitle="آمادگی، دقت، پیروزی"
+          data-desc="یک تیرانداز تاکتیکال ۵ در ۵ با قابلیت‌های منحصربه‌فرد هر عامل. تیم‌ات را بچین و دشمن را نابود کن.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGecMXMN8YYF9xX6b1xeYKW6RHyktldnEuraMrdRkFVRCtoI7yRSBG8TN_t9vkxRiu6trez6jWkXpCcD_H9Um9tiBPJ2qcHLr_p7F-FkgUo-mn3Hxwbd-4iclFUzcJ9F2UWl62bcXGRY--hh2RuiXDlz8EjlW3inLUNs2l3FHtB_a10_CbbG0VNn60ao4LOhzjc0z_-_yrucNwuEjy4uqCASPcdq-rx3zzg9YPYjv35W1XdawStvhh6TJjvxZmHr7DEB_Wv96fPFl_qg" alt="Valorant">
+            <span class="badge--corner badge">Selected</span>
+          </div>
+          <p class="hero-thumb__label">Tactical shooter</p>
+        </div>
+        <div class="hero-thumb" data-thumb="1"
+          data-title="ELDEN RING"
+          data-subtitle="ارباب حلقه‌های درهم شکسته"
+          data-desc="در سرزمین میانه سفری بی‌مانند آغاز کن. یک اثر ماندگار از FromSoftware که هر گوشه‌اش رازی پنهان دارد.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxOBHhg8sjZ0_-4UX7Z7o-kYimVtCOOGHwwNTK19I6x2sA9P0YW4yLjxIhyyY1MrQ9PfkaF6K7pkLV_YOQjZSqZRPNUEkrtv0nGD4imqkoEBnuNHm8K4LdagVWuUuOHBjBmOIozjI_nLaSIN_QrYINTc3YdL_KfS5EsLzTr0alc9TzRAVy5Em26EiJKhE2znLj-uQx0rDgnJ7jqvHItCY0PZNE46_cTvgvpvQdWN_Bo9VgvoRthlSbWLeRRravurhDE1wxxrFpeQ3Qmg" alt="Elden Ring">
+          </div>
+          <p class="hero-thumb__label">Dark fantasy RPG</p>
+        </div>
+        <div class="hero-thumb" data-thumb="2"
+          data-title="STARFIELD"
+          data-subtitle="فضا بی‌نهایت است"
+          data-desc="هزار سیاره منتظر کاوش تو هستند. مأموریت‌ها، کشف‌ها و نبردهای فضایی در مقیاسی که تا به حال ندیده‌ای.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBylsqfiAiQefJ0m7o53oZcmavZI4kYuPVY49PEeSYqwxlGHQZQ9CZUjG0X7HpsFkkSpTHRjghYgF0Of_StYj31ZUjLwNYAlshzd5iRlAlsmNtOpThBpWNqJ7K7KHhcw97rbmSoDm0jxAp3tEVhLzsGXmxdTlN-u0TCTJjj56Kr0uqt2MnAP3obBZ3FgLiFh9gejdvFu9Vx0fdy39HKVFLXnHsSKyRDbHFRkLx1S_hM3xyr9wqxqVSNCQsyb7PxQZydfA-MGTmDB2msXg" alt="Starfield">
+          </div>
+          <p class="hero-thumb__label">Sci-fi space opera</p>
+        </div>
+        <div class="hero-thumb" data-thumb="3"
+          data-title="CYBERPUNK 2077"
+          data-subtitle="آینده‌ای که رویایش را داری"
+          data-desc="شهر Night City، جایی که رویاها به کابوس تبدیل می‌شوند. به عنوان V سرنوشت خود را در این دنیای دیستوپیک رقم بزن.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPq5PpUPBKLbzxver0TL2yhYuIrzA4UfevjpTSWTEvwzJARj5NtpxVhSaLbAEm0Bx0iAxixxMesEu7PGLW-gZmbJVizCWXsQCOZYycMYPTu8Wob2lbi69yrVp-rcXDBT7qVUNsFERgDKU8p7-EI8dvvEoz1d80hfE07Bs6sVKmDG_OXrWTpfRGEgzo-OzzHqSuepomqsdHLbHZ8tI_Lka-Sg7KfbbK3ZtRl_IC_upEaFV1d_XRIwsOqYC96Hroo5e08Hdyw2mnlF15sw" alt="Cyberpunk 2077">
+          </div>
+          <p class="hero-thumb__label">Cyberpunk action</p>
+        </div>
+        <div class="hero-thumb" data-thumb="4"
+          data-title="THE LAST OF US"
+          data-subtitle="بقا تنها معنی زندگی است"
+          data-desc="در دنیایی پس از آخرالزمان، Joel و Ellie باید از میان خطرات بگذرند. داستانی تکان‌دهنده از عشق و بقا.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtkxz-f8qRBZoWQMOe814-mTdy9o1Sp_ljn9tftPL9O5vdVTNmNA3ZuTCt5fPFEiy0-1dhJQoj1PMBCXJxJXk1Gna7D0q4NWm75OUeapjdux8PYFOQW3JjG5po7ufLrva2fSAK6WZmyeAh4605TaJUYoHIHWphnXPASD5ab_iZv8PJtGioFmEiKEYFjLgExDWWvx-zG_hmC-rLpp_HlLHQvbzSnb87uX86e_ybo6rXx_UUPZjVqWPRpq7YX7BCiGZCYvq0c3RoO2L0Bg" alt="The Last of Us">
+          </div>
+          <p class="hero-thumb__label">Post-apocalyptic survival</p>
+        </div>
+        <div class="hero-thumb" data-thumb="5"
+          data-title="DEAD SPACE"
+          data-subtitle="ترس از اعماق فضا"
+          data-desc="در ایستگاه فضایی USG Ishimura هیچ‌کس صدای فریاد تو را نمی‌شنود. آماده مواجهه با کابوسی باش که انتظارش را نداری.">
+          <div class="hero-thumb__frame">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xv9-G239d6bfXCp4AYTIKN4iIduIhvpJJkb88qgBBXu-7F66vuXAzJ4NkFLQVPHZHyI364iYvWpfKRlqbvfzZ8svEQPB-xr_6a8hiV2Z7auAT7N4EWMw6_BHxunvicZPvJ0-VHzZIDWiRgt7lvaeuxGKCV3Mh8l46CooVRu_4EN5K2zwRkMlP6sgDdE0Iyb3W0JjT1MBBhSSHvlz6EXy4iO9t20H2OWDm1B4mQWIs02NBP6dxF-bAmn3C8XgDQv3q8AlMdE6_bF2tw" alt="Dead Space">
+          </div>
+          <p class="hero-thumb__label">Horror game</p>
+        </div>
+        <div class="hero-thumb" data-thumb="6"
+          data-title="شاپ ماشین آهنی"
+          data-subtitle="خرید آیتم‌های دوتا 2"
+          data-desc="آیتم‌های کمیاب، باندل‌ها، اسکین‌ها و آیتم‌های ویژه — تحویل سریع، پرداخت امن و موجودی متنوع. همین حالا خرید کن!">
+          <div class="hero-thumb__frame">
+            <img src="assets/shop-banner.png" alt="شاپ ماشین آهنی">
+          </div>
+          <p class="hero-thumb__label">Dota 2 Item Shop</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="app-main__content">
+
+    <!-- ===== SHOP SECTION ===== -->
+    <section class="flex flex-col gap-8">
+      <!-- Shop Banner -->
+      <div class="shop-banner">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVcyfS8OyulBoEuSLPfPsnUw_ZKK_NbGr67wAUxLL16Yy1QuUFFcyZzGLtkujyz8-29nDXdK2R0vAajWiZl2xWN044j28-37WzMbDwVR5C3cGZmVJ5Y2GHS4Oo-Vm5MYLSVWKjSHLwb1GPfsvQd4gA9qK0pq-y8c-RoN5VQuD9CMjpQdErvY5etj8tdvzRcejGLri0zyAu2Vo4AfBOo-WQmgSiQ3CHTjPicIDCRIsnnaPco7n2FusmwNYwbfcyxYaCeTP9BLtiMII82A" alt="Shop">
+        <div class="shop-banner__overlay"></div>
+        <div class="shop-banner__content">
+          <div class="shop-banner__title">
+            <h2>فروشگاه بازی و آیتم</h2>
+            <span class="material-symbols-outlined">shopping_cart</span>
+          </div>
+          <p class="shop-banner__desc">خرید آیتم، بازی، جم و گیفت کارت با امنیت و سرعت بالا</p>
+        </div>
+      </div>
+
+      <!-- Feature Cards -->
+      <div class="grid-shop-cards">
+        <div class="feature-card" data-accent="purple">
+          <span class="material-symbols-outlined feature-card__icon">handshake</span>
+          <h4 class="feature-card__title">معاملات کاربر</h4>
+          <p class="feature-card__desc">خرید و فروش امن بین کاربران</p>
+          <span class="material-symbols-outlined feature-card__arrow">arrow_back</span>
+        </div>
+        <div class="feature-card" data-accent="yellow">
+          <span class="material-symbols-outlined feature-card__icon">swords</span>
+          <h4 class="feature-card__title">اسکین و سلاح</h4>
+          <p class="feature-card__desc">خاص‌ترین آیتم‌های بازی‌ها</p>
+          <span class="material-symbols-outlined feature-card__arrow">arrow_back</span>
+        </div>
+        <div class="feature-card" data-accent="green">
+          <span class="material-symbols-outlined feature-card__icon">card_giftcard</span>
+          <h4 class="feature-card__title">گیفت کارت</h4>
+          <p class="feature-card__desc">شارژ آنی تمامی پلتفرم‌ها</p>
+          <span class="material-symbols-outlined feature-card__arrow">arrow_back</span>
+        </div>
+        <div class="feature-card" data-accent="blue">
+          <span class="material-symbols-outlined feature-card__icon">diamond</span>
+          <h4 class="feature-card__title">جم و کوین</h4>
+          <p class="feature-card__desc">ارز رایج بازی‌های موبایلی</p>
+          <span class="material-symbols-outlined feature-card__arrow">arrow_back</span>
+        </div>
+        <div class="feature-card" data-accent="amber">
+          <span class="material-symbols-outlined feature-card__icon">sports_esports</span>
+          <h4 class="feature-card__title">بازی‌های برتر</h4>
+          <p class="feature-card__desc">پیشنهادات ویژه هفتگی</p>
+          <span class="material-symbols-outlined feature-card__arrow">arrow_back</span>
+        </div>
+      </div>
+
+      <!-- Trust Bar -->
+      <div class="trust-bar">
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">verified_user</span><span class="trust-bar__label">تضمین امنیت</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">support_agent</span><span class="trust-bar__label">پشتیبانی ۲۴/۷</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">sell</span><span class="trust-bar__label">بهترین قیمت</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">bolt</span><span class="trust-bar__label">تحویل سریع</span></div>
+      </div>
+    </section>
+
+    <!-- ===== GAMES GRID ===== -->
+    <section style="padding-bottom: var(--space-6); overflow: hidden">
+      <div class="section-header">
+        <h3 class="section-heading">بازی‌ها</h3>
+        <button class="link-action">مشاهده همه</button>
+      </div>
+      <div class="grid-games-hero">
+        <!-- Large Tile -->
+        <div class="grid-games-hero__large">
+          <div class="game-tile game-tile--large">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0WdbtrpkziQswii_djLXEyoeW3s-3RQfOvEr0Ta0SYRZ-LDyzAq-M5JjvtDBjwkxaB5rQZcqM0rWYOhexNqn0gL7icAAjO_tBIp3PcjcxGQj_Gh5tUjn7w8fBLOxyy16i8lCjTZMquG0_k4fzXFAPymbbkqxxsV5Ksn6lWF8mUKxHGM0rOZLf3PBjxTJrenijszCnH7Ke3qrLazBdnFZpW5kCuaGhXRy7sFl-_BBzH8ofMI_zbl5FPFn0u6emhoQFOdDJlXJKbFMMUg" alt="Counter-Strike 2">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <h4 class="game-tile__name">Counter-Strike 2</h4>
+              <div class="game-tile__online"><span class="status-dot"></span>آنلاین 230K</div>
+            </div>
+          </div>
+        </div>
+        <!-- Small Tiles -->
+        <div class="grid-games-hero__small">
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEX5UQTPDu2TmlO8W182rudOcsieILJwe6S9JR2VJaDPuEhl9tTziLbl-yqvo-xJtM23gT6qRjvrhms2rtUeSLDNoYPDA430HvHhpnfd1KitvpMQHioqTvpHSoOANymKfjZ2r94jNq-VOqbNOJhl5qLEI13H-UIzB8YxqyGHA16kQ7YlpmCRfW-NU4HlkaLxgmcfKK1VvgXIHuAUhvpTPkbBGwiQeipRI68T882KSg8PDsyaU4IWU4Xl5zltnk2HKfw-bjiETHUUhA7g" alt="DOTA 2">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">DOTA 2</span>
+              <span class="game-tile__online">آنلاین 551K</span>
+            </div>
+          </div>
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHj5MQ1lVlmlKaRjizTLybN5cjFHmgJNbC4lOLnnnKDPbgn_UJRa5QHy0TXI1mrwYz9CWrt3C8HgmGpNqp7s9Nn-UHfuCW6YPi9AAcjqxZg0Y2cFKevEIJuA2lT7mkEYQsSCSAnwPVJk6r4DM7wDLeMZofWryxkhFBttJaEqba3R9Syys5r_a99nllRKb6MUV5XeXuTO070d5X7hJo_uMLEkzb7qo4-qGsVzgE-4wJAA0BJNCb2Hwa7zcGVJDKwpEgYjzqbxjDQHwOmA" alt="Forza Horizon 4">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">Forza Horizon 4</span>
+              <span class="game-tile__online">آنلاین 92K</span>
+            </div>
+          </div>
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5JsRdxeZncuQztiYHDlQC344q_o4qTjJ704Ws2cNGP_T1ISPuf9yKp-IErz34h6Q6XOy-zSmFPw0OG5VEtM9tz8TRjEhIbNKiRNDv-jVT_U1L-RAW87AelZYHjE4V1a16-tEOsITd1oZYBupdg-EDzVEkhzabgWnp2I3FN8zyrjbaR6Tn_BcsWyJlku8nnNjTUC26GcbnWEr6J6YdV5fKkgi97PWEhhXeYau5rKEauGsA4XoZsR5F5fhCsVxPQAIdkLi3ij0n5Fl95w" alt="PUBG">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">PUBG</span>
+              <span class="game-tile__online">آنلاین 186K</span>
+            </div>
+          </div>
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaHJuHOO9PuG6so2KUAfpFctC-sg5uZRJgBBYm0EUhzIfsmeODgPatQxopjXG97dfJdDLFHqIxVFk45JXmjdqrOo4FABhnSfJ0jlkeMG3MugC48_BVPrhNYNfGhuC-keX_4bpKBkj71kYMIuODATPitZCtwbySV-8eZagW16Q1Z-qmdX3d2-crxhmgBfJPCdJTo4wIbdxEvdQxo8_oHM7HoexIBMTTR72x6Vnighg-Ss8JEn6tqvpqxxuz31iZFa1_7KlF4NjV8DO4RA" alt="Valorant">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">Valorant</span>
+              <span class="game-tile__online">آنلاین 146K</span>
+            </div>
+          </div>
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy_E--mxZl2aK-AfS7ZmnGNIIAeY-7YK9g47JMCoNn2PfypEVDDSFUEGlxAAvb3VWePHvQLpzHoUyB7MSbFxAUjttAFp__Q6tJWsdnW-3WODFehPk659X5OFh3eCW9kyi60TOnX8BUJM3W9-05npvrLxhgsZFd5moNln2ynNL1u9CB5lulrtWhVTwk7KnB9vp08hHcjNLlG8F3Eq6Koti7Lngq_DVhs85sYccyX-4GQkfhsgRe8nqNfrzBipv3GJ-oY0yJ7Fpa9w2qFQ" alt="Minecraft">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">Minecraft</span>
+              <span class="game-tile__online">آنلاین 211K</span>
+            </div>
+          </div>
+          <div class="game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoZhp-yADiqLPHpKBvHDEiGhuVHL41KZh9ZoYh1eHscTbRl2mGgFWXeSv6AlpuLhFBn_ukoEOW4VQuWnvq5LTX2LXVICPBnQTbz1HTgmUfEG8DRpcqWwukwFFuCxtzwKPyXh5yW5dGrVKFZO7RavDqfga32S2NvYSAMtQdLmRW_2qcuH3lblhp5R7uh-wr-MenbUxYyrOYZGisA0hF97YrdiMDpIF2WbatGu9wWecxobJtUEIPAV_1Uy9Xs5LhpV6lv0lvjFexw6kmPg" alt="LoL Wild Rift">
+            <div class="game-tile__overlay"></div>
+            <div class="game-tile__info">
+              <span class="game-tile__name">League of Legends: Wild Rift</span>
+              <span class="game-tile__online">آنلاین 169K</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTINUE PLAYING ===== -->
+    <section style="padding-top: var(--space-4); border-top: 1px solid var(--color-border-subtle)">
+      <h3 class="section-heading" style="margin-bottom: var(--space-8)">ادامه و بازی‌های من</h3>
+      <div class="grid-games-row" id="continue-games"></div>
+    </section>
+
+    <!-- ===== ACTIVE STREAMS ===== -->
+    <section>
+      <div style="margin-bottom: var(--space-8)">
+        <h3 class="section-heading">
+          <span class="section-heading__bar"></span>
+          استریم‌های فعال
+        </h3>
+        <p class="section-subtitle">با محبوب‌ترین و سرگرم‌کننده‌ترین استریمرها</p>
+      </div>
+      <div class="grid-streams">
+        <div class="grid-streams__side" id="streams-right"></div>
+        <div class="grid-streams__main">
+          <div class="stream-card-lg">
+            <img class="stream-card-lg__media" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmNh5byfSu9cA3ZwC0W_NXWic-l2g7c7CSZxlZKLg83ZO65DDIXokGtGfWdSgyRZGNMne5p70bauG7eOTxvLH1HGST6kQ9e0mPCrm0DpWx-am88PfuUnzc4UBTJDl-TMbVCb1zz22bYVXsVrdI9lnj6yUb8PH3f6vBrLpWM2IuTSLk5R_bXefFEMeBAXUP5fTZnb7CMDMBKFouARbByB--nH0nHRTiEh8Ah6pUtPmSJ3fSjqTeucyTASuM8zvhSNAa3t1a40-q1oc" alt="">
+            <div class="stream-card-lg__overlay"></div>
+            <div class="stream-card-lg__badge"><span class="badge badge--live">LIVE</span></div>
+            <div class="stream-card-lg__footer">
+              <div class="stream-card-lg__streamer">
+                <div class="stream-card-lg__avatar">
+                  <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDatwpV8HD9E1vzo9nZezjozdUcXDxUGGdDr3gEFR9V1qvSK_a3H8M7hs8piF2RdzBwEn6YEPY4Gr5yjPtEwRxKZBSBxAuBoB4jHnotxU2GZuyt_Ww0-A7_ycJKJmNKFH5bWYgKXD_nKKM9uh_nJoJiunQ1ufLgdLvUHpqlwu160uiu3rLlKcNAnBEszpLw0GNYEgpo0-r_V1JYN5ekUELvU787sfl1hYIc-8o_jxkGf4erPoqPy0G7Fecv2XUo77uNeJ4I53zKF3I" alt="">
+                </div>
+                <div>
+                  <h4 class="stream-card-lg__title">PUBG BATTLEGROUNDS</h4>
+                  <span class="stream-card-lg__handle">PersaPUBG</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <span class="stream-card-lg__viewers">
+                  <span class="material-symbols-outlined" style="font-size:14px">group</span>
+                  12.4K viewer
+                </span>
+                <button class="btn btn--primary">مشاهده</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-streams__side" id="streams-left"></div>
+      </div>
+    </section>
+
+    <!-- ===== TOURNAMENTS ===== -->
+    <section style="padding-bottom: var(--space-24)">
+      <div class="section-header">
+        <div>
+          <h3 class="section-heading">
+            <span class="section-heading__bar"></span>
+            تورنومنت‌های فعال
+          </h3>
+          <div class="flex flex-wrap gap-3" style="margin-top: var(--space-6)" id="tournament-tabs">
+            <button class="chip chip--active" data-tab="all">همه بازی‌ها</button>
+            <button class="chip" data-tab="dota2">Dota 2</button>
+            <button class="chip" data-tab="pubg">PUBG Mobile</button>
+            <button class="chip" data-tab="cs2">Counter-Strike 2</button>
+            <button class="chip" data-tab="valorant">Valorant</button>
+            <button class="chip" data-tab="minecraft">Minecraft</button>
+            <button class="chip" data-tab="lol">League of Legends</button>
+          </div>
+        </div>
+        <button class="link-action">مشاهده همه</button>
+      </div>
+      <div class="grid-tournaments" id="tournaments-grid"></div>
+      <div class="trust-bar trust-bar--lg">
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">verified_user</span><span class="trust-bar__label">ساخت تورنومنت</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">support_agent</span><span class="trust-bar__label">ساخت تیم</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">sell</span><span class="trust-bar__label">جوایز ارزنده</span></div>
+        <div class="trust-bar__item"><span class="material-symbols-outlined trust-bar__icon">bolt</span><span class="trust-bar__label">مچ‌میکینگ</span></div>
+      </div>
+    </section>
+
+    <!-- ===== MATCHMAKING ===== -->
+    <section style="margin-bottom: var(--space-24)">
+      <div style="margin-bottom: var(--space-8)">
+        <h3 class="section-heading">
+          <span class="section-heading__bar"></span>
+          مچ‌میکینگ اختصاصی
+        </h3>
+        <p class="section-subtitle">تجربه بازی آنلاین با کمترین تاخیر و بهترین کیفیت اتصال</p>
+      </div>
+      <div class="grid-matchmaking" id="matchmaking-grid"></div>
+    </section>
+
+    <!-- ===== LEADERBOARD ===== -->
+    <section style="margin-bottom: var(--space-24)">
+      <div class="section-header">
+        <h3 class="section-heading">
+          <span class="section-heading__bar"></span>
+          برترین بازیکن‌ها
+        </h3>
+        <div class="flex flex-wrap gap-3" id="leaderboard-tabs">
+          <button class="chip chip--active chip--glow" data-tab="all">همه بازی‌ها</button>
+          <button class="chip" data-tab="cs2">Counter-Strike 2</button>
+          <button class="chip" data-tab="pubg">PUBG</button>
+          <button class="chip" data-tab="minecraft">Minecraft</button>
+          <button class="chip" data-tab="dota2">Dota 2</button>
+        </div>
+      </div>
+      <div class="grid-leaderboard">
+        <div class="podium grid-leaderboard__podium">
+          <!-- Rank 3 -->
+          <div class="podium__rank podium__rank--3">
+            <div class="podium__avatar podium__avatar--3">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNLJWCtt5hJ4xEJ8N4hdqf1KryQYM3_ngpM0dqtEq-R6R0aMc5nb38TBVsLgPzb5NOOSx_UXu23gTx8XfvMq9WG0fdD47SXIcPvLQlRqaLC694Jb9vpTBEF_jX3XeNu20rd7OJfNcBUbfFKoTkr7hu245hDXPFUohV5bvdQYWn4WkcmSCOI-Txl3rV0HWgp9msHWN4Xr0oSQ89vSQjhBJBDJhLxdTHaT7d4WekWOMBzLpqXTYFFwgbCSRZ5sm8PR6kOhZ7NxdCx3s" alt="">
+            </div>
+            <span class="podium__name">ShadowStorm</span>
+            <span class="podium__wins">1,768 WINS</span>
+            <div class="podium__bar podium__bar--3"><span class="podium__num podium__num--3">3</span></div>
+          </div>
+          <!-- Rank 1 -->
+          <div class="podium__rank podium__rank--1">
+            <span class="material-symbols-outlined podium__crown">workspace_premium</span>
+            <div class="podium__avatar podium__avatar--1">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDob6yBY9p-ZZOGJQQQo9A6jZ3eo3fnPDliXnSxdd9vZL9yOswzHG1FKbe8932vB49zHbANXYbtgNJKmKJlWzVOlq_CNOmhevUmmHFaN4RHLOlz-iZmgE9BcHddx_zTOC5FXrWmVwlCxOYyaXOfQKJkYJfQA4-IVaUtp-aaLFYdxBdKlCBdOE2-iakiz5Fcoc0gR551dz_nJUqFlaDelW6HSpwVi752QB73nxtgJhvdYcq90vpzM_x9bz8OejzfXOut_OMO5bk0ltI" alt="">
+            </div>
+            <span class="podium__name">LEGEND_SHOT</span>
+            <span class="podium__wins">2,845 WINS</span>
+            <div class="podium__bar podium__bar--1"><span class="podium__num podium__num--1">1</span></div>
+          </div>
+          <!-- Rank 2 -->
+          <div class="podium__rank podium__rank--2">
+            <div class="podium__avatar podium__avatar--2">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhcFH4QrbqJ6TTz5qjThNCBtYTbg-Ll7abxF8dryzIE-pbPB-rS26BUke-EzQgTIjVYtHwnMrgHnQjkqTPih1H9MHYnbF4OkeZFc3ToZJrknU75V0s_Bf69Wl1kiJtFy8Jqfkt2oMQ-THmayyJPcUOVbfnAQUfyg_I6MzqjRbdXNa1hcL2d9XflDcI_9zEMfeepabQDmsIhgCNaDzoNHpVt2VBEA35HwXAL8mTe2fvV-m047EQ9AU0IJbmkfdD2LoNbqF2aTohFog" alt="">
+            </div>
+            <span class="podium__name">ReaperX</span>
+            <span class="podium__wins">2,157 WINS</span>
+            <div class="podium__bar podium__bar--2"><span class="podium__num podium__num--2">2</span></div>
+          </div>
+        </div>
+        <div class="grid-leaderboard__list scrollbar-thin" id="leaderboard-list"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="app-footer">
+    <div class="app-footer__links">
+      <a href="#">قوانین و مقررات</a>
+      <a href="#">پشتیبانی</a>
+      <a href="#">درباره ما</a>
+      <a href="#">تبلیغات</a>
+    </div>
+    <p class="app-footer__copyright">© 2024 Shekan Launcher · Bokhariz. All rights reserved.</p>
+  </footer>
+
+</div><!-- /page-home -->
+
+
+<!-- ============================================
+     PAGE: CONNECTION (اتصال)
+     ============================================ -->
+<div class="page" data-page="connection">
+  <div class="conn-page">
+
+    <!-- Page Header -->
+    <div class="conn-page__header">
+      <h2 class="conn-page__title">
+        <span class="section-heading__bar"></span>
+        اتصال شبکه
+      </h2>
+      <p class="conn-page__sub">مدیریت سرویس‌های اتصال و کیفیت پینگ برای بازی‌های آنلاین</p>
+    </div>
+
+    <!-- Top Row: Network Test + Shecan Service -->
+    <div class="conn-grid-top">
+
+      <!-- Network Test Card -->
+      <div class="conn-card net-test">
+        <div class="net-test__head">
+          <span class="material-symbols-outlined net-test__icon">network_check</span>
+          <h3 class="net-test__title">تست کیفیت شبکه</h3>
+          <p class="net-test__sub">انتخاب هوشمند سرور بر اساس بازی انتخابی شما</p>
+        </div>
+
+        <!-- Gauge -->
+        <div class="gauge">
+          <svg viewBox="0 0 200 130" class="gauge__svg">
+            <defs>
+              <linearGradient id="gauge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#22c55e"/>
+                <stop offset="50%"  stop-color="#eab308"/>
+                <stop offset="100%" stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+            <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="#2a2a2d" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 20 110 A 80 80 0 0 1 180 110" fill="none" stroke="url(#gauge-grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="250" stroke-dashoffset="60" class="gauge__arc"/>
+            <line x1="100" y1="110" x2="100" y2="45" stroke="#ffffff" stroke-width="3" stroke-linecap="round" class="gauge__needle" transform="rotate(-25 100 110)"/>
+            <circle cx="100" cy="110" r="6" fill="#ffffff"/>
+          </svg>
+          <div class="gauge__labels">
+            <span class="gauge__lbl gauge__lbl--good">عالی</span>
+            <span class="gauge__lbl gauge__lbl--bad">ضعیف</span>
+          </div>
+        </div>
+
+        <!-- Service Select -->
+        <div class="net-select">
+          <span class="net-select__label">سرویس تحریم شکن</span>
+          <div class="net-select__field" id="conn-svc-field" style="position:relative">
+            <span class="material-symbols-outlined net-select__chev">expand_more</span>
+            <span class="net-select__value" id="conn-svc-name">شکن</span>
+            <div class="net-select__dropdown" id="conn-svc-menu" hidden>
+              <div class="net-select__option net-select__option--active" data-svc="شکن">شکن</div>
+              <div class="net-select__option" data-svc="الکترو">الکترو</div>
+              <div class="net-select__option" data-svc="رستار">رستار</div>
+              <div class="net-select__option" data-svc="پینگ نت">پینگ نت</div>
+              <div class="net-select__option" data-svc="آسیاپینگ">آسیاپینگ</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Select -->
+        <label class="net-select">
+          <span class="net-select__label">انتخاب بازی</span>
+          <div class="net-select__field">
+            <span class="material-symbols-outlined net-select__chev">expand_more</span>
+            <span class="net-select__value" id="conn-game-name">Dota 2</span>
+          </div>
+        </label>
+
+        <!-- Start Button -->
+        <button class="btn btn--primary btn--block" id="conn-start-test">
+          شروع تست اتصال
+        </button>
+
+        <!-- Stats Pills -->
+        <div class="net-stats">
+          <div class="net-stat">
+            <span class="net-stat__label">Packet<br>Loss</span>
+            <span class="net-stat__value">% 0.1</span>
+          </div>
+          <div class="net-stat">
+            <span class="net-stat__label">تأخیر<br>(Ping)</span>
+            <span class="net-stat__value">ms 42</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- تحریم شکن Service Card -->
+      <div class="conn-card shecan">
+
+        <!-- هدر: لوگو + نام + توضیح + اطلاعات اکانت -->
+        <div class="shecan__top">
+          <div class="shecan__brand">
+            <div class="shecan__logo">
+              <span class="material-symbols-outlined">shield</span>
+            </div>
+            <div>
+              <h3 class="shecan__name">تحریم شکن</h3>
+              <p class="shecan__desc">
+                با تحریم شکن هم محدودیت‌های اینترنتی برطرف می‌شود و هم پینگ بازی‌های آنلاین به طرز چشمگیری کاهش می‌یابد. مسیر اتصال شما بهینه‌سازی شده و بدون تأخیر به سرورهای بازی متصل می‌شوید.
+              </p>
+            </div>
+          </div>
+
+          <!-- اطلاعات اکانت: نوع + روز مانده -->
+          <div class="shecan__account shecan__account--silver">
+            <img class="shecan__account-badge" src="assets/badge-silver.png" alt="نقره‌ای">
+            <div class="shecan__account-days">
+              <span class="material-symbols-outlined" style="font-size:13px">calendar_today</span>
+              <span>۱۵ روز مانده</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- انتخاب سرویس + دکمه اتصال -->
+        <div class="shecan__service-row">
+          <!-- سمت راست: لیست انتخاب -->
+          <div class="shecan__service-select" id="shecan-service-wrap">
+            <button class="shecan__service-btn" id="shecan-service-btn">
+              <span class="material-symbols-outlined" style="font-size:16px">vpn_key</span>
+              <span id="shecan-service-name">شکن</span>
+              <span class="material-symbols-outlined shecan__service-chev" id="shecan-service-chev">expand_more</span>
+            </button>
+            <div class="shecan__service-menu" id="shecan-service-menu" hidden>
+              <div class="shecan__service-item shecan__service-item--active" data-svc="شکن">شکن</div>
+              <div class="shecan__service-item" data-svc="الکترو">الکترو</div>
+              <div class="shecan__service-item" data-svc="رستار">رستار</div>
+              <div class="shecan__service-item" data-svc="پینگ نت">پینگ نت</div>
+              <div class="shecan__service-item" data-svc="آسیاپینگ">آسیاپینگ</div>
+            </div>
+          </div>
+
+          <!-- سمت چپ: دکمه اتصال -->
+          <button class="shecan__connect-btn shecan__connect-btn--on" id="shecan-connect-btn">
+            <span class="material-symbols-outlined" id="shecan-btn-icon">check_circle</span>
+            <span id="shecan-btn-label">متصل</span>
+          </button>
+        </div>
+
+        <!-- متریک‌ها: پایداری + پینگ (سرور فعال حذف شد) -->
+        <div class="shecan__metrics">
+          <div class="shecan-metric">
+            <span class="material-symbols-outlined shecan-metric__icon">speed</span>
+            <div>
+              <span class="shecan-metric__value">۹۸٪</span>
+              <span class="shecan-metric__label">پایداری</span>
+            </div>
+          </div>
+          <div class="shecan-metric">
+            <span class="material-symbols-outlined shecan-metric__icon">trending_down</span>
+            <div>
+              <span class="shecan-metric__value">۳۸ms</span>
+              <span class="shecan-metric__label">میانگین پینگ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Middle Row: Platform Services -->
+    <div class="conn-grid-mid">
+
+      <div class="conn-card service-card service-card--off">
+        <div class="service-card__icon">
+          <!-- Epic Games Logo -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="28" height="28" fill="currentColor">
+            <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm6.4 22.4H9.6V9.6h12.8v2.56H12.16v2.56h6.4v2.56h-6.4v2.56H22.4v2.56z"/>
+          </svg>
+        </div>
+        <div class="service-card__body">
+          <h4 class="service-card__name">اپیک گیمز (Epic Games)</h4>
+          <span class="service-card__status">
+            <span class="status-dot status-dot--off"></span>
+            متصل نیست
+          </span>
+        </div>
+        <button class="btn btn--soft btn--xs service-card__btn">اتصال</button>
+      </div>
+
+      <div class="conn-card service-card service-card--on">
+        <div class="service-card__icon">
+          <!-- Steam Logo -->
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.492 1.009 2.447-.397.957-1.493 1.411-2.455 1.02zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.252 0-2.265-1.014-2.265-2.265z"/>
+          </svg>
+        </div>
+        <div class="service-card__body">
+          <h4 class="service-card__name">استیم (Steam)</h4>
+          <span class="service-card__status">
+            <span class="status-dot"></span>
+            متصل
+          </span>
+        </div>
+        <button class="btn btn--ghost btn--xs service-card__btn">قطع اتصال</button>
+      </div>
+
+    </div>
+
+    <!-- Bottom: Security Banner -->
+    <div class="conn-card security-banner">
+      <div class="security-banner__content">
+        <h3 class="security-banner__title">امنیت حساب کاربری</h3>
+        <p class="security-banner__desc">
+          x100 با استفاده از پروتکل‌های رمزنگاری پیشرفته، امنیت حساب‌های بازی شما را تضمین می‌کند.
+          هیچ‌گونه اطلاعات ورود شما در سرورهای ما ذخیره نمی‌شود و تمام ارتباطات بصورت مستقیم به پلتفرم‌های اصلی برقرار می‌گردد.
+        </p>
+        <a href="#" class="security-banner__link">
+          <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span>
+          مطالعه بیشتر درباره امنیت
+        </a>
+      </div>
+      <div class="security-banner__art">
+        <div class="security-banner__art-glow"></div>
+        <span class="material-symbols-outlined security-banner__art-icon">lock</span>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-connection -->
+
+
+<!-- ============================================
+     PAGE: GAMES (بازی‌ها)
+     ============================================ -->
+<div class="page" data-page="games">
+
+  <!-- Featured Banner (Steam-style) -->
+  <section class="feat-banner" id="games-featured">
+    <!-- Prev arrow -->
+    <button class="feat-banner__nav feat-banner__nav--prev" id="feat-prev" aria-label="قبلی">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+
+    <div class="feat-banner__body">
+      <!-- Main art — expands to fill all space except thumb strip -->
+      <div class="feat-banner__art">
+        <img id="feat-main-img" src="" alt="">
+        <!-- Text overlay at bottom of art -->
+        <div class="feat-banner__overlay">
+          <h3 class="feat-banner__title" id="feat-title"></h3>
+          <p class="feat-banner__rec" id="feat-rec"></p>
+          <div class="feat-banner__tags" id="feat-tags"></div>
+          <div class="feat-banner__foot">
+            <button class="btn btn--primary">بازی</button>
+            <span class="feat-banner__sub" id="feat-sub"></span>
+          </div>
+        </div>
+        <!-- Dots -->
+        <div class="feat-banner__dots" id="feat-dots"></div>
+      </div>
+      <!-- Vertical thumbnail strip on the far right -->
+      <div class="feat-banner__thumbs" id="feat-thumbs"></div>
+    </div>
+
+    <!-- Next arrow -->
+    <button class="feat-banner__nav feat-banner__nav--next" id="feat-next" aria-label="بعدی">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </section>
+
+  <!-- Filters & Search -->
+  <section class="games-filters">
+    <div class="filters-group">
+      <span class="filters-group__label">فیلترها</span>
+      <div class="dropdown" data-filter="subscription">
+        <button class="dropdown__btn">
+          <span class="material-symbols-outlined dropdown__chev">expand_more</span>
+          <span class="dropdown__label">اشتراک</span>
+        </button>
+        <div class="dropdown__menu"></div>
+      </div>
+      <div class="dropdown" data-filter="connection">
+        <button class="dropdown__btn">
+          <span class="material-symbols-outlined dropdown__chev">expand_more</span>
+          <span class="dropdown__label">اتصال</span>
+        </button>
+        <div class="dropdown__menu"></div>
+      </div>
+      <div class="dropdown" data-filter="genre">
+        <button class="dropdown__btn">
+          <span class="material-symbols-outlined dropdown__chev">expand_more</span>
+          <span class="dropdown__label">ژانر</span>
+        </button>
+        <div class="dropdown__menu"></div>
+      </div>
+      <button class="btn btn--ghost btn--xs" id="clear-filters" hidden>
+        <span class="material-symbols-outlined" style="font-size:16px">filter_alt_off</span>
+        حذف فیلتر
+      </button>
+    </div>
+    <div class="search-input">
+      <input type="text" placeholder="جست و جو" id="games-search">
+      <span class="material-symbols-outlined search-input__icon">search</span>
+    </div>
+  </section>
+
+  <!-- نتایج فیلتر — فقط وقتی فیلتر فعاله نمایش داده میشه -->
+  <section class="games-grid-section" id="games-filter-section" hidden>
+    <div class="games-grid" id="games-grid"></div>
+    <div class="games-empty" id="games-empty" hidden>
+      <span class="material-symbols-outlined" style="font-size:48px;color:var(--color-on-surface-variant)">search_off</span>
+      <p>بازی‌ای با این فیلترها پیدا نشد</p>
+    </div>
+  </section>
+
+  <!-- سکشن‌های دسته‌بندی — حالت پیش‌فرض -->
+  <div class="games-sections" id="games-sections-wrap">
+
+    <!-- بازی‌های من -->
+    <section class="games-section">
+      <div class="games-section__head">
+        <h2 class="games-section__title">
+          <span class="material-symbols-outlined">folder_special</span>
+          بازی‌های من
+        </h2>
+        <button class="btn btn--ghost btn--xs">مشاهده همه</button>
+      </div>
+      <div class="games-section__row" id="gs-mine-row"></div>
+    </section>
+
+    <!-- بازی‌های برتر -->
+    <section class="games-section">
+      <div class="games-section__head">
+        <h2 class="games-section__title">
+          <span class="material-symbols-outlined">military_tech</span>
+          بازی‌های برتر
+        </h2>
+        <button class="btn btn--ghost btn--xs">مشاهده همه</button>
+      </div>
+      <div class="games-section__row" id="gs-top-row"></div>
+    </section>
+
+    <!-- جدیدترین بازی‌ها -->
+    <section class="games-section">
+      <div class="games-section__head">
+        <h2 class="games-section__title">
+          <span class="material-symbols-outlined">new_releases</span>
+          جدیدترین بازی‌ها
+        </h2>
+        <button class="btn btn--ghost btn--xs">مشاهده همه</button>
+      </div>
+      <div class="games-section__row" id="gs-new-row"></div>
+    </section>
+
+    <!-- بازی‌های سرور اختصاصی -->
+    <section class="games-section">
+      <div class="games-section__head">
+        <h2 class="games-section__title">
+          <span class="material-symbols-outlined">dns</span>
+          بازی‌های سرور اختصاصی
+        </h2>
+        <button class="btn btn--ghost btn--xs">مشاهده همه</button>
+      </div>
+      <div class="games-section__row" id="gs-dedicated-row"></div>
+    </section>
+
+  </div><!-- /games-sections-wrap -->
+
+</div><!-- /page-games -->
+
+
+<!-- ============================================
+     PAGE: GAME DETAIL (صفحه بازی)
+     ============================================ -->
+<div class="page" data-page="game-detail">
+
+  <!-- ── Title bar ── -->
+  <div class="gd-titlebar">
+    <button class="gd-back" id="gd-back">
+      <span class="material-symbols-outlined">arrow_forward</span>
+      بازگشت
+    </button>
+    <h1 class="gd-titlebar__name" id="gd-title">DOTA 2</h1>
+  </div>
+
+  <!-- ── Body: Media (left) + Info panel (right) ── -->
+  <div class="gd-body">
+
+    <!-- LEFT: screenshot viewer -->
+    <div class="gd-media">
+      <!-- Main display -->
+      <div class="gd-media__viewer">
+        <img id="gd-main-img" src="" alt="">
+        <button class="gd-media__arrow gd-media__arrow--prev" id="gd-prev">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button class="gd-media__arrow gd-media__arrow--next" id="gd-next">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+      <!-- Thumbnail strip -->
+      <div class="gd-media__thumbs scrollbar-thin" id="gd-thumbs"></div>
+    </div>
+
+    <!-- RIGHT: info panel -->
+    <div class="gd-info">
+      <!-- Key art / cover -->
+      <div class="gd-info__cover">
+        <img id="gd-cover" src="" alt="">
+      </div>
+      <!-- Description -->
+      <p class="gd-info__desc" id="gd-desc"></p>
+      <!-- Meta rows -->
+      <div class="gd-info__meta" id="gd-meta"></div>
+      <!-- Tags -->
+      <div>
+        <p class="gd-info__tags-label">تگ‌های کاربری این محصول:</p>
+        <div class="gd-info__tags" id="gd-tags"></div>
+      </div>
+      <!-- CTA row -->
+      <div class="gd-cta-row">
+        <!-- راست: نصب / اجرا / صفحه دانلود -->
+        <button class="gd-play-btn" id="gd-play-btn">
+          <span class="material-symbols-outlined" id="gd-cta-icon">download</span>
+          <span id="gd-cta-label">نصب بازی</span>
+        </button>
+        <!-- چپ: مکث / ادامه — فقط در حالت دانلود -->
+        <button class="gd-pause-btn" id="gd-pause-btn" hidden>
+          <span class="material-symbols-outlined" id="gd-pause-icon">pause</span>
+          <span id="gd-pause-label">مکث</span>
+        </button>
+        <!-- حذف — فقط بعد از نصب -->
+        <button class="gd-uninstall-btn" id="gd-uninstall-btn" hidden>
+          <span class="material-symbols-outlined">delete_outline</span>
+          حذف بازی
+        </button>
+        <!-- اطلاعات دانلود -->
+        <div class="gd-dl-info" id="gd-dl-info" hidden>
+          <span class="gd-dl-info__speed" id="gd-dl-speed"></span>
+          <span class="gd-dl-info__sep">·</span>
+          <span class="gd-dl-info__pct" id="gd-dl-pct"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="gd-tabs" id="gd-tabs">
+
+    <!-- Tab bar -->
+    <div class="gd-tabs__bar">
+      <button class="gd-tab gd-tab--active" data-tab="about">
+        <span class="material-symbols-outlined">info</span>
+        درباره بازی
+      </button>
+      <button class="gd-tab" data-tab="shop">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        فروشگاه
+      </button>
+      <button class="gd-tab" data-tab="tournament">
+        <span class="material-symbols-outlined">emoji_events</span>
+        تورنومنت
+      </button>
+      <button class="gd-tab" data-tab="community">
+        <span class="material-symbols-outlined">group</span>
+        جامعه کاربری
+      </button>
+      <button class="gd-tab" data-tab="streaming">
+        <span class="material-symbols-outlined">sensors</span>
+        استریمینگ
+      </button>
+    </div>
+
+    <!-- ── درباره بازی ── -->
+    <div class="gd-tab-panel gd-tab-panel--active" data-panel="about">
+      <div class="gd-about">
+
+        <!-- توضیح + ورژن -->
+        <div class="gd-about__intro">
+          <p class="gd-about__desc" id="gd-about-desc"></p>
+          <div class="gd-about__version-row">
+            <span class="material-symbols-outlined">new_releases</span>
+            <span class="gd-about__version-label">آخرین نسخه:</span>
+            <span class="gd-about__version-val" id="gd-about-version"></span>
+            <span class="gd-about__version-date" id="gd-about-version-date"></span>
+          </div>
+        </div>
+
+        <div class="gd-sysreq-grid">
+
+          <!-- Minimum -->
+          <div class="gd-sysreq-col">
+            <h4 class="gd-sysreq-col__title">
+              <span class="material-symbols-outlined">memory</span>
+              حداقل سیستم مورد نیاز
+            </h4>
+            <div class="gd-sysreq-col__rows">
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">سیستم‌عامل</span>
+                <span class="gd-sysreq-row__val">Windows 7 / Vista / XP</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">پردازنده</span>
+                <span class="gd-sysreq-row__val">Dual core 2.8 GHz</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">حافظه</span>
+                <span class="gd-sysreq-row__val">4 GB RAM</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">گرافیک</span>
+                <span class="gd-sysreq-row__val">nVidia GeForce 8600 / 9600GT</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">DirectX</span>
+                <span class="gd-sysreq-row__val">Version 9.0c</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">فضای ذخیره‌سازی</span>
+                <span class="gd-sysreq-row__val">15 GB</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">شبکه</span>
+                <span class="gd-sysreq-row__val">Broadband Internet</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recommended -->
+          <div class="gd-sysreq-col gd-sysreq-col--recommended">
+            <h4 class="gd-sysreq-col__title">
+              <span class="material-symbols-outlined">rocket_launch</span>
+              سیستم پیشنهادی
+            </h4>
+            <div class="gd-sysreq-col__rows">
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">سیستم‌عامل</span>
+                <span class="gd-sysreq-row__val">Windows 10 / 11 (64-bit)</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">پردازنده</span>
+                <span class="gd-sysreq-row__val">Intel Core i5-4670 @ 3.4GHz</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">حافظه</span>
+                <span class="gd-sysreq-row__val">8 GB RAM</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">گرافیک</span>
+                <span class="gd-sysreq-row__val">nVidia GeForce GTX 970</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">DirectX</span>
+                <span class="gd-sysreq-row__val">Version 11</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">فضای ذخیره‌سازی</span>
+                <span class="gd-sysreq-row__val">15 GB SSD</span>
+              </div>
+              <div class="gd-sysreq-row">
+                <span class="gd-sysreq-row__key">شبکه</span>
+                <span class="gd-sysreq-row__val">Broadband Internet</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── فروشگاه ── -->
+    <div class="gd-tab-panel" data-panel="shop">
+      <div class="gd-tab-placeholder">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <h3>فروشگاه بازی</h3>
+        <p>آیتم‌ها، اسکین‌ها و محتوای دانلودی به زودی اضافه می‌شود</p>
+      </div>
+    </div>
+
+    <!-- ── تورنومنت ── -->
+    <div class="gd-tab-panel" data-panel="tournament">
+      <div class="gd-tab-placeholder">
+        <span class="material-symbols-outlined">emoji_events</span>
+        <h3>تورنومنت‌ها</h3>
+        <p>رقابت‌های فعال و آینده این بازی به زودی نمایش داده می‌شود</p>
+      </div>
+    </div>
+
+    <!-- ── جامعه کاربری ── -->
+    <div class="gd-tab-panel" data-panel="community">
+      <div class="gd-tab-placeholder">
+        <span class="material-symbols-outlined">group</span>
+        <h3>جامعه کاربری</h3>
+        <p>مطالب، نظرات و فعالیت‌های جامعه به زودی اضافه می‌شود</p>
+      </div>
+    </div>
+
+    <!-- ── استریمینگ ── -->
+    <div class="gd-tab-panel" data-panel="streaming">
+      <div class="gd-tab-placeholder">
+        <span class="material-symbols-outlined">sensors</span>
+        <h3>استریمینگ</h3>
+        <p>استریم‌های زنده این بازی به زودی نمایش داده می‌شود</p>
+      </div>
+    </div>
+
+  </div><!-- /.gd-tabs -->
+
+</div><!-- /page-game-detail -->
+
+
+<!-- ============================================
+     PAGE: PROFILE (پروفایل)
+     ============================================ -->
+<div class="page" data-page="profile">
+  <div class="profile-page">
+    <div class="profile-card glass-panel">
+
+      <!-- ── Avatar ── -->
+      <div class="profile-card__avatar-wrap">
+        <div class="profile-card__avatar">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhUP1O6W6OoKKw4Umv2fieIfdFZedKbKczzSjt0-0BzEoztx6QXtC9qSysKbt_YKeGsJeOoWzJReEzHt5__Wag1FfDKNsgk5i1j23-7BexQd4VgReH4h_QgH-L0lrIWcgqhkfSWfusZeGWXTgzyYCQaxkNMosEHHBo0PWOpE6Q7jWxKGT9JX32tZJiPjIh18HzGkXqpim15_UPUI7DWDZnu0_0Z9fyFxdC5pRUgaVh8yPQBEdBOkVS6iC1honbljcnW1Jylaz1g8o" alt="آواتار کاربر" id="profile-avatar-img">
+        </div>
+        <span class="badge badge--primary profile-card__badge">پریمیوم</span>
+      </div>
+
+      <!-- ── Name ── -->
+      <div class="profile-card__head">
+        <h2 class="profile-card__name" id="profile-display-name">احسان</h2>
+        <p class="profile-card__since">
+          <span class="material-symbols-outlined" style="font-size:14px">calendar_today</span>
+          عضو از ۱۴۰۳
+        </p>
+      </div>
+
+      <!-- ── Form ── -->
+      <div class="profile-form">
+
+        <!-- شماره موبایل (read-only) -->
+        <div class="profile-form__field">
+          <label class="profile-form__label">
+            <span class="material-symbols-outlined">smartphone</span>
+            شماره موبایل
+            <span class="profile-form__lock-badge">
+              <span class="material-symbols-outlined" style="font-size:13px">lock</span>
+              غیرقابل تغییر
+            </span>
+          </label>
+          <div class="profile-form__readonly">
+            <span class="profile-form__phone">۰۹۱۲ ۳۴۵ ۶۷۸۹</span>
+          </div>
+        </div>
+
+        <!-- نیک‌نیم -->
+        <div class="profile-form__field">
+          <label class="profile-form__label" for="profile-nickname">
+            <span class="material-symbols-outlined">badge</span>
+            نیک‌نیم
+          </label>
+          <input
+            id="profile-nickname"
+            class="profile-form__input"
+            type="text"
+            placeholder="نیک‌نیم خود را وارد کنید…"
+            maxlength="32"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <p class="profile-form__hint">این نام در بخش‌های عمومی لانچر نمایش داده می‌شود</p>
+        </div>
+
+        <!-- ثبت تغییر -->
+        <button class="btn btn--primary btn--block profile-form__save" id="profile-save">
+          <span class="material-symbols-outlined">save</span>
+          ثبت تغییر
+        </button>
+
+        <!-- toast feedback -->
+        <div class="profile-toast" id="profile-toast" hidden>
+          <span class="material-symbols-outlined" style="font-size:18px;color:var(--color-secondary-fixed)">check_circle</span>
+          تغییرات با موفقیت ذخیره شد
+        </div>
+
+      </div><!-- /profile-form -->
+    </div><!-- /profile-card -->
+  </div><!-- /profile-page -->
+</div><!-- /page-profile -->
+
+
+<!-- ============================================
+     PAGE: DOWNLOADS
+     ============================================ -->
+<div class="page" data-page="downloads">
+  <div class="dl-page">
+
+    <!-- Header -->
+    <div class="dl-page__header">
+      <h1 class="dl-page__title">
+        <span class="material-symbols-outlined">download</span>
+        دانلودها
+      </h1>
+      <button class="btn btn--ghost btn--xs" id="dl-speed-limit-btn">
+        <span class="material-symbols-outlined">speed</span>
+        محدودیت سرعت: نامحدود
+      </button>
+    </div>
+
+    <!-- Active Downloads -->
+    <section class="dl-section" id="dl-active-section">
+      <div class="dl-section__head">
+        <span class="material-symbols-outlined dl-section__icon">downloading</span>
+        <h2 class="dl-section__title">در حال دانلود</h2>
+        <span class="badge badge--primary" id="dl-active-count"></span>
+      </div>
+      <div class="dl-section__body" id="dl-active-list"></div>
+    </section>
+
+    <!-- Queue -->
+    <section class="dl-section" id="dl-queue-section">
+      <div class="dl-section__head">
+        <span class="material-symbols-outlined dl-section__icon">queue_play_next</span>
+        <h2 class="dl-section__title">صف دانلود</h2>
+        <span class="badge badge--primary" id="dl-queue-count"></span>
+      </div>
+      <div class="dl-section__body" id="dl-queue-list"></div>
+    </section>
+
+    <!-- Installed -->
+    <section class="dl-section" id="dl-installed-section">
+      <div class="dl-section__head">
+        <span class="material-symbols-outlined dl-section__icon">check_circle</span>
+        <h2 class="dl-section__title">نصب شده</h2>
+        <span class="badge badge--primary" id="dl-installed-count"></span>
+      </div>
+      <div class="dl-section__body" id="dl-installed-list"></div>
+    </section>
+
+  </div>
+</div><!-- /page-downloads -->
+
+
+<!-- ============================================
+     PAGE: PLACEHOLDER (for not-yet-built pages)
+     ============================================ -->
+<div class="page" data-page="placeholder">
+  <div class="placeholder-page">
+    <span class="material-symbols-outlined placeholder-page__icon">construction</span>
+    <h2 class="placeholder-page__title">به زودی</h2>
+    <p class="placeholder-page__desc">این بخش در حال توسعه است</p>
+  </div>
+</div>
+
+
+<!-- PAGE: COMMUNITY -->
+<div class="page" data-page="community">
+  <div class="comm-page">
+
+    <!-- ستون دوستان — ثابت در هر دو تب (اول = راست‌ترین در RTL) -->
+    <div class="posts-friends-col">
+        <div class="pf-head">
+          <span class="material-symbols-outlined">group</span>
+          <span class="pf-head__title">دوستان</span>
+          <span class="pf-head__badge">۳</span>
+        </div>
+        <div class="pf-search">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" placeholder="جستجوی دوستان..." class="pf-search__inp">
+        </div>
+        <div class="pf-tabs">
+          <button class="pf-tab pf-tab--active" data-pftab="online">آنلاین<span class="pf-tab-cnt">۳</span></button>
+          <button class="pf-tab" data-pftab="all">همه<span class="pf-tab-cnt pf-tab-cnt--muted">۶</span></button>
+          <button class="pf-tab" data-pftab="pending">در انتظار<span class="pf-tab-cnt pf-tab-cnt--red">۲</span></button>
+          <button class="pf-tab pf-tab--add" title="افزودن دوست"><span class="material-symbols-outlined">person_add</span></button>
+        </div>
+        <div class="pf-list scrollbar-thin">
+          <div class="pf-section-label">آنلاین — ۳ نفر</div>
+          <div class="pf-friend">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=arash22" alt="">
+              <span class="pf-friend__dot pf-friend__dot--online"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">ArashGG</span>
+              <span class="pf-friend__game">Diablo IV</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+          <div class="pf-friend">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=sara77" alt="">
+              <span class="pf-friend__dot pf-friend__dot--online"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">SaraPlay</span>
+              <span class="pf-friend__game">Dota 2</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+          <div class="pf-friend">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=night9" alt="">
+              <span class="pf-friend__dot pf-friend__dot--online"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">NightWolf_IR</span>
+              <span class="pf-friend__game">آنلاین</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+          <div class="pf-section-label" style="margin-top:10px">آفلاین — ۳ نفر</div>
+          <div class="pf-friend pf-friend--offline">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=milad88" alt="">
+              <span class="pf-friend__dot pf-friend__dot--offline"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">MiladPro</span>
+              <span class="pf-friend__game">آفلاین</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+          <div class="pf-friend pf-friend--offline">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=ghost51" alt="">
+              <span class="pf-friend__dot pf-friend__dot--offline"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">GhostSniper</span>
+              <span class="pf-friend__game">آفلاین</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+          <div class="pf-friend pf-friend--offline">
+            <div class="pf-friend__av-wrap">
+              <img class="pf-friend__av" src="https://i.pravatar.cc/36?u=zirak9" alt="">
+              <span class="pf-friend__dot pf-friend__dot--offline"></span>
+            </div>
+            <div class="pf-friend__info">
+              <span class="pf-friend__name">Zirak90</span>
+              <span class="pf-friend__game">آفلاین</span>
+            </div>
+            <button class="pf-friend__msg" title="پیام"><span class="material-symbols-outlined">chat</span></button>
+          </div>
+        </div>
+    </div><!-- /posts-friends-col -->
+
+    <div class="comm-views">
+    <div class="comm-view posts-layout" id="comv-posts">
+
+      <!-- ستون اصلی (راست در RTL) — فید -->
+      <div class="posts-main">
+        <div class="posts-feed-label" id="posts-feed-label">خانه</div>
+        <div class="comm-feed scrollbar-thin" id="posts-feed-home">
+          <div class="feed-item">
+            <div class="feed-item__header">
+              <div class="feed-avatar-wrap"><img class="feed-avatar" src="https://i.pravatar.cc/40?u=ehsan99" alt=""><span class="feed-badge feed-badge--creator">کریتور</span></div>
+              <div class="feed-meta"><span class="feed-author">احسان <span class="feed-verify">✓</span></span><span class="feed-time">1 ساعت پیش</span></div>
+              <span class="feed-tag feed-tag--stream">استریم</span>
+            </div>
+            <div class="feed-body">فردا ساعت 8 شب استریم Diablo IV دارم! 🔴</div>
+            <div class="feed-image feed-image--wide">
+              <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&h=360&fit=crop" alt="استریم">
+              <div class="feed-image__badge"><span class="material-symbols-outlined">live_tv</span> LIVE فردا 8 شب</div>
+            </div>
+            <div class="feed-actions">
+              <button class="feed-btn feed-btn--like" data-id="cp1"><span class="material-symbols-outlined">thumb_up</span><span>56</span></button>
+              <button class="feed-btn feed-btn--dislike" data-id="cp1"><span class="material-symbols-outlined">thumb_down</span><span>0</span></button>
+              <button class="feed-btn feed-btn--cmt" data-target="ccmt-p1"><span class="material-symbols-outlined">chat</span><span>7 کامنت</span></button>
+            </div>
+            <div class="feed-comments" id="ccmt-p1" hidden>
+              <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=41" alt=""><div><b>ArashGG</b><p>حتماً میام! 👾</p></div></div>
+              <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-item__header">
+              <div class="feed-avatar-wrap"><img class="feed-avatar" src="https://i.pravatar.cc/40?u=ghost51" alt=""><span class="feed-badge feed-badge--creator">کریتور</span></div>
+              <div class="feed-meta"><span class="feed-author">GhostSniper</span><span class="feed-time">3 ساعت پیش</span></div>
+              <span class="feed-tag feed-tag--clip">کلیپ</span>
+            </div>
+            <div class="feed-body">وقتی 5 ساعت grind می‌کنی یه legendary بیفته و trash باشه 💀😭</div>
+            <div class="feed-video">
+              <div class="feed-video__thumb">
+                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&h=300&fit=crop" alt="کلیپ">
+                <div class="feed-video__overlay"><div class="feed-video__play-btn"><span class="material-symbols-outlined">play_arrow</span></div><div class="feed-video__duration">0:14</div></div>
+              </div>
+              <video class="feed-video__player" hidden controls playsinline preload="none">
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="feed-actions">
+              <button class="feed-btn feed-btn--like" data-id="cp2"><span class="material-symbols-outlined">thumb_up</span><span>148</span></button>
+              <button class="feed-btn feed-btn--dislike" data-id="cp2"><span class="material-symbols-outlined">thumb_down</span><span>3</span></button>
+              <button class="feed-btn feed-btn--cmt" data-target="ccmt-p2"><span class="material-symbols-outlined">chat</span><span>24 کامنت</span></button>
+            </div>
+            <div class="feed-comments" id="ccmt-p2" hidden>
+              <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=52" alt=""><div><b>MiladPro</b><p>😂 دقیقاً</p></div></div>
+              <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-item__header">
+              <div class="feed-avatar-wrap"><img class="feed-avatar" src="https://i.pravatar.cc/40?u=sara77" alt=""><span class="feed-badge feed-badge--creator">کریتور</span></div>
+              <div class="feed-meta"><span class="feed-author">SaraPlay <span class="feed-verify">✓</span></span><span class="feed-time">6 ساعت پیش</span></div>
+              <span class="feed-tag feed-tag--newgame">اسکرین‌شات</span>
+            </div>
+            <div class="feed-body">بالاخره به Ancient رسیدم تو Dota 2! 🎉 💜</div>
+            <div class="feed-image feed-image--square"><img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=500&h=500&fit=crop" alt="Dota 2"></div>
+            <div class="feed-actions">
+              <button class="feed-btn feed-btn--like" data-id="cp3"><span class="material-symbols-outlined">thumb_up</span><span>342</span></button>
+              <button class="feed-btn feed-btn--dislike" data-id="cp3"><span class="material-symbols-outlined">thumb_down</span><span>0</span></button>
+              <button class="feed-btn feed-btn--cmt" data-target="ccmt-p3"><span class="material-symbols-outlined">chat</span><span>51 کامنت</span></button>
+            </div>
+            <div class="feed-comments" id="ccmt-p3" hidden>
+              <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=62" alt=""><div><b>ArashGG</b><p>🎊 تبریک!</p></div></div>
+              <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+            </div>
+          </div>
+        </div>
+        <!-- صفحه شخصی -->
+        <div class="posts-feed-profile scrollbar-thin" id="posts-feed-profile" hidden>
+          <!-- بنر بالا -->
+          <div class="prof-banner">
+            <img class="prof-banner__img" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000&h=260&fit=crop" alt="بنر">
+            <button class="prof-edit-icon" title="ویرایش پروفایل"><span class="material-symbols-outlined">edit</span></button>
+          </div>
+          <!-- زیر بنر: آواتار راست، توضیحات چپش -->
+          <div class="prof-header">
+            <div class="prof-header__avatar-col">
+              <img class="prof-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=220&h=220&fit=crop" alt="نرگس احمدی">
+              <button class="prof-avatar-upload" title="آپلود عکس پروفایل"><span class="material-symbols-outlined">photo_camera</span></button>
+            </div>
+            <div class="prof-header__info">
+              <div class="prof-name-row">
+                <div class="prof-name-block">
+                  <div class="prof-name">نرگس احمدی <span class="prof-verify">✓</span></div>
+                  <div class="prof-handle">@narges_gamer</div>
+                </div>
+                <div class="prof-stats">
+                  <div class="prof-stat" title="پست"><span class="material-symbols-outlined">grid_on</span><span class="prof-stat__num">۱۲</span></div>
+                  <div class="prof-stat" title="دنبال‌کننده"><span class="material-symbols-outlined">group</span><span class="prof-stat__num">۲۴۸</span></div>
+                  <div class="prof-stat" title="دنبال‌شونده"><span class="material-symbols-outlined">person_add</span><span class="prof-stat__num">۱۳۱</span></div>
+                </div>
+              </div>
+              <div class="prof-bio">🎮 گیمر | استریمر Diablo IV | عاشق RPG و FPS</div>
+            </div>
+          </div>
+          <!-- تب‌های صفحه شخصی -->
+          <div class="prof-tabs">
+            <button class="prof-tab prof-tab--active" data-ptab="posts"><span class="material-symbols-outlined">article</span>پست</button>
+            <button class="prof-tab" data-ptab="content"><span class="material-symbols-outlined">grid_view</span>محتوا</button>
+            <button class="prof-tab" data-ptab="shop"><span class="material-symbols-outlined">storefront</span>فروشگاه</button>
+          </div>
+
+          <!-- تب پست -->
+          <div class="prof-tabpane" data-ptabpane="posts">
+          <!-- پست‌ها — Twitter/X style -->
+          <div class="prof-posts">
+
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">1 ساعت پیش</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">فردا ساعت 8 شب استریم Diablo IV دارم! 🔴 بیاید باهم بازی کنیم</div>
+                <div class="tw-post__media tw-post__media--wide">
+                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=640&h=360&fit=crop" alt="">
+                  <div class="tw-post__media-badge"><span class="material-symbols-outlined">live_tv</span> LIVE فردا 8 شب</div>
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>7</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>12</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>56</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۲.۴K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">دیروز</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">سیزن جدید Diablo IV واقعاً خفنه 🔥 build جدیدم رو امتحان کردم — necromancer رو بوس بازی کردم 💀</div>
+                <div class="tw-post__media tw-post__media--square">
+                  <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=500&h=500&fit=crop" alt="">
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>14</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>31</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>120</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۵.۸K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">3 روز پیش</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">کسی CS2 رفلکس داره؟ دنبال تیم برای ranked هستم 🎯 دایمند هستم پلی کنیم</div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>28</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>9</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>89</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۱۲K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">5 روز پیش</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">رسیدم به لول 85 تو Diablo IV تو کمتر از یه هفته 💪 grind واقعی یعنی این</div>
+                <div class="tw-post__media tw-post__media--tall">
+                  <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=480&h=600&fit=crop" alt="">
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>32</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>58</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>204</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۱۸K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          </div><!-- /tabpane posts -->
+
+          <!-- تب محتوا — گرید اینستاگرامی -->
+          <div class="prof-tabpane" data-ptabpane="content" hidden>
+            <div class="exp-grid prof-content-grid">
+              <div class="exp-tile exp-tile--tall">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=480&h=720&fit=crop" alt="">
+                <span class="exp-tile__type"><span class="material-symbols-outlined">smart_display</span></span>
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۲۰۴</span><span><span class="material-symbols-outlined">chat_bubble</span>۳۲</span></div>
+              </div>
+              <div class="exp-tile">
+                <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=400&fit=crop" alt="">
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۱۲۰</span><span><span class="material-symbols-outlined">chat_bubble</span>۱۴</span></div>
+              </div>
+              <div class="exp-tile">
+                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=400&fit=crop" alt="">
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۲۰۴</span><span><span class="material-symbols-outlined">chat_bubble</span>۳۲</span></div>
+              </div>
+              <div class="exp-tile">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop" alt="">
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۸۹</span><span><span class="material-symbols-outlined">chat_bubble</span>۹</span></div>
+              </div>
+              <div class="exp-tile exp-tile--wide">
+                <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&h=400&fit=crop" alt="">
+                <span class="exp-tile__type"><span class="material-symbols-outlined">photo_library</span></span>
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۳۴۲</span><span><span class="material-symbols-outlined">chat_bubble</span>۵۱</span></div>
+              </div>
+              <div class="exp-tile">
+                <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=400&fit=crop" alt="">
+                <div class="exp-tile__overlay"><span><span class="material-symbols-outlined">favorite</span>۱۶۷</span><span><span class="material-symbols-outlined">chat_bubble</span>۲۲</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- تب فروشگاه -->
+          <div class="prof-tabpane" data-ptabpane="shop" hidden>
+            <div class="prof-shop-grid">
+              <div class="prof-shop-card">
+                <div class="prof-shop-card__img"><img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?w=400&h=300&fit=crop" alt=""></div>
+                <div class="prof-shop-card__body">
+                  <div class="prof-shop-card__title">اکانت Diablo IV لول ۱۰۰</div>
+                  <div class="prof-shop-card__price"><span class="coin-x">X</span> ۲٬۵۰۰٬۰۰۰</div>
+                  <button class="prof-shop-card__btn">خرید</button>
+                </div>
+              </div>
+              <div class="prof-shop-card">
+                <div class="prof-shop-card__img"><img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=300&fit=crop" alt=""></div>
+                <div class="prof-shop-card__body">
+                  <div class="prof-shop-card__title">باندل اسکین Valorant</div>
+                  <div class="prof-shop-card__price"><span class="coin-x">X</span> ۸۵۰٬۰۰۰</div>
+                  <button class="prof-shop-card__btn">خرید</button>
+                </div>
+              </div>
+              <div class="prof-shop-card">
+                <div class="prof-shop-card__img"><img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&h=300&fit=crop" alt=""></div>
+                <div class="prof-shop-card__body">
+                  <div class="prof-shop-card__title">گیفت‌کارت Steam ۵۰$</div>
+                  <div class="prof-shop-card__price"><span class="coin-x">X</span> ۱٬۲۰۰٬۰۰۰</div>
+                  <button class="prof-shop-card__btn">خرید</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comm-feed scrollbar-thin" id="posts-feed-explore" hidden>
+          <div class="exp-grid">
+
+            <!-- ردیف ۱: عمودی بزرگ + ۲ مربع -->
+            <div class="exp-tile exp-tile--tall">
+              <img src="https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=480&h=720&fit=crop" alt="">
+              <span class="exp-tile__type"><span class="material-symbols-outlined">smart_display</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۲۸۹</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۲۷</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۵۱۲</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۴۳</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=400&fit=crop" alt="">
+              <span class="exp-tile__type"><span class="material-symbols-outlined">smart_display</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۱۴۸</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۲۴</span>
+              </div>
+            </div>
+
+            <!-- پست متنی -->
+            <div class="exp-tile exp-tile--text">
+              <div class="exp-tile__text-inner">
+                <img class="exp-tile__ava" src="https://i.pravatar.cc/32?u=zirak9" alt="">
+                <b>Zirak90</b>
+                <p>تورنومنت Dota 2 هفته آینده — ثبت‌نام تا فردا بازه! جایزه ۵ میلیون تومنی 🏅</p>
+              </div>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۱۷۸</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۶۲</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۳۴۲</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۵۱</span>
+              </div>
+            </div>
+
+            <!-- افقی پهن -->
+            <div class="exp-tile exp-tile--wide">
+              <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=400&fit=crop" alt="">
+              <span class="exp-tile__type"><span class="material-symbols-outlined">photo_library</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۲۰۴</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۳۲</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۹۶</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۱۱</span>
+              </div>
+            </div>
+
+            <!-- پست متنی دوم -->
+            <div class="exp-tile exp-tile--text">
+              <div class="exp-tile__text-inner">
+                <img class="exp-tile__ava" src="https://i.pravatar.cc/32?u=arash22" alt="">
+                <b>ArashGG</b>
+                <p>بهترین clutch عمرم تو CS2 — 1v5 با دیفیوز آخرین ثانیه 🤯🔥</p>
+              </div>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۵۱۲</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۴۳</span>
+              </div>
+            </div>
+            <div class="exp-tile exp-tile--tall">
+              <img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=480&h=720&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۱۲۰</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۱۴</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=400&fit=crop" alt="">
+              <span class="exp-tile__type"><span class="material-symbols-outlined">smart_display</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۸۸</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۹</span>
+              </div>
+            </div>
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1542549237337-3d6caad3bb59?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۲۳۱</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۱۹</span>
+              </div>
+            </div>
+
+            <!-- ویدیو واقعی -->
+            <div class="exp-tile exp-tile--tall">
+              <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" autoplay muted loop playsinline></video>
+              <span class="exp-tile__type"><span class="material-symbols-outlined">videocam</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۴۵۶</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۷۳</span>
+              </div>
+            </div>
+
+            <!-- ترکیبی: عکس + متن -->
+            <div class="exp-tile exp-tile--mixed">
+              <div class="exp-tile__mimg"><img src="https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=400&h=260&fit=crop" alt=""></div>
+              <div class="exp-tile__mtext">
+                <img class="exp-tile__ava" src="https://i.pravatar.cc/32?u=sara" alt="">
+                <p><b>SaraPlay</b> ست‌آپ جدیدم بالاخره کامل شد 😍🖥️</p>
+              </div>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۳۸۷</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۴۴</span>
+              </div>
+            </div>
+
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1486572788966-cfd3df1f5b42?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۱۶۷</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۲۲</span>
+              </div>
+            </div>
+
+            <!-- ترکیبی دوم -->
+            <div class="exp-tile exp-tile--mixed">
+              <div class="exp-tile__mimg"><img src="https://images.unsplash.com/photo-1542903660-eedba2cda473?w=400&h=260&fit=crop" alt=""></div>
+              <div class="exp-tile__mtext">
+                <img class="exp-tile__ava" src="https://i.pravatar.cc/32?u=milad88" alt="">
+                <p><b>MiladPro</b> شب تا صبح رنک گیم — ارزششو داشت 🏆</p>
+              </div>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۲۱۲</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۳۱</span>
+              </div>
+            </div>
+
+            <!-- پست متنی سوم -->
+            <div class="exp-tile exp-tile--text">
+              <div class="exp-tile__text-inner">
+                <img class="exp-tile__ava" src="https://i.pravatar.cc/32?u=wolf7" alt="">
+                <b>NightWolf_IR</b>
+                <p>کسی هست امشب Valorant بزنیم؟ ۲ نفر کم داریم برای فول پارتی 🎯</p>
+              </div>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۶۴</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۲۸</span>
+              </div>
+            </div>
+
+            <!-- ویدیو دوم -->
+            <div class="exp-tile exp-tile--wide">
+              <video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" autoplay muted loop playsinline></video>
+              <span class="exp-tile__type"><span class="material-symbols-outlined">videocam</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۶۰۳</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۸۹</span>
+              </div>
+            </div>
+
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1593118247619-e2d6f056869e?w=400&h=400&fit=crop" alt="">
+              <span class="exp-tile__type"><span class="material-symbols-outlined">photo_library</span></span>
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۱۴۳</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۱۲</span>
+              </div>
+            </div>
+
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1592155931584-901ac15763e3?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۲۷۸</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۳۵</span>
+              </div>
+            </div>
+
+            <div class="exp-tile exp-tile--tall">
+              <img src="https://images.unsplash.com/photo-1542549237337-3d6caad3bb59?w=480&h=720&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۹۹</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۸</span>
+              </div>
+            </div>
+
+            <div class="exp-tile">
+              <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?w=400&h=400&fit=crop" alt="">
+              <div class="exp-tile__overlay">
+                <span><span class="material-symbols-outlined">favorite</span>۳۲۰</span>
+                <span><span class="material-symbols-outlined">chat_bubble</span>۴۱</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ستون سایدبار (چپ در RTL — دومین فرزند) -->
+      <div class="posts-sidebar scrollbar-thin">
+        <nav class="posts-nav">
+          <button class="posts-nav-item posts-nav-item--active" data-pnav="home">
+            <span class="material-symbols-outlined">home</span>
+            <span>خانه</span>
+          </button>
+          <button class="posts-nav-item" data-pnav="profile">
+            <span class="material-symbols-outlined">account_circle</span>
+            <span>صفحه شخصی</span>
+          </button>
+          <button class="posts-nav-item" data-pnav="explore">
+            <span class="material-symbols-outlined">explore</span>
+            <span>گشت‌وگذار</span>
+          </button>
+          <button class="posts-nav-item" data-pnav="follow">
+            <span class="material-symbols-outlined">person_add</span>
+            <span>دنبال کردن</span>
+          </button>
+          <button class="posts-nav-item" data-pnav="notif">
+            <span class="material-symbols-outlined">notifications</span>
+            <span>اعلان‌ها</span>
+            <span class="posts-nav-badge">۳</span>
+          </button>
+        </nav>
+
+        <div class="posts-follow-stats">
+          <div class="posts-follow-stat">
+            <span class="posts-follow-stat__num">۲۴۸</span>
+            <span class="posts-follow-stat__lbl">دنبال‌کننده</span>
+          </div>
+          <div class="posts-follow-stat-sep"></div>
+          <div class="posts-follow-stat">
+            <span class="posts-follow-stat__num">۱۳۱</span>
+            <span class="posts-follow-stat__lbl">دنبال‌شونده</span>
+          </div>
+        </div>
+
+        <div class="posts-suggest">
+          <div class="posts-suggest__title">پیشنهاد دنبال کردن</div>
+          <div class="posts-suggest-list" id="posts-suggest-list">
+            <!-- populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="comm-view comm-view--discord" id="comv-community" hidden>
+      <!-- Community Search Overlay -->
+      <div class="comm-search-overlay" id="comm-search-overlay" hidden>
+        <div class="comm-search-head">
+          <button class="comm-search-back" id="comm-search-back" title="بازگشت">
+            <span class="material-symbols-outlined">arrow_forward_ios</span>
+          </button>
+          <div class="comm-search-field">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" class="comm-search-inp" id="comm-search-inp" placeholder="نام کامیونیتی را جستجو کن...">
+            <button class="comm-search-clear" id="comm-search-clear" hidden>
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+        <div class="comm-search-results scrollbar-thin" id="comm-search-results">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- Requests Overlay -->
+      <div class="comm-req-overlay" id="comm-req-overlay" hidden>
+        <div class="comm-req-head">
+          <button class="comm-search-back" id="comm-req-back" title="بازگشت">
+            <span class="material-symbols-outlined">arrow_forward_ios</span>
+          </button>
+          <span class="comm-req-title">درخواست‌های عضویت</span>
+        </div>
+        <div class="comm-req-tabs">
+          <button class="comm-req-tab comm-req-tab--active" data-rtab="incoming">
+            دریافتی
+            <span class="comm-req-tab-badge" id="req-incoming-cnt">۳</span>
+          </button>
+          <button class="comm-req-tab" data-rtab="outgoing">
+            ارسالی
+            <span class="comm-req-tab-badge comm-req-tab-badge--muted" id="req-outgoing-cnt">۲</span>
+          </button>
+        </div>
+        <div class="comm-req-body scrollbar-thin" id="comm-req-body">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <div class="dsc-servers">
+        <!-- دکمه‌های ابزار -->
+        <button class="dsc-server dsc-server--notif" id="comm-req-btn" title="درخواست‌های عضویت">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="dsc-server-notif-badge" id="comm-req-badge">۳</span>
+        </button>
+        <button class="dsc-server dsc-server--search" id="comm-server-search-btn" title="جستجوی کامیونیتی">
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <button class="dsc-server dsc-server--add" title="کامیونیتی جدید">
+          <span class="material-symbols-outlined">add</span>
+        </button>
+        <div class="dsc-server-sep"></div>
+
+        <!-- کامیونیتی‌های پیش‌فرض (قابل خروج نیست) -->
+        <button class="dsc-server dsc-server--builtin dsc-server--active" data-server="x100" data-builtin="true" title="x100 Launcher">
+          <span class="material-symbols-outlined" style="font-size:18px">rocket_launch</span>
+        </button>
+        <button class="dsc-server dsc-server--builtin" data-server="trade" data-builtin="true" title="Trade">
+          <span class="material-symbols-outlined" style="font-size:18px">storefront</span>
+        </button>
+
+        <!-- خط جداکننده بین پیش‌فرض و عضو‌شده‌ها -->
+        <div class="dsc-server-sep dsc-server-sep--joined" id="dsc-sep-joined" hidden></div>
+
+        <!-- کامیونیتی‌های joined (به صورت داینامیک اضافه می‌شوند) -->
+        <div class="dsc-servers__joined" id="dsc-servers-joined"></div>
+      </div>
+      <div class="dsc-channels">
+        <!-- کارت اطلاعات کامیونیتی -->
+        <div class="comm-info-card" id="comm-info-card">
+          <div class="comm-info-card__top">
+            <div class="comm-info-card__avatar" id="comm-info-avatar">D4</div>
+            <div class="comm-info-card__meta">
+              <div class="comm-info-card__name">
+                <span id="comm-game-name">Diablo IV</span>
+                <span class="comm-info-card__verify" id="comm-info-verify">
+                  <span class="material-symbols-outlined">verified</span>
+                </span>
+              </div>
+              <div class="comm-info-card__type" id="comm-info-type">جامعه رسمی</div>
+            </div>
+          </div>
+          <div class="comm-info-card__level">
+            <div class="comm-info-card__level-row">
+              <span class="comm-info-card__level-badge">سطح <span id="comm-info-level">۵</span></span>
+              <span class="comm-info-card__xp-text"><span id="comm-info-xp">۲٬۴۵۰</span> / <span id="comm-info-xp-max">۵٬۰۰۰</span> XP</span>
+            </div>
+            <div class="comm-info-card__xp-bar">
+              <div class="comm-info-card__xp-fill" id="comm-info-xp-fill" style="width:49%"></div>
+            </div>
+          </div>
+          <div class="comm-info-card__stats">
+            <div class="comm-info-card__stat">
+              <span class="comm-info-card__stat-val" id="comm-info-members">۱۲٬۴۵۰</span>
+              <span class="comm-info-card__stat-label">اعضا</span>
+            </div>
+            <div class="comm-info-card__stat-sep"></div>
+            <div class="comm-info-card__stat">
+              <span class="comm-info-card__stat-val comm-info-card__stat-val--online">
+                <span class="comm-info-card__online-dot"></span>
+                <span id="comm-info-online">۲۴۳</span>
+              </span>
+              <span class="comm-info-card__stat-label">آنلاین</span>
+            </div>
+          </div>
+          <button class="comm-info-card__invite" id="comm-invite-btn">
+            <span class="material-symbols-outlined">person_add</span>
+            دعوت از دوستان
+          </button>
+        </div>
+        <div class="dsc-cat-label">کانال‌های متنی</div>
+        <button class="dsc-ch dsc-ch--active" data-ch="crules"><span class="material-symbols-outlined">gavel</span>قوانین</button>
+        <button class="dsc-ch" data-ch="cakhabar"><span class="material-symbols-outlined">newspaper</span>اخبار</button>
+        <button class="dsc-ch" data-ch="cnews"><span class="material-symbols-outlined">campaign</span>تازه‌ها</button>
+        <button class="dsc-ch" data-ch="ctutorial"><span class="material-symbols-outlined">school</span>آموزش</button>
+        <button class="dsc-ch" data-ch="cfreechat"><span class="material-symbols-outlined">chat_bubble</span>چت روم آزاد</button>
+        <button class="dsc-ch" data-ch="cfindplayer"><span class="material-symbols-outlined">person_search</span>پیدا کردن پلیر</button>
+        <div class="dsc-cat-label" style="margin-top:8px">ویس چت</div>
+        <button class="dsc-ch dsc-ch--voice" data-ch="cv2"><span class="material-symbols-outlined">volume_up</span><span class="dsc-ch__name">اتاق 2 نفره</span><span class="dsc-voice-cnt">0/2</span></button>
+        <button class="dsc-ch dsc-ch--voice" data-ch="cv5a"><span class="material-symbols-outlined">volume_up</span><span class="dsc-ch__name">اتاق 5 نفره - 1</span><span class="dsc-voice-cnt dsc-voice-cnt--used">3/5</span></button>
+        <button class="dsc-ch dsc-ch--voice" data-ch="cv20"><span class="material-symbols-outlined">volume_up</span><span class="dsc-ch__name">اتاق 20 نفره</span><span class="dsc-voice-cnt dsc-voice-cnt--used">7/20</span></button>
+        <div class="dsc-channels__footer">
+          <button class="dsc-leave-btn" id="comm-leave-btn">
+            <span class="material-symbols-outlined">logout</span>
+            خروج از کامیونیتی
+          </button>
+        </div>
+      </div>
+
+      <!-- Leave confirmation popup -->
+      <div class="comm-leave-popup" id="comm-leave-popup" hidden>
+        <div class="comm-leave-popup__box">
+          <div class="comm-leave-popup__icon">
+            <span class="material-symbols-outlined">logout</span>
+          </div>
+          <div class="comm-leave-popup__title">خروج از کامیونیتی</div>
+          <div class="comm-leave-popup__msg">آیا می‌خواهید از کامیونیتی <b id="comm-leave-name">Diablo IV</b> خارج شوید؟</div>
+          <div class="comm-leave-popup__actions">
+            <button class="comm-leave-popup__confirm" id="comm-leave-confirm">
+              <span class="material-symbols-outlined">logout</span>بله، خارج می‌شم
+            </button>
+            <button class="comm-leave-popup__cancel" id="comm-leave-cancel">انصراف</button>
+          </div>
+        </div>
+      </div>
+      <div class="dsc-content">
+        <div class="dsc-panel" id="comm-rules"><div class="dsc-panel__head"><span class="material-symbols-outlined">gavel</span>قوانین</div><div class="dsc-panel__body scrollbar-thin"><h3>قوانین جامعه x100</h3><ol><li>احترام الزامی است.</li><li>تبلیغات ممنوع است.</li><li>چیت = بن دائمی.</li></ol></div></div>
+        <div class="dsc-panel" id="comm-akhabar" hidden>
+          <div class="dsc-panel__head"><span class="material-symbols-outlined">newspaper</span>اخبار</div>
+          <div class="dsc-panel__body scrollbar-thin">
+            <div class="feed-item">
+              <div class="feed-item__header feed-item__header--news">
+                <span class="feed-tag feed-tag--event">ایونت</span><span class="feed-time">2 ساعت پیش</span>
+              </div>
+              <div class="feed-title">🎉 رویداد تابستانه x100 آغاز شد!</div>
+              <div class="feed-body">از امروز تا پایان تابستان بازی‌های منتخب تخفیف 30 درصد دارن. وارد شو و بازی کن!</div>
+              <div class="feed-actions">
+                <button class="feed-btn feed-btn--like" data-id="an1"><span class="material-symbols-outlined">thumb_up</span><span>125</span></button>
+                <button class="feed-btn feed-btn--dislike" data-id="an1"><span class="material-symbols-outlined">thumb_down</span><span>4</span></button>
+                <button class="feed-btn feed-btn--cmt" data-target="acmt-n1"><span class="material-symbols-outlined">chat</span><span>18 کامنت</span></button>
+              </div>
+              <div class="feed-comments" id="acmt-n1" hidden>
+                <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=31" alt=""><div><b>ArashGG</b><p>عالیه! 🙌</p></div></div>
+                <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-item__header feed-item__header--news">
+                <span class="feed-tag feed-tag--update">آپدیت بازی</span><span class="feed-time">دیروز</span>
+              </div>
+              <div class="feed-title">🎮 Diablo IV — پچ 2.1.0 منتشر شد</div>
+              <div class="feed-body">باگ‌های مهم سیزن رفع شدن. باس جدید اضافه شده. بالانس کلاس‌ها تغییر کرده.</div>
+              <div class="feed-actions">
+                <button class="feed-btn feed-btn--like" data-id="an2"><span class="material-symbols-outlined">thumb_up</span><span>89</span></button>
+                <button class="feed-btn feed-btn--dislike" data-id="an2"><span class="material-symbols-outlined">thumb_down</span><span>2</span></button>
+                <button class="feed-btn feed-btn--cmt" data-target="acmt-n2"><span class="material-symbols-outlined">chat</span><span>12 کامنت</span></button>
+              </div>
+              <div class="feed-comments" id="acmt-n2" hidden>
+                <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=33" alt=""><div><b>NightWolf</b><p>بالاخره! 😅</p></div></div>
+                <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+              </div>
+            </div>
+            <div class="feed-item">
+              <div class="feed-item__header feed-item__header--news">
+                <span class="feed-tag feed-tag--newgame">بازی جدید</span><span class="feed-time">3 روز پیش</span>
+              </div>
+              <div class="feed-title">🆕 CS2 به لانچر x100 اضافه شد!</div>
+              <div class="feed-body">CS2 رسماً در کاتالوگ x100 اضافه شده. حالا مستقیم از لانچر باز کن.</div>
+              <div class="feed-actions">
+                <button class="feed-btn feed-btn--like" data-id="an3"><span class="material-symbols-outlined">thumb_up</span><span>203</span></button>
+                <button class="feed-btn feed-btn--dislike" data-id="an3"><span class="material-symbols-outlined">thumb_down</span><span>8</span></button>
+                <button class="feed-btn feed-btn--cmt" data-target="acmt-n3"><span class="material-symbols-outlined">chat</span><span>31 کامنت</span></button>
+              </div>
+              <div class="feed-comments" id="acmt-n3" hidden>
+                <div class="feed-comment"><img src="https://i.pravatar.cc/24?u=34" alt=""><div><b>GhostSniper</b><p>دقیقاً همینو میخواستم! 💯</p></div></div>
+                <div class="feed-cmt-input"><input type="text" placeholder="کامنت بذار..."><button><span class="material-symbols-outlined">send</span></button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dsc-panel" id="comm-news" hidden><div class="dsc-panel__head"><span class="material-symbols-outlined">campaign</span>تازه‌ها</div><div class="dsc-panel__body scrollbar-thin"><div class="news-card"><div class="news-card__meta"><span class="news-card__tag">بازی</span><span class="news-card__date">18 خرداد</span></div><div class="news-card__title">سیزن 8 Diablo IV 🔥</div></div></div></div>
+        <div class="dsc-panel dsc-panel--tut" id="comm-tutorial" hidden><div class="dsc-panel__head"><span class="material-symbols-outlined">school</span>آموزش</div><div class="dsc-tut-wrap"><div class="dsc-tut-nav"><button class="tut-nav-item tut-nav-item--active" data-tut="ci">نصب</button><button class="tut-nav-item" data-tut="cn">شبکه</button></div><div class="dsc-tut-content scrollbar-thin"><div class="tut-page" id="tut-ci">نصب x100 — فایل را دانلود کنید.</div><div class="tut-page" id="tut-cn" hidden>تنظیمات شبکه — سرویس مناسب را انتخاب کنید.</div></div></div></div>
+        <div class="dsc-panel dsc-panel--chat" id="comm-freechat" hidden><div class="dsc-panel__head"><span class="material-symbols-outlined">chat_bubble</span>چت روم آزاد</div><div class="dsc-messages scrollbar-thin" id="comm-chat-messages"><div class="chat-msg"><img class="chat-msg__avatar" src="https://i.pravatar.cc/32?u=1" alt=""><div class="chat-msg__body"><span class="chat-msg__name">ArashGG</span><p class="chat-msg__text">کسی Diablo بازی می‌کنه؟ 🔥</p></div></div></div><div class="dsc-input-row"><input class="dsc-input" id="comm-chat-input" type="text" placeholder="پیام بنویس..."><button class="dsc-send-btn" id="comm-chat-send"><span class="material-symbols-outlined">send</span></button></div></div>
+        <div class="dsc-panel dsc-panel--chat" id="comm-findplayer" hidden><div class="dsc-panel__head"><span class="material-symbols-outlined">person_search</span>پیدا کردن پلیر</div><div class="dsc-messages scrollbar-thin"><div class="chat-msg"><img class="chat-msg__avatar" src="https://i.pravatar.cc/32?u=10" alt=""><div class="chat-msg__body"><span class="chat-msg__name">ProGamer_Ali</span><p class="chat-msg__text">دنبال پلیر ranked هستم 🎮</p></div></div></div><div class="dsc-input-row"><input class="dsc-input" type="text" placeholder="دنبال چه پلیری؟"><button class="dsc-send-btn"><span class="material-symbols-outlined">send</span></button></div></div>
+        <div class="dsc-panel" id="comm-voice" hidden><div class="dsc-panel__head"><span class="material-symbols-outlined">volume_up</span><span id="comm-voice-title">ویس چت</span></div><div class="dsc-panel__body"><div class="voice-card"><div class="voice-card__icon"><span class="material-symbols-outlined">headset_mic</span></div><div class="voice-card__info"><div class="voice-card__name" id="comm-voice-name">اتاق</div><div class="voice-card__cap" id="comm-voice-cap">0 نفر</div></div><button class="btn btn--primary">ورود</button></div><div class="voice-users" id="comm-voice-users"></div></div></div>
+      </div>
+    </div>
+
+    </div><!-- /comm-views -->
+
+  </div>
+</div>
+
+</main>
+
+<!-- ============================================
+     MODAL: نصب بازی
+     ============================================ -->
+<div class="modal-overlay" id="install-modal" hidden>
+  <div class="modal-dialog">
+    <div class="modal-dialog__head">
+      <h3 class="modal-dialog__title">نصب بازی</h3>
+      <button class="btn btn--icon modal-close" id="install-modal-close">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-dialog__body">
+      <!-- Game info row -->
+      <div class="install-modal__game">
+        <div class="install-modal__cover">
+          <img id="install-modal-img" src="" alt="">
+        </div>
+        <div class="install-modal__info">
+          <h4 id="install-modal-name"></h4>
+          <p id="install-modal-meta"></p>
+        </div>
+      </div>
+      <!-- Location picker -->
+      <div class="install-modal__field">
+        <span class="install-modal__field-label">مکان نصب</span>
+        <div class="install-modal__locations" id="install-modal-locations"></div>
+        <div class="install-modal__final-path" dir="ltr" id="install-modal-final-path"></div>
+      </div>
+      <!-- Disk space -->
+      <div class="install-modal__disk">
+        <span class="material-symbols-outlined">hard_drive</span>
+        <span>فضای خالی دیسک: <strong>120 GB ✅</strong></span>
+      </div>
+    </div>
+    <div class="modal-dialog__foot">
+      <button class="btn btn--ghost" id="install-modal-cancel">لغو</button>
+      <button class="btn btn--primary" id="install-modal-confirm">
+        <span class="material-symbols-outlined">download</span>
+        شروع دانلود
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     MODAL: تأیید عمومی (لغو دانلود / حذف بازی)
+     ============================================ -->
+<div class="modal-overlay" id="confirm-dialog" hidden>
+  <div class="modal-dialog modal-dialog--sm">
+    <div class="modal-dialog__head">
+      <h3 class="modal-dialog__title" id="confirm-title"></h3>
+    </div>
+    <div class="modal-dialog__body">
+      <p class="confirm-body" id="confirm-body"></p>
+    </div>
+    <div class="modal-dialog__foot">
+      <button class="btn btn--ghost" id="confirm-no">انصراف</button>
+      <button class="btn btn--primary" id="confirm-yes"></button>
+    </div>
+  </div>
+</div>
+
+<script src="scripts/data.js"></script>
+<script src="scripts/app.js"></script>
+</body>
+</html>

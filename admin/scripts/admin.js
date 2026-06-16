@@ -114,18 +114,45 @@ function initLogin() {
 // ============================================
 // ناوبری بین نماها
 // ============================================
-const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'بازی‌ها', launcher: 'لانچر', servers: 'سرورها' };
+const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'بازی‌ها', launcher: 'لانچر', servers: 'سرورها', publish: 'انتشار' };
 function initNav() {
-  const items = document.querySelectorAll('.admin-nav__item');
-  items.forEach((item) => {
+  const showView = (view) => {
+    document.querySelectorAll('.admin-view').forEach((v) => {
+      v.classList.toggle('admin-view--active', v.dataset.view === view);
+    });
+    document.getElementById('view-title').textContent = VIEW_TITLE[view];
+  };
+  const clearActive = () => {
+    document.querySelectorAll('.admin-nav__item, .admin-nav__subitem')
+      .forEach((i) => i.classList.remove('admin-nav__item--active', 'admin-nav__subitem--active'));
+  };
+
+  // آیتم‌های اصلی (دارای data-view مستقیم)
+  document.querySelectorAll('.admin-nav__item[data-view]').forEach((item) => {
     item.addEventListener('click', () => {
-      items.forEach((i) => i.classList.remove('admin-nav__item--active'));
+      clearActive();
       item.classList.add('admin-nav__item--active');
-      const view = item.dataset.view;
-      document.querySelectorAll('.admin-view').forEach((v) => {
-        v.classList.toggle('admin-view--active', v.dataset.view === view);
-      });
-      document.getElementById('view-title').textContent = VIEW_TITLE[view];
+      showView(item.dataset.view);
+    });
+  });
+
+  // والد «انتشار» — باز/بسته کردن منوی کشویی
+  const parent = document.querySelector('.admin-nav__parent');
+  if (parent) {
+    const sub = parent.nextElementSibling;
+    parent.addEventListener('click', () => {
+      const open = sub.hidden;
+      sub.hidden = !open;
+      parent.classList.toggle('admin-nav__parent--open', open);
+    });
+  }
+
+  // زیرگزینه‌های انتشار (خانه / لانچر / صفحهٔ بازی‌ها)
+  document.querySelectorAll('.admin-nav__subitem').forEach((sub) => {
+    sub.addEventListener('click', () => {
+      clearActive();
+      showView('publish');
+      setPubTarget(sub.dataset.pub); // زیرگزینهٔ فعال را هم خودش ست می‌کند
     });
   });
 }
@@ -797,12 +824,166 @@ function initServers() {
 }
 
 // ============================================
+// انتشار — محتوای منتشرشده در لانچر
+// ============================================
+const PUB_KINDS = {
+  home: ['بنر هیرو', 'بازی ویژه', 'خبر / اعلان', 'تخفیف'],
+  game: ['بنر صفحهٔ بازی', 'آپدیت بازی', 'رویداد', 'تخفیف'],
+};
+const PUB_TITLE = { home: 'انتشار محتوا در خانهٔ لانچر', game: 'انتشار محتوا در صفحهٔ بازی' };
+const PUB_LIST_LABEL = { home: 'محتوای خانه', game: 'محتوای بازی‌ها' };
+let PUBLICATIONS = [
+  { id: 1, target: 'home', kind: 'بنر هیرو', game: 'Counter-Strike 2', title: 'فصل جدید CS2 آغاز شد', subtitle: 'آماده، نشانه‌گیری، برد', desc: 'بتل‌پس فصل سوم با اسکین‌های جدید و نقشهٔ بازطراحی‌شده.', media: [{ type: 'image', url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=240&fit=crop' }], live: true, date: '۲۵ خرداد ۱۴۰۴' },
+  { id: 2, target: 'home', kind: 'تخفیف', game: 'Diablo IV', title: 'حراج تابستانهٔ x100', subtitle: 'فقط تا پایان هفته', desc: 'تا ۵۰٪ تخفیف روی بازی‌های منتخب فروشگاه.', media: [{ type: 'image', url: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=240&fit=crop' }], live: false, date: '۲۰ خرداد ۱۴۰۴' },
+  { id: 3, target: 'game', kind: 'آپدیت بازی', game: '', title: 'آپدیت ۱.۴ منتشر شد', desc: 'بهبود سیستم ضدتقلب و رفع باگ‌های شبکه.', media: [], live: true, date: '۱۸ خرداد ۱۴۰۴' },
+];
+let pubTarget = 'home';
+let pubDraftMedia = [];
+
+function pubFillSelects() {
+  document.getElementById('pub-kind').innerHTML = PUB_KINDS[pubTarget].map((k) => `<option>${k}</option>`).join('');
+  const gameOpts = GAMES.map((g) => `<option>${g.name}</option>`).join('');
+  const noGame = (pubTarget === 'game') ? '' : '<option value="">— بدون بازی —</option>';
+  document.getElementById('pub-game').innerHTML = noGame + gameOpts;
+}
+
+function pubRenderDraftMedia() {
+  const grid = document.getElementById('pub-media-grid');
+  grid.innerHTML = pubDraftMedia.map((m, i) => `
+    <div class="media-thumb" data-mi="${i}">
+      <img src="${m.url}" alt=""><span class="media-thumb__badge"><span class="material-icons-outlined">image</span>عکس</span>
+      ${i === 0 ? '<span class="media-thumb__cover">کاور</span>' : ''}
+      <button type="button" class="media-thumb__del" data-mi="${i}"><span class="material-icons-outlined">close</span></button>
+    </div>
+  `).join('');
+  grid.querySelectorAll('.media-thumb__del').forEach((btn) => {
+    btn.addEventListener('click', () => { pubDraftMedia.splice(Number(btn.dataset.mi), 1); pubRenderDraftMedia(); });
+  });
+}
+
+function pubResetForm() {
+  document.getElementById('pub-form').reset();
+  document.getElementById('pub-live').checked = true;
+  document.getElementById('pub-live-hint').textContent = 'فعال: بلافاصله در لانچر نمایش داده می‌شود';
+  pubDraftMedia = [];
+  pubRenderDraftMedia();
+}
+
+function setPubTarget(t) {
+  pubTarget = t;
+  document.querySelectorAll('.admin-nav__subitem').forEach((s) => s.classList.toggle('admin-nav__subitem--active', s.dataset.pub === t));
+  document.getElementById('pub-form-title').textContent = PUB_TITLE[t];
+  document.getElementById('pub-subtitle-field').hidden = (t !== 'home'); // زیرعنوان فقط در انتشار خانه
+  document.getElementById('pub-game-field').hidden = (t === 'game');     // بازی مرتبط فقط در انتشار خانه
+  pubFillSelects();
+  pubResetForm();
+  renderPublications();
+}
+
+function renderPublications() {
+  const rows = PUBLICATIONS.filter((p) => p.target === pubTarget);
+  document.getElementById('pub-list-head').innerHTML =
+    `${PUB_LIST_LABEL[pubTarget]} <span class="badge-count">${faNum(rows.length)}</span>`;
+  const list = document.getElementById('pub-list');
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty-state">هنوز محتوایی منتشر نشده است</div>';
+    return;
+  }
+  list.innerHTML = rows.map((p) => {
+    const cover = p.media && p.media[0];
+    return `
+    <div class="pub-card" data-pid="${p.id}">
+      <div class="pub-card__cover">${cover ? `<img src="${cover.url}" alt="">` : '<span class="material-icons-outlined">campaign</span>'}</div>
+      <div class="pub-card__body">
+        <div class="pub-card__top">
+          <span class="pub-card__kind">${p.kind}</span>
+          <span class="pub-status ${p.live ? 'pub-status--live' : 'pub-status--draft'}">${p.live ? 'منتشرشده' : 'پیش‌نویس'}</span>
+        </div>
+        <div class="pub-card__title">${p.title}</div>
+        ${p.subtitle ? `<div class="pub-card__subtitle">${p.subtitle}</div>` : ''}
+        ${p.game ? `<div class="pub-card__game"><span class="material-icons-outlined">sports_esports</span>${p.game}</div>` : ''}
+        ${p.desc ? `<div class="pub-card__desc">${p.desc}</div>` : ''}
+        <div class="pub-card__meta"><span class="material-icons-outlined">schedule</span>${p.date}</div>
+      </div>
+      <div class="pub-card__actions">
+        <button class="icon-btn" data-action="toggle" title="${p.live ? 'لغو انتشار' : 'انتشار'}"><span class="material-icons-outlined">${p.live ? 'visibility_off' : 'publish'}</span></button>
+        <button class="icon-btn icon-btn--del" data-action="del" title="حذف"><span class="material-icons-outlined">delete</span></button>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('[data-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const pid = Number(btn.closest('.pub-card').dataset.pid);
+      const p = PUBLICATIONS.find((x) => x.id === pid);
+      if (!p) return;
+      if (btn.dataset.action === 'toggle') {
+        p.live = !p.live;
+        renderPublications();
+      } else if (btn.dataset.action === 'del') {
+        if (confirm(`محتوای «${p.title}» حذف شود؟`)) {
+          PUBLICATIONS = PUBLICATIONS.filter((x) => x.id !== pid);
+          renderPublications();
+        }
+      }
+    });
+  });
+}
+
+function initPublish() {
+  // جابه‌جایی بین خانه/لانچر/بازی‌ها از طریق منوی کشویی سایدبار انجام می‌شود
+
+  // آپلود تصویر بنر
+  const mediaInput = document.getElementById('pub-media-input');
+  document.getElementById('pub-media-add').addEventListener('click', () => mediaInput.click());
+  mediaInput.addEventListener('change', () => {
+    Array.from(mediaInput.files).forEach((file) => pubDraftMedia.push({ type: 'image', url: URL.createObjectURL(file) }));
+    mediaInput.value = '';
+    pubRenderDraftMedia();
+  });
+
+  // متن راهنمای تاگل انتشار
+  const live = document.getElementById('pub-live');
+  const liveHint = document.getElementById('pub-live-hint');
+  live.addEventListener('change', () => {
+    liveHint.textContent = live.checked
+      ? 'فعال: بلافاصله در لانچر نمایش داده می‌شود'
+      : 'غیرفعال: به‌صورت پیش‌نویس ذخیره می‌شود';
+  });
+
+  // ثبت محتوا
+  document.getElementById('pub-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const game = pubTarget === 'home' ? document.getElementById('pub-game').value : '';
+    PUBLICATIONS.unshift({
+      id: Date.now(),
+      target: pubTarget,
+      kind: document.getElementById('pub-kind').value,
+      game,
+      title: document.getElementById('pub-title').value.trim(),
+      subtitle: pubTarget === 'home' ? document.getElementById('pub-subtitle').value.trim() : '',
+      desc: document.getElementById('pub-desc').value.trim(),
+      media: pubDraftMedia.slice(),
+      live: live.checked,
+      date: 'هم‌اکنون',
+    });
+    pubResetForm();
+    renderPublications();
+  });
+
+  document.getElementById('pub-reset').addEventListener('click', pubResetForm);
+
+  setPubTarget('home');
+}
+
+// ============================================
 function bootDashboard() {
   renderOverview();
   renderUsers();
   renderGames();
   renderLaunchers();
   renderServers();
+  renderPublications();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -812,4 +993,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initGames();
   initLauncher();
   initServers();
+  initPublish();
 });

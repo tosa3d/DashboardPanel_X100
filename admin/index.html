@@ -44,6 +44,11 @@
       <button class="admin-nav__item" data-view="games"><span class="material-icons-outlined">sports_esports</span>بازی‌ها</button>
       <button class="admin-nav__item" data-view="launcher"><span class="material-icons-outlined">rocket_launch</span>لانچر</button>
       <button class="admin-nav__item" data-view="servers"><span class="material-icons-outlined">dns</span>سرورها</button>
+      <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">campaign</span>انتشار<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
+      <div class="admin-nav__sub" hidden>
+        <button class="admin-nav__subitem" data-view="publish" data-pub="home"><span class="material-icons-outlined">home</span>خانه</button>
+        <button class="admin-nav__subitem" data-view="publish" data-pub="game"><span class="material-icons-outlined">sports_esports</span>صفحهٔ بازی‌ها</button>
+      </div>
     </nav>
     <button class="admin-logout" id="logout-btn"><span class="material-icons-outlined">logout</span>خروج</button>
   </aside>
@@ -346,6 +351,60 @@
             </div>
             <div class="servers-list" id="servers-list"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== انتشار ===== -->
+    <section class="admin-view" data-view="publish">
+      <div class="games-layout">
+        <!-- فرم انتشار محتوا -->
+        <div class="panel">
+          <div class="panel__head"><h2 id="pub-form-title">انتشار محتوا در خانهٔ لانچر</h2></div>
+          <form id="pub-form" class="game-form">
+            <label class="field"><span>عنوان محتوا</span><input type="text" id="pub-title" required placeholder="مثلاً VALORANT یا جشنوارهٔ تخفیف"></label>
+            <label class="field" id="pub-subtitle-field"><span>زیرعنوان / شعار</span><input type="text" id="pub-subtitle" placeholder="مثلاً آمادگی، دقت، پیروزی"></label>
+            <div class="field-row">
+              <label class="field"><span>نوع محتوا</span>
+                <select id="pub-kind"></select>
+              </label>
+              <label class="field" id="pub-game-field"><span>بازی مرتبط</span>
+                <select id="pub-game"></select>
+              </label>
+            </div>
+
+            <div class="form-section__title">تصویر بنر</div>
+            <div class="media-uploader">
+              <input type="file" id="pub-media-input" accept="image/*" hidden>
+              <button type="button" class="media-add-btn" id="pub-media-add">
+                <span class="material-icons-outlined">add_photo_alternate</span>
+                افزودن تصویر بنر
+              </button>
+              <div class="media-grid" id="pub-media-grid"></div>
+            </div>
+
+            <label class="field"><span>توضیحات</span><textarea id="pub-desc" rows="3" placeholder="توضیح کوتاه دربارهٔ این محتوا..."></textarea></label>
+
+            <label class="toggle-field">
+              <input type="checkbox" id="pub-live" checked>
+              <span class="toggle-switch"></span>
+              <span class="toggle-label">
+                <b>انتشار فوری در لانچر</b>
+                <small id="pub-live-hint">فعال: بلافاصله در لانچر نمایش داده می‌شود</small>
+              </span>
+            </label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary" id="pub-submit">انتشار در لانچر</button>
+              <button type="button" class="btn-ghost" id="pub-reset">پاک کردن</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- لیست محتوای منتشرشده -->
+        <div class="panel">
+          <div class="panel__head"><h2 id="pub-list-head">محتوای خانه <span class="badge-count" id="pub-count">۰</span></h2></div>
+          <div class="pub-list" id="pub-list"></div>
         </div>
       </div>
     </section>

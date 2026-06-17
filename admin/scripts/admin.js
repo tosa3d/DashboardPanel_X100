@@ -954,31 +954,17 @@ function openGamePicker() {
 // ============================================
 let homeBanners = [];
 let homeBannerSeq = 1;
+let dragBannerId = null;
+const BANNER_MIN = 3;
+const BANNER_MAX = 7;
 
-const BNR_ACTIONS = {
-  none: 'بدون عملکرد',
-  game: 'باز کردن صفحهٔ بازی',
-  url: 'باز کردن لینک',
-  shop: 'رفتن به فروشگاه',
-  discount: 'صفحهٔ تخفیف',
-};
-
-function bannerActionTargetHTML(b) {
-  if (b.actionType === 'game') {
-    const opts = GAMES.map((g) => `<option ${b.actionValue === g.name ? 'selected' : ''}>${g.name}</option>`).join('');
-    return `<label class="field"><span>بازی مقصد</span><select class="bnr-target">${opts}</select></label>`;
-  }
-  if (b.actionType === 'url') {
-    return `<label class="field"><span>آدرس لینک</span><input type="text" class="bnr-target" value="${b.actionValue || ''}" placeholder="https://..."></label>`;
-  }
-  return '';
-}
-
-function bannerCardHTML(b) {
+function bannerCardHTML(b, i) {
   return `
   <div class="bnr-card ${b.open ? 'bnr-card--open' : ''}" data-bid="${b.id}">
     <div class="bnr-card__head">
+      <span class="bnr-card__drag" title="بکشید تا ترتیب عوض شود"><span class="material-icons-outlined">drag_indicator</span></span>
       <button type="button" class="bnr-card__toggle">
+        <span class="bnr-card__num">${faNum(i + 1)}</span>
         <span class="material-icons-outlined bnr-card__chevron">expand_more</span>
         <span class="bnr-card__thumb">${b.img ? `<img src="${b.img}" alt="">` : '<span class="material-icons-outlined">image</span>'}</span>
         <span class="bnr-card__title">${b.title || 'بنر بدون عنوان'}</span>
@@ -986,20 +972,34 @@ function bannerCardHTML(b) {
       <button type="button" class="bnr-card__del" title="حذف بنر"><span class="material-icons-outlined">delete</span></button>
     </div>
     <div class="bnr-card__body">
-      <div class="bnr-img-uploader">
-        <input type="file" class="bnr-img-input" accept="image/*" hidden>
-        ${b.img
-          ? `<div class="bnr-img-preview"><img src="${b.img}" alt=""><button type="button" class="bnr-img-del">تغییر عکس</button></div>`
-          : `<button type="button" class="media-add-btn bnr-img-add"><span class="material-icons-outlined">add_photo_alternate</span>افزودن عکس بنر</button>`}
+      <input type="file" class="bnr-img-input" accept="image/*" hidden>
+
+      <!-- پیش‌نمایش زندهٔ بنر — عنوان/زیرعنوان/متن مستقیم روی همین عکس ویرایش می‌شوند -->
+      <div class="bnr-stage ${b.img ? 'bnr-stage--has-img' : ''}" ${b.img ? `style="background-image:url('${b.img}')"` : ''}>
+        <div class="bnr-stage__upload">
+          <button type="button" class="bnr-stage__upload-btn"><span class="material-icons-outlined">photo_camera</span>${b.img ? 'تغییر عکس' : 'افزودن عکس'}</button>
+          <div class="bnr-stage__hint">رزولوشن عکس آپلودی باید ۱۲۸۰×۷۲۰ باشد</div>
+        </div>
+        <div class="bnr-stage__content">
+          <div class="bnr-stage__title" contenteditable="true" data-ph="عنوان بنر">${b.title || ''}</div>
+          <div class="bnr-stage__subtitle" contenteditable="true" data-ph="زیرعنوان / شعار">${b.subtitle || ''}</div>
+          <div class="bnr-stage__text" contenteditable="true" data-ph="متن توضیحات بنر...">${b.text || ''}</div>
+          <button type="button" class="bnr-stage__cta" ${b.hasButton ? '' : 'hidden'}>${b.btnLabel || 'مشاهده'} <span>←</span></button>
+        </div>
       </div>
-      <label class="field"><span>تایتل</span><input type="text" class="bnr-title" value="${b.title || ''}" placeholder="عنوان بنر"></label>
-      <label class="field"><span>ساب‌تایتل</span><input type="text" class="bnr-subtitle" value="${b.subtitle || ''}" placeholder="زیرعنوان / شعار"></label>
-      <label class="field"><span>متن</span><textarea class="bnr-text" rows="2" placeholder="توضیح بنر...">${b.text || ''}</textarea></label>
-      <div class="field-row">
-        <label class="field"><span>عملکرد کلیک</span>
-          <select class="bnr-action">${Object.entries(BNR_ACTIONS).map(([k, v]) => `<option value="${k}" ${b.actionType === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
-        </label>
-        <div class="bnr-target-wrap">${bannerActionTargetHTML(b)}</div>
+
+      <!-- تنظیمات دکمهٔ روی بنر -->
+      <label class="toggle-field">
+        <input type="checkbox" class="bnr-has-btn" ${b.hasButton ? 'checked' : ''}>
+        <span class="toggle-switch"></span>
+        <span class="toggle-label">
+          <b>دکمه دارد</b>
+          <small>اگر فعال شود، روی بنر یک دکمه نمایش داده می‌شود</small>
+        </span>
+      </label>
+      <div class="bnr-btn-fields" ${b.hasButton ? '' : 'hidden'}>
+        <label class="field"><span>نام دکمه</span><input type="text" class="bnr-btn-label" value="${b.btnLabel || ''}" placeholder="مثلاً مشاهده"></label>
+        <label class="field"><span>عملکرد دکمه (فانکشن)</span><input type="text" class="bnr-btn-action" value="${b.btnAction || ''}" placeholder="مثلاً openGame('valorant') یا https://..."></label>
       </div>
     </div>
   </div>`;
@@ -1007,12 +1007,14 @@ function bannerCardHTML(b) {
 
 function renderHomeBanners() {
   document.getElementById('home-banner-count').textContent = faNum(homeBanners.length);
+  const addBtn = document.getElementById('home-banner-add');
+  if (addBtn) addBtn.disabled = homeBanners.length >= BANNER_MAX;
   const wrap = document.getElementById('home-banner-cards');
   if (!homeBanners.length) {
     wrap.innerHTML = '<div class="empty-state" style="padding:30px">هنوز بنری اضافه نشده — روی «افزودن بنر» بزنید</div>';
     return;
   }
-  wrap.innerHTML = homeBanners.map((b) => bannerCardHTML(b)).join('');
+  wrap.innerHTML = homeBanners.map((b, i) => bannerCardHTML(b, i)).join('');
   homeBanners.forEach((b) => bindBannerCard(b));
 }
 
@@ -1020,68 +1022,143 @@ function bindBannerCard(b) {
   const card = document.querySelector(`.bnr-card[data-bid="${b.id}"]`);
   if (!card) return;
 
+  // درگ برای تغییر ترتیب — فقط از طریق دستگیره فعال می‌شود
+  const drag = card.querySelector('.bnr-card__drag');
+  if (drag) {
+    drag.addEventListener('mousedown', () => card.setAttribute('draggable', 'true'));
+    drag.addEventListener('mouseup', () => card.removeAttribute('draggable'));
+  }
+  card.addEventListener('dragstart', (e) => {
+    dragBannerId = b.id;
+    card.classList.add('bnr-card--dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    try { e.dataTransfer.setData('text/plain', String(b.id)); } catch (_) {}
+  });
+  card.addEventListener('dragend', () => {
+    card.classList.remove('bnr-card--dragging');
+    card.removeAttribute('draggable');
+    document.querySelectorAll('.bnr-card--dragover').forEach((c) => c.classList.remove('bnr-card--dragover'));
+    dragBannerId = null;
+  });
+  card.addEventListener('dragover', (e) => {
+    if (dragBannerId === null || dragBannerId === b.id) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    card.classList.add('bnr-card--dragover');
+  });
+  card.addEventListener('dragleave', () => card.classList.remove('bnr-card--dragover'));
+  card.addEventListener('drop', (e) => {
+    e.preventDefault();
+    card.classList.remove('bnr-card--dragover');
+    if (dragBannerId === null || dragBannerId === b.id) return;
+    const from = homeBanners.findIndex((x) => x.id === dragBannerId);
+    const to = homeBanners.findIndex((x) => x.id === b.id);
+    dragBannerId = null;
+    if (from === -1 || to === -1) return;
+    const [moved] = homeBanners.splice(from, 1);
+    homeBanners.splice(to, 0, moved);
+    renderHomeBanners(); // شماره‌ها بعد از جابه‌جایی به‌روز می‌شوند
+  });
+
   card.querySelector('.bnr-card__toggle').addEventListener('click', () => {
     b.open = !b.open;
     card.classList.toggle('bnr-card--open', b.open);
   });
   card.querySelector('.bnr-card__del').addEventListener('click', () => {
+    if (homeBanners.length <= BANNER_MIN) { showBannerHint(`حداقل ${faNum(BANNER_MIN)} بنر باید وجود داشته باشد.`, true); return; }
     if (confirm('این بنر حذف شود؟')) {
       homeBanners = homeBanners.filter((x) => x.id !== b.id);
       renderHomeBanners();
     }
   });
 
-  // ورودی‌های متنی — بدون رندر مجدد (حفظ فوکوس)
-  card.querySelector('.bnr-title').addEventListener('input', (e) => {
-    b.title = e.target.value;
+  // ویرایش زندهٔ متن‌ها مستقیم روی بنر (contenteditable)
+  const titleEl = card.querySelector('.bnr-stage__title');
+  titleEl.addEventListener('input', () => {
+    if (!titleEl.textContent.trim()) titleEl.innerHTML = '';
+    b.title = titleEl.textContent.trim();
     card.querySelector('.bnr-card__title').textContent = b.title || 'بنر بدون عنوان';
   });
-  card.querySelector('.bnr-subtitle').addEventListener('input', (e) => { b.subtitle = e.target.value; });
-  card.querySelector('.bnr-text').addEventListener('input', (e) => { b.text = e.target.value; });
+  const subEl = card.querySelector('.bnr-stage__subtitle');
+  subEl.addEventListener('input', () => { if (!subEl.textContent.trim()) subEl.innerHTML = ''; b.subtitle = subEl.textContent.trim(); });
+  const textEl = card.querySelector('.bnr-stage__text');
+  textEl.addEventListener('input', () => { if (!textEl.textContent.trim()) textEl.innerHTML = ''; b.text = textEl.textContent.trim(); });
 
-  // عملکرد کلیک
-  const actionSel = card.querySelector('.bnr-action');
-  actionSel.addEventListener('change', (e) => {
-    b.actionType = e.target.value;
-    b.actionValue = '';
-    card.querySelector('.bnr-target-wrap').innerHTML = bannerActionTargetHTML(b);
-    bindBannerTarget(b, card);
+  // تنظیمات دکمهٔ روی بنر
+  const hasBtn = card.querySelector('.bnr-has-btn');
+  const btnFields = card.querySelector('.bnr-btn-fields');
+  const cta = card.querySelector('.bnr-stage__cta');
+  const btnLabelInput = card.querySelector('.bnr-btn-label');
+  const btnActionInput = card.querySelector('.bnr-btn-action');
+  hasBtn.addEventListener('change', () => {
+    b.hasButton = hasBtn.checked;
+    btnFields.hidden = !b.hasButton;
+    if (cta) cta.hidden = !b.hasButton;
   });
-  bindBannerTarget(b, card);
+  btnLabelInput.addEventListener('input', () => {
+    b.btnLabel = btnLabelInput.value;
+    if (cta) cta.firstChild.textContent = (b.btnLabel || 'مشاهده') + ' ';
+  });
+  btnActionInput.addEventListener('input', () => { b.btnAction = btnActionInput.value; });
 
-  // آپلود عکس
+  // آپلود عکس بنر روی همان استیج (بدون رندر مجدد تا متن‌ها حفظ شوند)
   const fileInput = card.querySelector('.bnr-img-input');
-  const addBtn = card.querySelector('.bnr-img-add');
-  const changeBtn = card.querySelector('.bnr-img-del');
-  if (addBtn) addBtn.addEventListener('click', () => fileInput.click());
-  if (changeBtn) changeBtn.addEventListener('click', () => fileInput.click());
+  const stage = card.querySelector('.bnr-stage');
+  const uploadBtn = card.querySelector('.bnr-stage__upload-btn');
+  uploadBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', () => {
     const f = fileInput.files[0];
     if (!f) return;
     b.img = URL.createObjectURL(f);
-    renderHomeBanners();
+    stage.classList.add('bnr-stage--has-img');
+    stage.style.backgroundImage = `url('${b.img}')`;
+    uploadBtn.lastChild.textContent = 'تغییر عکس';
+    card.querySelector('.bnr-card__thumb').innerHTML = `<img src="${b.img}" alt="">`;
   });
 }
 
-function bindBannerTarget(b, card) {
-  const t = card.querySelector('.bnr-target');
-  if (t) t.addEventListener('input', (e) => { b.actionValue = e.target.value; });
-  if (t && t.tagName === 'SELECT') {
-    b.actionValue = t.value; // مقدار پیش‌فرض اولین بازی
-    t.addEventListener('change', (e) => { b.actionValue = e.target.value; });
-  }
+function showBannerHint(msg, warn) {
+  const el = document.getElementById('home-banner-hint');
+  if (!el) return;
+  el.textContent = msg || `می‌توانید بین ${faNum(BANNER_MIN)} تا ${faNum(BANNER_MAX)} بنر داشته باشید.`;
+  el.classList.toggle('banner-hint--warn', !!warn);
 }
 
 function initHomeBanners() {
+  // حداقل ۳ بنر به‌صورت پیش‌فرض موجود باشد
+  if (!homeBanners.length) {
+    for (let k = 0; k < BANNER_MIN; k++) {
+      homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnAction: '', open: false });
+    }
+  }
   document.getElementById('home-banner-toggle').addEventListener('click', () => {
     document.getElementById('home-banner-acc').classList.toggle('acc--open');
   });
   document.getElementById('home-banner-add').addEventListener('click', () => {
-    homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', actionType: 'none', actionValue: '', open: true });
+    if (homeBanners.length >= BANNER_MAX) { showBannerHint(`حداکثر ${faNum(BANNER_MAX)} بنر می‌توانید اضافه کنید.`, true); return; }
+    homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnAction: '', open: true });
     document.getElementById('home-banner-acc').classList.add('acc--open');
     renderHomeBanners();
+    showBannerHint();
   });
+
+  // راهنمای اطلاعات (باز/بسته با کلیک، بستن با کلیک بیرون)
+  const infoBtn = document.getElementById('home-banner-info');
+  const infoPop = document.getElementById('home-banner-info-pop');
+  if (infoBtn && infoPop) {
+    infoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      infoPop.hidden = !infoPop.hidden;
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoPop.hidden && !infoPop.contains(e.target) && !infoBtn.contains(e.target)) {
+        infoPop.hidden = true;
+      }
+    });
+  }
+
   renderHomeBanners();
+  showBannerHint();
 }
 
 function initBanner() {

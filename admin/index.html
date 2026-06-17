@@ -366,9 +366,22 @@
               <span>بنر خانه</span>
               <span class="badge-count" id="home-banner-count">۰</span>
             </button>
-            <button type="button" class="btn-primary btn-primary--sm" id="home-banner-add"><span class="material-icons-outlined">add</span>افزودن بنر</button>
+            <div class="acc__head-actions">
+              <button type="button" class="btn-primary btn-primary--sm" id="home-banner-add"><span class="material-icons-outlined">add</span>افزودن بنر</button>
+              <button type="button" class="info-btn" id="home-banner-info" title="راهنما"><span class="material-icons-outlined">info</span></button>
+              <div class="info-pop" id="home-banner-info-pop" hidden>
+                <div class="info-pop__title">راهنمای بنر خانه</div>
+                <ul class="info-pop__list">
+                  <li><b>شماره‌گذاری:</b> عدد کنار هر بنر، ترتیب نمایش آن در خانهٔ لانچر است.</li>
+                  <li><b>جابه‌جایی:</b> با کشیدن دستگیره (⠿) ترتیب بنرها را عوض کنید؛ شماره‌ها به‌روز می‌شوند.</li>
+                  <li><b>تعداد مجاز:</b> حداقل ۳ و حداکثر ۷ بنر می‌توانید داشته باشید.</li>
+                  <li><b>ویرایش:</b> روی هر بنر بزنید تا باز شود و عکس، عنوان، متن و عملکرد کلیک را تنظیم کنید.</li>
+                </ul>
+              </div>
+            </div>
           </div>
           <div class="acc__body">
+            <div class="banner-hint" id="home-banner-hint">می‌توانید بین ۳ تا ۷ بنر داشته باشید.</div>
             <div class="banner-cards" id="home-banner-cards"></div>
           </div>
         </div>

@@ -636,7 +636,44 @@ input, select, textarea, button { font-family: inherit; }
 /* کارت بنر (مستطیلی، باز/بسته‌شو) */
 .banner-cards { display: flex; flex-direction: column; gap: 10px; }
 .bnr-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-.bnr-card__head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; }
+.bnr-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; }
+.bnr-card__drag { flex-shrink: 0; display: flex; align-items: center; cursor: grab; color: var(--text-faint); }
+.bnr-card__drag:active { cursor: grabbing; }
+.bnr-card__drag:hover { color: var(--text-dim); }
+.bnr-card__drag .material-icons-outlined { font-size: 20px; }
+.bnr-card__num {
+  flex-shrink: 0; min-width: 22px; height: 22px; padding: 0 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(0,188,212,.12); color: var(--primary);
+  border-radius: 6px; font-size: 12px; font-weight: 700;
+}
+.bnr-card--dragging { opacity: .45; }
+.bnr-card--dragover { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+.banner-hint { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; padding: 0 2px; }
+.banner-hint--warn { color: var(--gold); font-weight: 600; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+/* آیکون اطلاعات + راهنمای کشویی */
+.acc__head-actions { display: flex; align-items: center; gap: 8px; position: relative; }
+.info-btn {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-dim); cursor: pointer; transition: all .15s;
+}
+.info-btn:hover { color: var(--primary); border-color: var(--primary); }
+.info-btn .material-icons-outlined { font-size: 19px; }
+.info-pop {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 60;
+  width: 320px; max-width: 82vw;
+  background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: 12px; padding: 14px 16px; box-shadow: 0 16px 40px rgba(0,0,0,.5);
+}
+.info-pop__title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+.info-pop__list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.info-pop__list li { font-size: 12px; color: var(--text-dim); line-height: 1.7; padding-right: 15px; position: relative; }
+.info-pop__list li::before { content: '•'; position: absolute; right: 0; top: -1px; color: var(--primary); font-weight: 700; }
+.info-pop__list b { color: var(--text); font-weight: 600; }
 .bnr-card__toggle {
   display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;
   background: none; border: none; cursor: pointer; color: var(--text);
@@ -672,6 +709,52 @@ input, select, textarea, button { font-family: inherit; }
 .bnr-img-del:hover { background: rgba(0,0,0,.9); }
 .bnr-target-wrap { flex: 1; }
 .bnr-target-wrap:empty { display: none; }
+
+/* استیج پیش‌نمایش زندهٔ بنر (WYSIWYG) */
+.bnr-stage {
+  position: relative; width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 12px; overflow: hidden;
+  background: #0c0c12 center / cover no-repeat;
+  display: flex; align-items: center;
+}
+.bnr-stage::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to left, rgba(8,8,14,.92) 0%, rgba(8,8,14,.55) 45%, rgba(8,8,14,.1) 100%);
+}
+.bnr-stage:not(.bnr-stage--has-img)::after {
+  content: ''; position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(120% 90% at 100% 50%, rgba(229,56,59,.18), transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 12px, transparent 12px 24px);
+}
+.bnr-stage__upload { position: absolute; top: 14px; left: 14px; z-index: 3; }
+.bnr-stage__upload-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,.55); color: #fff; border: 1px solid rgba(255,255,255,.22);
+  border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; cursor: pointer;
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .15s;
+}
+.bnr-stage__upload-btn:hover { background: rgba(0,0,0,.8); }
+.bnr-stage__upload-btn .material-icons-outlined { font-size: 18px; }
+.bnr-stage__hint {
+  margin-top: 6px; display: inline-block; font-size: 11px; color: rgba(255,255,255,.7);
+  background: rgba(0,0,0,.5); padding: 3px 8px; border-radius: 6px;
+}
+.bnr-stage__content {
+  position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+  z-index: 2; text-align: right; max-width: 60%;
+}
+.bnr-stage__title { font-size: clamp(20px, 3.4vw, 40px); font-weight: 800; color: #fff; line-height: 1.1; outline: none; min-width: 40px; }
+.bnr-stage__subtitle { font-size: clamp(13px, 1.6vw, 20px); font-weight: 700; color: var(--primary); margin-top: 8px; outline: none; min-width: 40px; }
+.bnr-stage__text { font-size: clamp(11px, 1.1vw, 14px); color: rgba(255,255,255,.72); margin-top: 10px; line-height: 1.7; outline: none; min-width: 60px; }
+.bnr-stage__cta {
+  margin-top: 16px; display: inline-flex; align-items: center; gap: 6px;
+  background: var(--primary); color: #042b30; border: none; border-radius: 10px;
+  padding: 9px 22px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: default;
+}
+.bnr-stage [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(0,188,212,.55); border-radius: 4px; }
+.bnr-stage [contenteditable][data-ph]:empty::before { content: attr(data-ph); color: rgba(255,255,255,.4); pointer-events: none; }
+.bnr-btn-fields { display: flex; flex-direction: column; gap: 12px; }
 
 /* بخش کشویی مشخصات سیستم */
 .umodal-accordion { border-bottom: 1px solid var(--border); }

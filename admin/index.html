@@ -388,13 +388,35 @@
         </div>
       </div>
 
-      <!-- سکشن بنر صفحهٔ بازی‌ها (فقط در حالت صفحهٔ بازی‌ها) -->
-      <div class="panel" id="pub-banner-section" hidden style="margin-bottom:20px">
-        <div class="panel__head">
-          <h2>بنر صفحهٔ بازی‌ها <span class="badge-count" id="banner-count">۰</span></h2>
-          <button class="btn-primary btn-primary--sm" id="banner-add-btn"><span class="material-icons-outlined">add</span>افزودن بازی به بنر</button>
+      <!-- بخش بازی: بنر بازی‌ها (ویرایشگر زنده) -->
+      <div class="pub-home-canvas" id="pub-game-canvas" hidden>
+        <div class="acc acc--open" id="game-banner-acc">
+          <div class="acc__head">
+            <button type="button" class="acc__toggle" id="game-banner-toggle">
+              <span class="material-icons-outlined acc__chevron">expand_more</span>
+              <span>بنر بازی‌ها</span>
+              <span class="badge-count" id="game-banner-count">۰</span>
+            </button>
+            <div class="acc__head-actions">
+              <button type="button" class="btn-primary btn-primary--sm" id="game-banner-add"><span class="material-icons-outlined">add</span>افزودن بنر بازی</button>
+              <button type="button" class="info-btn" id="game-banner-info" title="راهنما"><span class="material-icons-outlined">info</span></button>
+              <div class="info-pop" id="game-banner-info-pop" hidden>
+                <div class="info-pop__title">راهنمای بنر بازی</div>
+                <ul class="info-pop__list">
+                  <li><b>عکس بنر:</b> تصویر اصلی بازی با رزولوشن ۱۲۸۰×۷۲۰ آپلود کنید.</li>
+                  <li><b>اسم بازی و پیشنهاد:</b> مستقیم روی بنر، نام بازی و دلیل پیشنهاد را بنویسید.</li>
+                  <li><b>ژانرها:</b> یک یا چند ژانر را تیک بزنید تا روی بنر نمایش داده شوند.</li>
+                  <li><b>قیمت:</b> اگر بازی رایگان است تیک «رایگان» را روشن بگذارید، وگرنه قیمت را وارد کنید.</li>
+                  <li><b>عکس‌های محیط بازی:</b> بین ۳ تا ۶ عکس از گیم‌پلی اضافه کنید.</li>
+                  <li><b>ترتیب نمایش:</b> با کشیدن دستگیره (⠿) ترتیب بنرها را تغییر دهید.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="acc__body">
+            <div class="banner-cards" id="game-banner-cards"></div>
+          </div>
         </div>
-        <div class="banner-games" id="banner-games"></div>
       </div>
 
       <div class="games-layout" id="pub-layout">
@@ -508,9 +530,15 @@
                 <option value="w1">هفته گذشته</option>
                 <option value="mo1">ماه گذشته</option>
               </select>
+              <select class="toolbar__select" id="notif-type-filter">
+                <option value="all">همهٔ نوع‌ها</option>
+                <option value="warning">هشدار</option>
+                <option value="news">خبری</option>
+                <option value="reward">جایزه</option>
+              </select>
               <div class="toolbar__search">
                 <span class="material-icons-outlined">search</span>
-                <input type="text" id="notif-search" placeholder="جستجو در عنوان و متن پیام...">
+                <input type="text" id="notif-search" placeholder="جستجو در عنوان، متن، نام کاربری و شماره تلفن...">
               </div>
             </div>
             <div class="notif-htabs">
@@ -525,15 +553,6 @@
     </section>
 
   </main>
-</div>
-
-<!-- ========== مودال انتخاب بازی برای بنر ========== -->
-<div class="modal-overlay" id="game-picker" hidden>
-  <div class="modal modal--wide">
-    <button class="modal__close" id="game-picker-close"><span class="material-icons-outlined">close</span></button>
-    <h3 class="modal__title">انتخاب بازی برای بنر</h3>
-    <div class="picker-grid" id="picker-grid"></div>
-  </div>
 </div>
 
 <!-- ========== مودال جزئیات کاربر ========== -->

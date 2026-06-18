@@ -874,89 +874,216 @@ function setPubTarget(t) {
   pubTarget = t;
   document.querySelectorAll('.admin-nav__subitem').forEach((s) => s.classList.toggle('admin-nav__subitem--active', s.dataset.pub === t));
 
-  // پنل نوتیفیکیشن جدا از پنل‌های محتواست
+  // سه بوم جداگانه: خانه / بازی / نوتیفیکیشن
   const isNotif = (t === 'notif');
   document.getElementById('pub-notif').hidden = !isNotif;
   document.getElementById('pub-home-canvas').hidden = (t !== 'home');
-  document.getElementById('pub-banner-section').hidden = (t !== 'game');
+  document.getElementById('pub-game-canvas').hidden = (t !== 'game');
   document.getElementById('pub-layout').hidden = true;
-  if (isNotif) { renderNotifications(); return; }
 
-  document.getElementById('pub-form-title').textContent = PUB_TITLE[t];
-  document.getElementById('pub-subtitle-field').hidden = (t !== 'home'); // زیرعنوان فقط در انتشار خانه
-  document.getElementById('pub-game-field').hidden = (t === 'game');     // بازی مرتبط فقط در انتشار خانه
-  // فرم انتشار فقط در حالت خانه؛ در صفحهٔ بازی‌ها فقط لیست نمایش داده می‌شود
-  document.getElementById('pub-form-panel').hidden = (t === 'game');
-  document.getElementById('pub-layout').classList.toggle('games-layout--single', t === 'game');
-  // سکشن بنر صفحهٔ بازی‌ها فقط در حالت بازی
-  document.getElementById('pub-banner-section').hidden = (t !== 'game');
-  if (t === 'game') renderBannerGames();
-  // بخش خانه آکاردئون بنر را نشان می‌دهد؛ لیست/فرم قدیمی در هر دو حالت مخفی است
-  document.getElementById('pub-home-canvas').hidden = (t !== 'home');
-  document.getElementById('pub-layout').hidden = true;
-  pubFillSelects();
-  pubResetForm();
-  renderPublications();
+  if (isNotif) { renderNotifications(); return; }
+  if (t === 'game') { renderGameBanners(); return; }
+  renderHomeBanners(); // حالت خانه
 }
 
 // ============================================
 // بنر صفحهٔ بازی‌ها — افزودن/حذف بازی‌ها
 // ============================================
-let bannerGames = [1]; // شناسهٔ بازی‌های افزوده‌شده به بنر (پیش‌فرض: CS2)
+const GAME_GENRES = ['استراتژی', 'MOBA', 'فانتزی', 'اسپرت', 'اکشن', 'نقش‌آفرینی', 'تیراندازی', 'بتل‌رویال', 'ماجراجویی', 'ترسناک'];
+const GB_SHOTS_MIN = 3;
+const GB_SHOTS_MAX = 6;
+let gameBanners = [
+  { id: 1, name: 'DOTA 2', suggest: 'چون بازی‌های استراتژی و فانتزی بازی کردی', genres: ['استراتژی', 'MOBA', 'فانتزی', 'اسپرت'], free: true, price: '', img: '', shots: [], open: false },
+];
+let gameBannerSeq = 2;
+let dragGameBannerId = null;
 
-function renderBannerGames() {
-  const wrap = document.getElementById('banner-games');
-  const items = bannerGames.map((id) => GAMES.find((g) => g.id === id)).filter(Boolean);
-  document.getElementById('banner-count').textContent = faNum(items.length);
-  if (!items.length) {
-    wrap.innerHTML = '<div class="empty-state">هنوز بازی‌ای به بنر اضافه نشده — روی «افزودن بازی به بنر» بزنید</div>';
-    return;
-  }
-  wrap.innerHTML = items.map((g) => {
-    const cover = (g.media && g.media[0]) ? g.media[0].url : '';
-    return `
-    <div class="banner-game" data-gid="${g.id}">
-      <img class="banner-game__cover" src="${cover}" alt="">
-      <div class="banner-game__info">
-        <div class="banner-game__name">${g.name}</div>
-        <div class="banner-game__genre">${g.genre}</div>
-      </div>
-      <button class="banner-game__del" data-gid="${g.id}" title="حذف از بنر"><span class="material-icons-outlined">close</span></button>
-    </div>`;
-  }).join('');
-  wrap.querySelectorAll('.banner-game__del').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      bannerGames = bannerGames.filter((id) => id !== Number(btn.dataset.gid));
-      renderBannerGames();
-    });
-  });
+function gbShotsHTML(b) {
+  return (b.shots || []).map((url, si) => `
+    <div class="media-thumb" data-si="${si}">
+      <img src="${url}" alt="">
+      <button type="button" class="media-thumb__del" data-si="${si}"><span class="material-icons-outlined">close</span></button>
+    </div>`).join('');
 }
 
-function openGamePicker() {
-  const grid = document.getElementById('picker-grid');
-  const available = GAMES.filter((g) => !bannerGames.includes(g.id));
-  if (!available.length) {
-    grid.innerHTML = '<div class="empty-state">همهٔ بازی‌ها قبلاً به بنر اضافه شده‌اند</div>';
-  } else {
-    grid.innerHTML = available.map((g) => {
-      const cover = (g.media && g.media[0]) ? g.media[0].url : '';
-      return `
-      <button class="picker-card" data-gid="${g.id}">
-        <img src="${cover}" alt="">
-        <div class="picker-card__name">${g.name}</div>
-        <div class="picker-card__genre">${g.genre}</div>
-        <span class="picker-card__add"><span class="material-icons-outlined">add_circle</span></span>
-      </button>`;
-    }).join('');
-    grid.querySelectorAll('.picker-card').forEach((card) => {
-      card.addEventListener('click', () => {
-        bannerGames.push(Number(card.dataset.gid));
-        renderBannerGames();
-        openGamePicker(); // به‌روزرسانی لیست انتخاب
-      });
+function gameBannerCardHTML(b, i) {
+  const genres = b.genres || [];
+  return `
+  <div class="bnr-card ${b.open ? 'bnr-card--open' : ''}" data-gbid="${b.id}">
+    <div class="bnr-card__head">
+      <span class="bnr-card__drag" title="بکشید تا ترتیب عوض شود"><span class="material-icons-outlined">drag_indicator</span></span>
+      <button type="button" class="bnr-card__toggle">
+        <span class="bnr-card__num">${faNum(i + 1)}</span>
+        <span class="material-icons-outlined bnr-card__chevron">expand_more</span>
+        <span class="bnr-card__thumb">${b.img ? `<img src="${b.img}" alt="">` : '<span class="material-icons-outlined">image</span>'}</span>
+        <span class="bnr-card__title">${b.name || 'بازی بدون عنوان'}</span>
+      </button>
+      <button type="button" class="bnr-card__del" title="حذف بنر"><span class="material-icons-outlined">delete</span></button>
+    </div>
+    <div class="bnr-card__body">
+      <input type="file" class="gb-img-input" accept="image/*" hidden>
+      <div class="bnr-stage ${b.img ? 'bnr-stage--has-img' : ''}" ${b.img ? `style="background-image:url('${b.img}')"` : ''}>
+        <div class="bnr-stage__upload">
+          <button type="button" class="bnr-stage__upload-btn"><span class="material-icons-outlined">photo_camera</span>${b.img ? 'تغییر عکس' : 'افزودن عکس بنر'}</button>
+          <div class="bnr-stage__hint">رزولوشن عکس بنر باید ۱۲۸۰×۷۲۰ باشد</div>
+        </div>
+        <div class="bnr-stage__content">
+          <div class="bnr-stage__title gb-name" contenteditable="true" data-ph="اسم بازی">${b.name || ''}</div>
+          <div class="gb-suggest-row"><span class="gb-suggest-label">پیشنهاد شده:</span> <span class="gb-suggest" contenteditable="true" data-ph="چرا این بازی پیشنهاد می‌شود؟">${b.suggest || ''}</span></div>
+          <div class="gb-stage-genres">${genres.map((g) => `<span class="gb-genre-chip">${g}</span>`).join('')}</div>
+          <div class="gb-stage-price">${b.free ? 'رایگان' : (b.price ? faNum(b.price) + ' تومان' : 'قیمت تعیین نشده')}</div>
+        </div>
+      </div>
+
+      <div class="field"><span>ژانرها (چند انتخاب)</span>
+        <div class="notif-tagpick gb-genres">
+          ${GAME_GENRES.map((g) => `<label class="tag-check ${genres.includes(g) ? 'tag-check--on' : ''}"><input type="checkbox" value="${g}" ${genres.includes(g) ? 'checked' : ''}><span class="material-icons-outlined">sell</span>${g}</label>`).join('')}
+        </div>
+      </div>
+
+      <label class="toggle-field">
+        <input type="checkbox" class="gb-free" ${b.free ? 'checked' : ''}>
+        <span class="toggle-switch"></span>
+        <span class="toggle-label"><b>رایگان</b><small>اگر غیرفعال شود، قیمت بازی را وارد کنید</small></span>
+      </label>
+      <label class="field gb-price-field" ${b.free ? 'hidden' : ''}><span>قیمت (تومان)</span><input type="text" class="gb-price" value="${b.price || ''}" placeholder="مثلاً ۲۵۰٬۰۰۰"></label>
+
+      <div class="form-section__title">عکس‌های محیط بازی (۳ تا ۶)</div>
+      <div class="media-uploader">
+        <input type="file" class="gb-shots-input" accept="image/*" multiple hidden>
+        <button type="button" class="media-add-btn gb-shots-add"><span class="material-icons-outlined">add_photo_alternate</span>افزودن عکس محیط</button>
+        <div class="media-grid gb-shots-grid">${gbShotsHTML(b)}</div>
+      </div>
+      <div class="banner-hint gb-shots-hint"></div>
+    </div>
+  </div>`;
+}
+
+function renderGameBanners() {
+  document.getElementById('game-banner-count').textContent = faNum(gameBanners.length);
+  const wrap = document.getElementById('game-banner-cards');
+  if (!gameBanners.length) {
+    wrap.innerHTML = '<div class="empty-state" style="padding:30px">هنوز بنری اضافه نشده — روی «افزودن بنر بازی» بزنید</div>';
+    return;
+  }
+  wrap.innerHTML = gameBanners.map((b, i) => gameBannerCardHTML(b, i)).join('');
+  gameBanners.forEach((b) => bindGameBannerCard(b));
+}
+
+function gbUpdateShotsHint(card, b) {
+  const hint = card.querySelector('.gb-shots-hint');
+  const n = (b.shots || []).length;
+  if (n < GB_SHOTS_MIN) { hint.textContent = `حداقل ${faNum(GB_SHOTS_MIN)} عکس لازم است (الان ${faNum(n)}).`; hint.classList.add('banner-hint--warn'); }
+  else if (n >= GB_SHOTS_MAX) { hint.textContent = `به حداکثر ${faNum(GB_SHOTS_MAX)} عکس رسیدید.`; hint.classList.remove('banner-hint--warn'); }
+  else { hint.textContent = `${faNum(n)} عکس انتخاب شده (تا ${faNum(GB_SHOTS_MAX)} مجاز).`; hint.classList.remove('banner-hint--warn'); }
+}
+
+function bindGameBannerCard(b) {
+  const card = document.querySelector(`.bnr-card[data-gbid="${b.id}"]`);
+  if (!card) return;
+
+  // درگ برای تغییر ترتیب
+  const drag = card.querySelector('.bnr-card__drag');
+  if (drag) {
+    drag.addEventListener('mousedown', () => card.setAttribute('draggable', 'true'));
+    drag.addEventListener('mouseup', () => card.removeAttribute('draggable'));
+  }
+  card.addEventListener('dragstart', (e) => { dragGameBannerId = b.id; card.classList.add('bnr-card--dragging'); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', String(b.id)); } catch (_) {} });
+  card.addEventListener('dragend', () => { card.classList.remove('bnr-card--dragging'); card.removeAttribute('draggable'); document.querySelectorAll('.bnr-card--dragover').forEach((c) => c.classList.remove('bnr-card--dragover')); dragGameBannerId = null; });
+  card.addEventListener('dragover', (e) => { if (dragGameBannerId === null || dragGameBannerId === b.id) return; e.preventDefault(); e.dataTransfer.dropEffect = 'move'; card.classList.add('bnr-card--dragover'); });
+  card.addEventListener('dragleave', () => card.classList.remove('bnr-card--dragover'));
+  card.addEventListener('drop', (e) => {
+    e.preventDefault(); card.classList.remove('bnr-card--dragover');
+    if (dragGameBannerId === null || dragGameBannerId === b.id) return;
+    const from = gameBanners.findIndex((x) => x.id === dragGameBannerId);
+    const to = gameBanners.findIndex((x) => x.id === b.id);
+    dragGameBannerId = null;
+    if (from === -1 || to === -1) return;
+    const [moved] = gameBanners.splice(from, 1);
+    gameBanners.splice(to, 0, moved);
+    renderGameBanners();
+  });
+
+  card.querySelector('.bnr-card__toggle').addEventListener('click', () => { b.open = !b.open; card.classList.toggle('bnr-card--open', b.open); });
+  card.querySelector('.bnr-card__del').addEventListener('click', () => { if (confirm('این بنر بازی حذف شود؟')) { gameBanners = gameBanners.filter((x) => x.id !== b.id); renderGameBanners(); } });
+
+  // اسم بازی و متن پیشنهاد (ویرایش روی بنر)
+  const nameEl = card.querySelector('.gb-name');
+  nameEl.addEventListener('input', () => { if (!nameEl.textContent.trim()) nameEl.innerHTML = ''; b.name = nameEl.textContent.trim(); card.querySelector('.bnr-card__title').textContent = b.name || 'بازی بدون عنوان'; });
+  const sugEl = card.querySelector('.gb-suggest');
+  sugEl.addEventListener('input', () => { if (!sugEl.textContent.trim()) sugEl.innerHTML = ''; b.suggest = sugEl.textContent.trim(); });
+
+  // آپلود عکس بنر
+  const imgInput = card.querySelector('.gb-img-input');
+  const stage = card.querySelector('.bnr-stage');
+  const upBtn = card.querySelector('.bnr-stage__upload-btn');
+  upBtn.addEventListener('click', () => imgInput.click());
+  imgInput.addEventListener('change', () => {
+    const f = imgInput.files[0]; if (!f) return;
+    b.img = URL.createObjectURL(f);
+    stage.classList.add('bnr-stage--has-img'); stage.style.backgroundImage = `url('${b.img}')`;
+    upBtn.lastChild.textContent = 'تغییر عکس';
+    card.querySelector('.bnr-card__thumb').innerHTML = `<img src="${b.img}" alt="">`;
+  });
+
+  // ژانرها (چک‌باکس) — به‌روزرسانی زندهٔ چیپ‌های روی بنر
+  const stageGenres = card.querySelector('.gb-stage-genres');
+  card.querySelectorAll('.gb-genres input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      cb.closest('.tag-check').classList.toggle('tag-check--on', cb.checked);
+      b.genres = Array.from(card.querySelectorAll('.gb-genres input:checked')).map((x) => x.value);
+      stageGenres.innerHTML = b.genres.map((g) => `<span class="gb-genre-chip">${g}</span>`).join('');
+    });
+  });
+
+  // رایگان / قیمت
+  const free = card.querySelector('.gb-free');
+  const priceField = card.querySelector('.gb-price-field');
+  const priceInput = card.querySelector('.gb-price');
+  const stagePrice = card.querySelector('.gb-stage-price');
+  const refreshPrice = () => { stagePrice.textContent = b.free ? 'رایگان' : (b.price ? faNum(b.price) + ' تومان' : 'قیمت تعیین نشده'); };
+  free.addEventListener('change', () => { b.free = free.checked; priceField.hidden = b.free; refreshPrice(); });
+  priceInput.addEventListener('input', () => { b.price = priceInput.value.trim(); refreshPrice(); });
+
+  // عکس‌های محیط بازی
+  const shotsInput = card.querySelector('.gb-shots-input');
+  const shotsGrid = card.querySelector('.gb-shots-grid');
+  const renderShots = () => {
+    shotsGrid.innerHTML = gbShotsHTML(b);
+    shotsGrid.querySelectorAll('.media-thumb__del').forEach((btn) => btn.addEventListener('click', () => { b.shots.splice(Number(btn.dataset.si), 1); renderShots(); }));
+    gbUpdateShotsHint(card, b);
+  };
+  card.querySelector('.gb-shots-add').addEventListener('click', () => shotsInput.click());
+  shotsInput.addEventListener('change', () => {
+    b.shots = b.shots || [];
+    Array.from(shotsInput.files).forEach((f) => { if (b.shots.length < GB_SHOTS_MAX) b.shots.push(URL.createObjectURL(f)); });
+    shotsInput.value = '';
+    renderShots();
+  });
+  renderShots();
+}
+
+function initGameBanners() {
+  document.getElementById('game-banner-toggle').addEventListener('click', () => {
+    document.getElementById('game-banner-acc').classList.toggle('acc--open');
+  });
+  document.getElementById('game-banner-add').addEventListener('click', () => {
+    gameBanners.push({ id: gameBannerSeq++, name: '', suggest: '', genres: [], free: true, price: '', img: '', shots: [], open: true });
+    document.getElementById('game-banner-acc').classList.add('acc--open');
+    renderGameBanners();
+  });
+
+  // راهنمای اطلاعات (باز/بسته با کلیک، بستن با کلیک بیرون)
+  const gInfoBtn = document.getElementById('game-banner-info');
+  const gInfoPop = document.getElementById('game-banner-info-pop');
+  if (gInfoBtn && gInfoPop) {
+    gInfoBtn.addEventListener('click', (e) => { e.stopPropagation(); gInfoPop.hidden = !gInfoPop.hidden; });
+    document.addEventListener('click', (e) => {
+      if (!gInfoPop.hidden && !gInfoPop.contains(e.target) && !gInfoBtn.contains(e.target)) gInfoPop.hidden = true;
     });
   }
-  document.getElementById('game-picker').hidden = false;
+
+  renderGameBanners();
 }
 
 // ============================================
@@ -1218,16 +1345,6 @@ function initHomeBanners() {
   showBannerHint();
 }
 
-function initBanner() {
-  document.getElementById('banner-add-btn').addEventListener('click', openGamePicker);
-  document.getElementById('game-picker-close').addEventListener('click', () => {
-    document.getElementById('game-picker').hidden = true;
-  });
-  document.getElementById('game-picker').addEventListener('click', (e) => {
-    if (e.target.id === 'game-picker') document.getElementById('game-picker').hidden = true;
-  });
-}
-
 function renderPublications() {
   const rows = PUBLICATIONS.filter((p) => p.target === pubTarget);
   document.getElementById('pub-list-head').innerHTML =
@@ -1293,15 +1410,16 @@ const _notifNow = Date.now();
 let NOTIFICATIONS = [
   { id: 1, scope: 'public', userName: '', title: 'فصل جدید آغاز شد', text: 'فصل سوم با جوایز و رویدادهای ویژه شروع شد — همین حالا وارد شوید!', type: 'news', tags: ['tournament'], ts: _notifNow - 40 * 60 * 1000 },
   { id: 5, scope: 'public', userName: '', title: 'استریم ویژهٔ آخر هفته', text: 'پنجشنبه ساعت ۲۱ منتظرتان هستیم.', type: 'news', tags: ['stream'], ts: _notifNow - 2 * 3600 * 1000 },
-  { id: 2, scope: 'private', userName: 'آرش کریمی', title: 'جایزهٔ شما آماده است', text: '۵۰۰ سکهٔ X به حساب شما اضافه شد.', type: 'reward', tags: ['general'], ts: _notifNow - 8 * 3600 * 1000 },
-  { id: 6, scope: 'private', userName: 'پیمان شریفی', title: 'تأیید پروفایل', text: 'اطلاعات حساب شما با موفقیت تأیید شد.', type: 'news', tags: [], ts: _notifNow - 5 * 3600 * 1000 },
+  { id: 2, scope: 'private', userId: 3, userName: 'آرش کریمی', userHandle: '@ArashGG', userPhone: '0901 887 6655', title: 'جایزهٔ شما آماده است', text: '۵۰۰ سکهٔ X به حساب شما اضافه شد.', type: 'reward', tags: ['general'], ts: _notifNow - 8 * 3600 * 1000 },
+  { id: 6, scope: 'private', userId: 8, userName: 'پیمان شریفی', userHandle: '@NightWolf_IR', userPhone: '0991 445 6677', title: 'تأیید پروفایل', text: 'اطلاعات حساب شما با موفقیت تأیید شد.', type: 'news', tags: [], ts: _notifNow - 5 * 3600 * 1000 },
   { id: 3, scope: 'public', userName: '', title: 'به‌روزرسانی لانچر', text: 'نسخهٔ ۱.۴ لانچر منتشر شد؛ همین حالا آپدیت کنید.', type: 'news', tags: ['general'], ts: _notifNow - 3 * 24 * 3600 * 1000 },
-  { id: 4, scope: 'private', userName: 'مریم اکبری', title: 'هشدار امنیتی', text: 'ورود ناشناس به حساب شما شناسایی شد.', type: 'warning', tags: [], ts: _notifNow - 12 * 24 * 3600 * 1000 },
+  { id: 4, scope: 'private', userId: 11, userName: 'مریم اکبری', userHandle: '@MaryGamer', userPhone: '0922 556 7788', title: 'هشدار امنیتی', text: 'ورود ناشناس به حساب شما شناسایی شد.', type: 'warning', tags: [], ts: _notifNow - 12 * 24 * 3600 * 1000 },
 ];
 let notifScope = 'public';
 let notifTargetId = null;
 let notifHistTab = 'public';
 let notifTimeFilter = 'all';
+let notifTypeFilter = 'all';
 let notifSearch = '';
 let notifTagFilter = 'all';
 let pendingNotif = null;   // پیام در انتظار تأیید در پاپ‌آپ
@@ -1411,9 +1529,23 @@ function renderNotifications() {
   if (!list) return;
   const win = NOTIF_WINDOWS[notifTimeFilter] || 0;
   const cutoff = win ? Date.now() - win : 0;
-  const q = notifSearch.trim().toLowerCase();
-  const base = (n) => (!cutoff || n.ts >= cutoff)
-    && (!q || (n.title || '').toLowerCase().includes(q) || (n.text || '').toLowerCase().includes(q));
+  const q = enNum(notifSearch.trim().toLowerCase());
+  const qDigits = q.replace(/\D/g, '');
+  const matchSearch = (n) => {
+    if (!q) return true;
+    if ((n.title || '').toLowerCase().includes(q)) return true;
+    if ((n.text || '').toLowerCase().includes(q)) return true;
+    // برای پیام خصوصی: نام، نام کاربری و شمارهٔ تلفن گیرنده هم جستجو می‌شود
+    if (n.scope === 'private') {
+      if ((n.userName || '').toLowerCase().includes(q)) return true;
+      const h = (n.userHandle || '').toLowerCase();
+      if (h.includes(q) || h.replace('@', '').includes(q)) return true;
+      if (qDigits.length >= 2 && enNum(n.userPhone || '').replace(/\D/g, '').includes(qDigits)) return true;
+    }
+    return false;
+  };
+  const matchType = (n) => notifTypeFilter === 'all' || n.type === notifTypeFilter;
+  const base = (n) => (!cutoff || n.ts >= cutoff) && matchSearch(n) && matchType(n);
   const pub = NOTIFICATIONS.filter((n) => n.scope === 'public' && base(n));
   const prv = NOTIFICATIONS.filter((n) => n.scope === 'private' && base(n));
   document.getElementById('notif-count-public').textContent = faNum(pub.length);
@@ -1434,7 +1566,9 @@ function renderNotifications() {
         <div class="notif-item__top">
           <span class="notif-item__title">${n.title}</span>
           <span class="notif-type-badge" style="color:${ty.color}">${ty.label}</span>
-          <span class="notif-scope-badge ${n.scope === 'public' ? 'notif-scope-badge--pub' : 'notif-scope-badge--prv'}">${n.scope === 'public' ? 'عمومی' : 'خصوصی: ' + n.userName}</span>
+          ${n.scope === 'public'
+            ? '<span class="notif-scope-badge notif-scope-badge--pub">عمومی</span>'
+            : `<span class="notif-scope-badge notif-scope-badge--prv">خصوصی</span><button type="button" class="notif-recipient" data-uid="${n.userId}" title="مشاهدهٔ پروفایل کاربر"><span class="material-icons-outlined">account_circle</span>${n.userName}</button>`}
         </div>
         ${tagBadges ? `<div class="notif-item__tags">${tagBadges}</div>` : ''}
         <div class="notif-item__text">${n.text}</div>
@@ -1460,8 +1594,15 @@ function renderNotifications() {
       } else if (btn.dataset.act === 'edit') {
         openNotifEdit(n);
       } else if (btn.dataset.act === 'resend') {
-        openNotifPreview({ scope: n.scope, userName: n.userName, title: n.title, text: n.text, type: n.type, tags: (n.tags || []).slice() }, false);
+        openNotifPreview({ scope: n.scope, userId: n.userId, userName: n.userName, userHandle: n.userHandle, userPhone: n.userPhone, title: n.title, text: n.text, type: n.type, tags: (n.tags || []).slice() }, false);
       }
+    });
+  });
+  // کلیک روی نام گیرنده → باز شدن مودال جزئیات کاربر
+  list.querySelectorAll('.notif-recipient').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const uid = Number(btn.dataset.uid);
+      if (uid) openUserModal(uid);
     });
   });
 }
@@ -1500,14 +1641,17 @@ function closeNotifPreview() {
 function confirmNotifSend() {
   if (!pendingNotif) return;
   const d = pendingNotif;
-  NOTIFICATIONS.unshift({ id: Date.now(), scope: d.scope, userName: d.userName, title: d.title, text: d.text, type: d.type, tags: (d.tags || []).slice(), scheduledAt: d.scheduledAt || '', ts: Date.now() });
+  NOTIFICATIONS.unshift({ id: Date.now(), scope: d.scope, userId: d.userId || null, userName: d.userName, userHandle: d.userHandle || '', userPhone: d.userPhone || '', title: d.title, text: d.text, type: d.type, tags: (d.tags || []).slice(), scheduledAt: d.scheduledAt || '', ts: Date.now() });
   const scope = d.scope;
   const fromForm = d.fromForm;
   closeNotifPreview();
   if (fromForm) resetNotifForm();
   notifTimeFilter = 'all';
+  notifTypeFilter = 'all';
   const tf = document.getElementById('notif-time-filter');
   if (tf) tf.value = 'all';
+  const tyf = document.getElementById('notif-type-filter');
+  if (tyf) tyf.value = 'all';
   setNotifHistTab(scope); // به تب همان نوع برو و رندر کن
 }
 
@@ -1555,7 +1699,10 @@ function initNotif() {
     const u = notifScope === 'private' ? USERS.find((x) => x.id === notifTargetId) : null;
     openNotifPreview({
       scope: notifScope,
+      userId: u ? u.id : null,
       userName: u ? u.name : '',
+      userHandle: u ? u.handle : '',
+      userPhone: u ? u.phone : '',
       title: document.getElementById('notif-title').value.trim(),
       text: document.getElementById('notif-text').value.trim(),
       type: document.getElementById('notif-type').value,
@@ -1571,6 +1718,10 @@ function initNotif() {
   // فیلتر زمانی تاریخچه
   document.getElementById('notif-time-filter').addEventListener('change', (e) => {
     notifTimeFilter = e.target.value;
+    renderNotifications();
+  });
+  document.getElementById('notif-type-filter').addEventListener('change', (e) => {
+    notifTypeFilter = e.target.value;
     renderNotifications();
   });
 
@@ -1671,7 +1822,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLauncher();
   initServers();
   initPublish();
-  initBanner();
+  initGameBanners();
   initHomeBanners();
   initNotif();
 });

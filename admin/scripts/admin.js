@@ -6,6 +6,7 @@ const ADMIN_CREDS = { user: 'admin', pass: 'admin123' };
 
 // تبدیل عدد به فارسی
 const faNum = (n) => String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]);
+const enNum = (s) => String(s).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 const faPrice = (n) => faNum(n.toLocaleString('en-US'));
 
 // ---------- داده‌های نمونه کاربران ----------
@@ -872,6 +873,15 @@ function pubResetForm() {
 function setPubTarget(t) {
   pubTarget = t;
   document.querySelectorAll('.admin-nav__subitem').forEach((s) => s.classList.toggle('admin-nav__subitem--active', s.dataset.pub === t));
+
+  // پنل نوتیفیکیشن جدا از پنل‌های محتواست
+  const isNotif = (t === 'notif');
+  document.getElementById('pub-notif').hidden = !isNotif;
+  document.getElementById('pub-home-canvas').hidden = (t !== 'home');
+  document.getElementById('pub-banner-section').hidden = (t !== 'game');
+  document.getElementById('pub-layout').hidden = true;
+  if (isNotif) { renderNotifications(); return; }
+
   document.getElementById('pub-form-title').textContent = PUB_TITLE[t];
   document.getElementById('pub-subtitle-field').hidden = (t !== 'home'); // زیرعنوان فقط در انتشار خانه
   document.getElementById('pub-game-field').hidden = (t === 'game');     // بازی مرتبط فقط در انتشار خانه
@@ -958,6 +968,40 @@ let dragBannerId = null;
 const BANNER_MIN = 3;
 const BANNER_MAX = 7;
 
+// مسیرهای ممکن برای دکمهٔ روی بنر
+const BNR_BTN_ACTIONS = {
+  game: 'صفحهٔ بازی',
+  url: 'لینک / وب‌پیج',
+  social: 'شبکهٔ اجتماعی',
+  tournament: 'بخش تورنومنت',
+  stream: 'بخش استریم',
+};
+
+function bannerBtnTargetHTML(b) {
+  if (b.btnActionType === 'game') {
+    const opts = GAMES.map((g) => `<option ${b.btnActionValue === g.name ? 'selected' : ''}>${g.name}</option>`).join('');
+    return `<label class="field"><span>بازی مقصد</span><select class="bnr-btn-value">${opts}</select></label>`;
+  }
+  if (b.btnActionType === 'url') {
+    return `<label class="field"><span>آدرس لینک</span><input type="text" class="bnr-btn-value" value="${b.btnActionValue || ''}" placeholder="https://example.com"></label>`;
+  }
+  if (b.btnActionType === 'social') {
+    return `<label class="field"><span>لینک شبکهٔ اجتماعی</span><input type="text" class="bnr-btn-value" value="${b.btnActionValue || ''}" placeholder="https://instagram.com/yourpage"></label>`;
+  }
+  return ''; // تورنومنت / استریم نیازی به مقدار اضافه ندارند
+}
+
+function bindBannerBtnTarget(b, card) {
+  const t = card.querySelector('.bnr-btn-value');
+  if (!t) { b.btnActionValue = ''; return; }
+  if (t.tagName === 'SELECT') {
+    b.btnActionValue = t.value;
+    t.addEventListener('change', () => { b.btnActionValue = t.value; });
+  } else {
+    t.addEventListener('input', () => { b.btnActionValue = t.value; });
+  }
+}
+
 function bannerCardHTML(b, i) {
   return `
   <div class="bnr-card ${b.open ? 'bnr-card--open' : ''}" data-bid="${b.id}">
@@ -998,8 +1042,13 @@ function bannerCardHTML(b, i) {
         </span>
       </label>
       <div class="bnr-btn-fields" ${b.hasButton ? '' : 'hidden'}>
-        <label class="field"><span>نام دکمه</span><input type="text" class="bnr-btn-label" value="${b.btnLabel || ''}" placeholder="مثلاً مشاهده"></label>
-        <label class="field"><span>عملکرد دکمه (فانکشن)</span><input type="text" class="bnr-btn-action" value="${b.btnAction || ''}" placeholder="مثلاً openGame('valorant') یا https://..."></label>
+        <div class="field-row">
+          <label class="field"><span>نام دکمه</span><input type="text" class="bnr-btn-label" value="${b.btnLabel || ''}" placeholder="مثلاً مشاهده"></label>
+          <label class="field"><span>مسیر دکمه (بعد از کلیک)</span>
+            <select class="bnr-btn-action-type">${Object.entries(BNR_BTN_ACTIONS).map(([k, v]) => `<option value="${k}" ${b.btnActionType === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+          </label>
+        </div>
+        <div class="bnr-btn-target">${bannerBtnTargetHTML(b)}</div>
       </div>
     </div>
   </div>`;
@@ -1089,7 +1138,8 @@ function bindBannerCard(b) {
   const btnFields = card.querySelector('.bnr-btn-fields');
   const cta = card.querySelector('.bnr-stage__cta');
   const btnLabelInput = card.querySelector('.bnr-btn-label');
-  const btnActionInput = card.querySelector('.bnr-btn-action');
+  const actionTypeSel = card.querySelector('.bnr-btn-action-type');
+  const targetWrap = card.querySelector('.bnr-btn-target');
   hasBtn.addEventListener('change', () => {
     b.hasButton = hasBtn.checked;
     btnFields.hidden = !b.hasButton;
@@ -1099,7 +1149,14 @@ function bindBannerCard(b) {
     b.btnLabel = btnLabelInput.value;
     if (cta) cta.firstChild.textContent = (b.btnLabel || 'مشاهده') + ' ';
   });
-  btnActionInput.addEventListener('input', () => { b.btnAction = btnActionInput.value; });
+  // مسیر دکمه (منوی کشویی) + فیلد مقصد وابسته
+  actionTypeSel.addEventListener('change', () => {
+    b.btnActionType = actionTypeSel.value;
+    b.btnActionValue = '';
+    targetWrap.innerHTML = bannerBtnTargetHTML(b);
+    bindBannerBtnTarget(b, card);
+  });
+  bindBannerBtnTarget(b, card);
 
   // آپلود عکس بنر روی همان استیج (بدون رندر مجدد تا متن‌ها حفظ شوند)
   const fileInput = card.querySelector('.bnr-img-input');
@@ -1128,7 +1185,7 @@ function initHomeBanners() {
   // حداقل ۳ بنر به‌صورت پیش‌فرض موجود باشد
   if (!homeBanners.length) {
     for (let k = 0; k < BANNER_MIN; k++) {
-      homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnAction: '', open: false });
+      homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnActionType: 'game', btnActionValue: '', open: false });
     }
   }
   document.getElementById('home-banner-toggle').addEventListener('click', () => {
@@ -1136,7 +1193,7 @@ function initHomeBanners() {
   });
   document.getElementById('home-banner-add').addEventListener('click', () => {
     if (homeBanners.length >= BANNER_MAX) { showBannerHint(`حداکثر ${faNum(BANNER_MAX)} بنر می‌توانید اضافه کنید.`, true); return; }
-    homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnAction: '', open: true });
+    homeBanners.push({ id: homeBannerSeq++, img: '', title: '', subtitle: '', text: '', hasButton: true, btnLabel: 'مشاهده', btnActionType: 'game', btnActionValue: '', open: true });
     document.getElementById('home-banner-acc').classList.add('acc--open');
     renderHomeBanners();
     showBannerHint();
@@ -1221,6 +1278,335 @@ function renderPublications() {
   });
 }
 
+// ============================================
+// انتشار پیام / نوتیفیکیشن
+// ============================================
+// نوع پیام (تک‌انتخابی — آیکون و رنگ) و تگ‌ها (چندانتخابی)
+const NOTIF_TYPES = {
+  warning: { label: 'هشدار', icon: 'warning',  color: 'var(--red)' },
+  news:    { label: 'خبری',  icon: 'campaign', color: 'var(--primary)' },
+  reward:  { label: 'جایزه', icon: 'redeem',   color: 'var(--green)' },
+};
+const NOTIF_TAG_LIST = { tournament: 'تورنومنت', stream: 'استریم', general: 'پیام کلی' };
+const NOTIF_WINDOWS = { all: 0, h1: 3600e3, h12: 12 * 3600e3, d1: 24 * 3600e3, w1: 7 * 24 * 3600e3, mo1: 30 * 24 * 3600e3 };
+const _notifNow = Date.now();
+let NOTIFICATIONS = [
+  { id: 1, scope: 'public', userName: '', title: 'فصل جدید آغاز شد', text: 'فصل سوم با جوایز و رویدادهای ویژه شروع شد — همین حالا وارد شوید!', type: 'news', tags: ['tournament'], ts: _notifNow - 40 * 60 * 1000 },
+  { id: 5, scope: 'public', userName: '', title: 'استریم ویژهٔ آخر هفته', text: 'پنجشنبه ساعت ۲۱ منتظرتان هستیم.', type: 'news', tags: ['stream'], ts: _notifNow - 2 * 3600 * 1000 },
+  { id: 2, scope: 'private', userName: 'آرش کریمی', title: 'جایزهٔ شما آماده است', text: '۵۰۰ سکهٔ X به حساب شما اضافه شد.', type: 'reward', tags: ['general'], ts: _notifNow - 8 * 3600 * 1000 },
+  { id: 6, scope: 'private', userName: 'پیمان شریفی', title: 'تأیید پروفایل', text: 'اطلاعات حساب شما با موفقیت تأیید شد.', type: 'news', tags: [], ts: _notifNow - 5 * 3600 * 1000 },
+  { id: 3, scope: 'public', userName: '', title: 'به‌روزرسانی لانچر', text: 'نسخهٔ ۱.۴ لانچر منتشر شد؛ همین حالا آپدیت کنید.', type: 'news', tags: ['general'], ts: _notifNow - 3 * 24 * 3600 * 1000 },
+  { id: 4, scope: 'private', userName: 'مریم اکبری', title: 'هشدار امنیتی', text: 'ورود ناشناس به حساب شما شناسایی شد.', type: 'warning', tags: [], ts: _notifNow - 12 * 24 * 3600 * 1000 },
+];
+let notifScope = 'public';
+let notifTargetId = null;
+let notifHistTab = 'public';
+let notifTimeFilter = 'all';
+let notifSearch = '';
+let notifTagFilter = 'all';
+let pendingNotif = null;   // پیام در انتظار تأیید در پاپ‌آپ
+let editingNotifId = null;
+
+function relativeTime(ts) {
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return 'هم‌اکنون';
+  if (m < 60) return `${faNum(m)} دقیقه پیش`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${faNum(h)} ساعت پیش`;
+  const d = Math.floor(h / 24);
+  if (d < 30) return `${faNum(d)} روز پیش`;
+  return `${faNum(Math.floor(d / 30))} ماه پیش`;
+}
+
+function fmtSchedule(v) {
+  if (!v) return '';
+  const [d, t] = v.split('T');
+  return `${faNum((d || '').replace(/-/g, '/'))} ساعت ${faNum(t || '')}`;
+}
+
+// تگ‌های چندانتخابی (چک‌باکس) در فرم/ویرایش
+function renderTagChecks(containerId, selected) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  const sel = selected || [];
+  wrap.innerHTML = Object.keys(NOTIF_TAG_LIST).map((k) => `
+    <label class="tag-check ${sel.includes(k) ? 'tag-check--on' : ''}">
+      <input type="checkbox" value="${k}" ${sel.includes(k) ? 'checked' : ''}>
+      <span class="material-icons-outlined">sell</span>${NOTIF_TAG_LIST[k]}
+    </label>`).join('');
+  wrap.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener('change', () => cb.closest('.tag-check').classList.toggle('tag-check--on', cb.checked));
+  });
+}
+function getCheckedTags(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)).map((cb) => cb.value);
+}
+
+function setNotifTagFilter(tag) {
+  notifTagFilter = tag;
+  renderNotifTagChips();
+  renderNotifications();
+}
+
+function renderNotifTagChips() {
+  const wrap = document.getElementById('notif-tag-chips');
+  if (!wrap) return;
+  const chip = (key, label) => `<button type="button" class="notif-chip ${notifTagFilter === key ? 'notif-chip--active' : ''}" data-tag="${key}">${label}</button>`;
+  wrap.innerHTML = chip('all', 'همه') + Object.keys(NOTIF_TAG_LIST).map((k) => chip(k, NOTIF_TAG_LIST[k])).join('');
+  wrap.querySelectorAll('[data-tag]').forEach((b) => b.addEventListener('click', () => setNotifTagFilter(b.dataset.tag)));
+}
+
+function resetNotifForm() {
+  document.getElementById('notif-form').reset();
+  notifScope = 'public';
+  notifTargetId = null;
+  document.querySelectorAll('.notif-scope__btn').forEach((b) => b.classList.toggle('notif-scope__btn--active', b.dataset.scope === 'public'));
+  document.getElementById('notif-target').hidden = true;
+  document.getElementById('notif-schedule-field').hidden = true;
+  renderTagChecks('notif-tags', []);
+  renderNotifUserList('');
+}
+
+function setNotifHistTab(tab) {
+  notifHistTab = tab;
+  notifTagFilter = 'all';
+  document.querySelectorAll('.notif-htab').forEach((t) => t.classList.toggle('notif-htab--active', t.dataset.htab === tab));
+  renderNotifTagChips();
+  renderNotifications();
+}
+
+function renderNotifUserList(q) {
+  const list = document.getElementById('notif-user-list');
+  if (!list) return;
+  const query = enNum((q || '').trim().toLowerCase());
+  const qDigits = query.replace(/\D/g, '');
+  const rows = USERS.filter((u) => {
+    if (!query) return true;
+    const handle = u.handle.toLowerCase();
+    const byText = u.name.toLowerCase().includes(query) || handle.includes(query) || handle.replace('@', '').includes(query);
+    const byPhone = qDigits.length >= 2 && enNum(u.phone).replace(/\D/g, '').includes(qDigits);
+    return byText || byPhone;
+  });
+  list.innerHTML = rows.slice(0, 8).map((u) => `
+    <button type="button" class="notif-user ${notifTargetId === u.id ? 'notif-user--active' : ''}" data-uid="${u.id}">
+      <img src="${u.avatar}" alt="">
+      <div class="notif-user__meta">
+        <div class="notif-user__name">${u.name}</div>
+        <div class="notif-user__handle">${u.handle} <span class="notif-user__phone">${u.phone}</span></div>
+      </div>
+      ${notifTargetId === u.id ? '<span class="material-icons-outlined">check_circle</span>' : ''}
+    </button>
+  `).join('') || '<div class="empty-state" style="padding:18px">کاربری یافت نشد</div>';
+  list.querySelectorAll('[data-uid]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const uid = Number(btn.dataset.uid);
+      notifTargetId = (notifTargetId === uid) ? null : uid;
+      renderNotifUserList(document.getElementById('notif-user-search').value);
+    });
+  });
+}
+
+function renderNotifications() {
+  const list = document.getElementById('notif-history');
+  if (!list) return;
+  const win = NOTIF_WINDOWS[notifTimeFilter] || 0;
+  const cutoff = win ? Date.now() - win : 0;
+  const q = notifSearch.trim().toLowerCase();
+  const base = (n) => (!cutoff || n.ts >= cutoff)
+    && (!q || (n.title || '').toLowerCase().includes(q) || (n.text || '').toLowerCase().includes(q));
+  const pub = NOTIFICATIONS.filter((n) => n.scope === 'public' && base(n));
+  const prv = NOTIFICATIONS.filter((n) => n.scope === 'private' && base(n));
+  document.getElementById('notif-count-public').textContent = faNum(pub.length);
+  document.getElementById('notif-count-private').textContent = faNum(prv.length);
+  let rows = notifHistTab === 'public' ? pub : prv;
+  if (notifTagFilter !== 'all') rows = rows.filter((n) => (n.tags || []).includes(notifTagFilter));
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty-state">پیامی با این فیلترها پیدا نشد</div>';
+    return;
+  }
+  list.innerHTML = rows.map((n) => {
+    const ty = NOTIF_TYPES[n.type] || NOTIF_TYPES.news;
+    const tagBadges = (n.tags || []).map((t) => `<span class="notif-tag-badge">${NOTIF_TAG_LIST[t] || t}</span>`).join('');
+    return `
+    <div class="notif-item">
+      <span class="notif-item__icon material-icons-outlined" style="color:${ty.color}">${ty.icon}</span>
+      <div class="notif-item__body">
+        <div class="notif-item__top">
+          <span class="notif-item__title">${n.title}</span>
+          <span class="notif-type-badge" style="color:${ty.color}">${ty.label}</span>
+          <span class="notif-scope-badge ${n.scope === 'public' ? 'notif-scope-badge--pub' : 'notif-scope-badge--prv'}">${n.scope === 'public' ? 'عمومی' : 'خصوصی: ' + n.userName}</span>
+        </div>
+        ${tagBadges ? `<div class="notif-item__tags">${tagBadges}</div>` : ''}
+        <div class="notif-item__text">${n.text}</div>
+        ${n.scheduledAt
+          ? `<div class="notif-item__date notif-item__date--sched"><span class="material-icons-outlined">schedule_send</span>زمان‌بندی: ${fmtSchedule(n.scheduledAt)}</div>`
+          : `<div class="notif-item__date"><span class="material-icons-outlined">schedule</span>${relativeTime(n.ts)}</div>`}
+      </div>
+      <div class="notif-item__actions">
+        <button class="icon-btn" data-act="edit" data-nid="${n.id}" title="ویرایش"><span class="material-icons-outlined">edit</span></button>
+        <button class="icon-btn" data-act="resend" data-nid="${n.id}" title="ارسال مجدد"><span class="material-icons-outlined">send</span></button>
+        <button class="icon-btn icon-btn--del" data-act="del" data-nid="${n.id}" title="حذف"><span class="material-icons-outlined">delete</span></button>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('[data-act]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = Number(btn.dataset.nid);
+      const n = NOTIFICATIONS.find((x) => x.id === id);
+      if (!n) return;
+      if (btn.dataset.act === 'del') {
+        NOTIFICATIONS = NOTIFICATIONS.filter((x) => x.id !== id);
+        renderNotifications();
+      } else if (btn.dataset.act === 'edit') {
+        openNotifEdit(n);
+      } else if (btn.dataset.act === 'resend') {
+        openNotifPreview({ scope: n.scope, userName: n.userName, title: n.title, text: n.text, type: n.type, tags: (n.tags || []).slice() }, false);
+      }
+    });
+  });
+}
+
+// پاپ‌آپ پیش‌نمایش/تأیید ارسال
+function openNotifPreview(data, fromForm) {
+  pendingNotif = Object.assign({}, data, { fromForm: !!fromForm });
+  const ty = NOTIF_TYPES[data.type] || NOTIF_TYPES.news;
+  const tags = data.tags || [];
+  const tagBadges = tags.map((t) => `<span class="notif-tag-badge">${NOTIF_TAG_LIST[t] || t}</span>`).join('');
+  document.getElementById('notif-preview-body').innerHTML = `
+    <div class="notif-item">
+      <span class="notif-item__icon material-icons-outlined" style="color:${ty.color}">${ty.icon}</span>
+      <div class="notif-item__body">
+        <div class="notif-item__top">
+          <span class="notif-item__title">${data.title || '(بدون عنوان)'}</span>
+          <span class="notif-type-badge" style="color:${ty.color}">${ty.label}</span>
+          <span class="notif-scope-badge ${data.scope === 'public' ? 'notif-scope-badge--pub' : 'notif-scope-badge--prv'}">${data.scope === 'public' ? 'عمومی' : 'خصوصی: ' + data.userName}</span>
+        </div>
+        ${tagBadges ? `<div class="notif-item__tags">${tagBadges}</div>` : ''}
+        <div class="notif-item__text">${data.text || ''}</div>
+      </div>
+    </div>
+    <div class="notif-preview__meta">
+      <span><b>مخاطب:</b> ${data.scope === 'public' ? 'همهٔ کاربران' : data.userName}</span>
+      <span><b>نوع:</b> ${ty.label}</span>
+      <span><b>تگ‌ها:</b> ${tags.length ? tags.map((t) => NOTIF_TAG_LIST[t]).join('، ') : '—'}</span>
+      <span><b>زمان ارسال:</b> ${data.scheduledAt ? fmtSchedule(data.scheduledAt) : 'فوری'}</span>
+    </div>`;
+  document.getElementById('notif-preview-modal').hidden = false;
+}
+function closeNotifPreview() {
+  document.getElementById('notif-preview-modal').hidden = true;
+  pendingNotif = null;
+}
+function confirmNotifSend() {
+  if (!pendingNotif) return;
+  const d = pendingNotif;
+  NOTIFICATIONS.unshift({ id: Date.now(), scope: d.scope, userName: d.userName, title: d.title, text: d.text, type: d.type, tags: (d.tags || []).slice(), scheduledAt: d.scheduledAt || '', ts: Date.now() });
+  const scope = d.scope;
+  const fromForm = d.fromForm;
+  closeNotifPreview();
+  if (fromForm) resetNotifForm();
+  notifTimeFilter = 'all';
+  const tf = document.getElementById('notif-time-filter');
+  if (tf) tf.value = 'all';
+  setNotifHistTab(scope); // به تب همان نوع برو و رندر کن
+}
+
+// مودال ویرایش پیام در تاریخچه
+function openNotifEdit(n) {
+  editingNotifId = n.id;
+  document.getElementById('notif-edit-title').value = n.title;
+  document.getElementById('notif-edit-text').value = n.text;
+  document.getElementById('notif-edit-type').value = n.type;
+  renderTagChecks('notif-edit-tags', n.tags || []);
+  document.getElementById('notif-edit-modal').hidden = false;
+}
+function closeNotifEdit() {
+  document.getElementById('notif-edit-modal').hidden = true;
+  editingNotifId = null;
+}
+
+function initNotif() {
+  // انتخاب مخاطب در فرم (عمومی / خصوصی)
+  document.querySelectorAll('.notif-scope__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      notifScope = btn.dataset.scope;
+      document.querySelectorAll('.notif-scope__btn').forEach((b) => b.classList.toggle('notif-scope__btn--active', b === btn));
+      document.getElementById('notif-target').hidden = (notifScope !== 'private');
+    });
+  });
+
+  // جستجو و انتخاب بازیکن (پیام خصوصی)
+  const search = document.getElementById('notif-user-search');
+  search.addEventListener('input', () => renderNotifUserList(search.value));
+
+  // تیک زمان‌بندی — نمایش/مخفی فیلد زمان
+  const schedToggle = document.getElementById('notif-schedule-toggle');
+  schedToggle.addEventListener('change', () => {
+    document.getElementById('notif-schedule-field').hidden = !schedToggle.checked;
+  });
+
+  // ارسال — به‌جای ارسال مستقیم، پاپ‌آپ پیش‌نمایش باز می‌شود
+  document.getElementById('notif-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (notifScope === 'private' && !notifTargetId) { alert('لطفاً یک بازیکن را انتخاب کنید.'); return; }
+    const scheduled = schedToggle.checked;
+    const schedAt = document.getElementById('notif-schedule-at').value;
+    if (scheduled && !schedAt) { alert('لطفاً زمان ارسال را انتخاب کنید.'); return; }
+    const u = notifScope === 'private' ? USERS.find((x) => x.id === notifTargetId) : null;
+    openNotifPreview({
+      scope: notifScope,
+      userName: u ? u.name : '',
+      title: document.getElementById('notif-title').value.trim(),
+      text: document.getElementById('notif-text').value.trim(),
+      type: document.getElementById('notif-type').value,
+      tags: getCheckedTags('notif-tags'),
+      scheduledAt: scheduled ? schedAt : '',
+    }, true);
+  });
+  document.getElementById('notif-reset').addEventListener('click', resetNotifForm);
+
+  // تب‌های تاریخچه (عمومی / خصوصی)
+  document.querySelectorAll('.notif-htab').forEach((t) => t.addEventListener('click', () => setNotifHistTab(t.dataset.htab)));
+
+  // فیلتر زمانی تاریخچه
+  document.getElementById('notif-time-filter').addEventListener('change', (e) => {
+    notifTimeFilter = e.target.value;
+    renderNotifications();
+  });
+
+  // جستجو در عنوان/متن تاریخچه
+  const histSearch = document.getElementById('notif-search');
+  histSearch.addEventListener('input', () => { notifSearch = histSearch.value; renderNotifications(); });
+
+  // پاپ‌آپ پیش‌نمایش/تأیید ارسال
+  document.getElementById('notif-preview-confirm').addEventListener('click', confirmNotifSend);
+  document.getElementById('notif-preview-cancel').addEventListener('click', closeNotifPreview);
+  document.getElementById('notif-preview-close').addEventListener('click', closeNotifPreview);
+  document.getElementById('notif-preview-modal').addEventListener('click', (e) => { if (e.target.id === 'notif-preview-modal') closeNotifPreview(); });
+
+  // مودال ویرایش
+  document.getElementById('notif-edit-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const n = NOTIFICATIONS.find((x) => x.id === editingNotifId);
+    if (n) {
+      n.title = document.getElementById('notif-edit-title').value.trim();
+      n.text = document.getElementById('notif-edit-text').value.trim();
+      n.type = document.getElementById('notif-edit-type').value;
+      n.tags = getCheckedTags('notif-edit-tags');
+    }
+    closeNotifEdit();
+    renderNotifications();
+  });
+  document.getElementById('notif-edit-cancel').addEventListener('click', closeNotifEdit);
+  document.getElementById('notif-edit-close').addEventListener('click', closeNotifEdit);
+  document.getElementById('notif-edit-modal').addEventListener('click', (e) => { if (e.target.id === 'notif-edit-modal') closeNotifEdit(); });
+
+  renderTagChecks('notif-tags', []);
+  renderNotifUserList('');
+  renderNotifTagChips();
+  renderNotifications();
+}
+
 function initPublish() {
   // جابه‌جایی بین خانه/لانچر/بازی‌ها از طریق منوی کشویی سایدبار انجام می‌شود
 
@@ -1287,4 +1673,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initPublish();
   initBanner();
   initHomeBanners();
+  initNotif();
 });

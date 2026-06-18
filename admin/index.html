@@ -48,6 +48,7 @@
       <div class="admin-nav__sub" hidden>
         <button class="admin-nav__subitem" data-view="publish" data-pub="home"><span class="material-icons-outlined">home</span>خانه</button>
         <button class="admin-nav__subitem" data-view="publish" data-pub="game"><span class="material-icons-outlined">sports_esports</span>بازی</button>
+        <button class="admin-nav__subitem" data-view="publish" data-pub="notif"><span class="material-icons-outlined">notifications</span>انتشار پیام</button>
       </div>
     </nav>
     <button class="admin-logout" id="logout-btn"><span class="material-icons-outlined">logout</span>خروج</button>
@@ -446,6 +447,81 @@
           <div class="pub-list" id="pub-list"></div>
         </div>
       </div>
+
+      <!-- ===== انتشار پیام / نوتیفیکیشن ===== -->
+      <div class="pub-notif" id="pub-notif" hidden>
+        <div class="games-layout">
+          <!-- فرم ارسال -->
+          <div class="panel">
+            <div class="panel__head"><h2>ارسال نوتیفیکیشن</h2></div>
+            <form id="notif-form" class="game-form">
+              <div class="field"><span>مخاطب</span>
+                <div class="notif-scope">
+                  <button type="button" class="notif-scope__btn notif-scope__btn--active" data-scope="public"><span class="material-icons-outlined">public</span>عمومی (همهٔ کاربران)</button>
+                  <button type="button" class="notif-scope__btn" data-scope="private"><span class="material-icons-outlined">person</span>خصوصی (یک بازیکن)</button>
+                </div>
+              </div>
+
+              <div class="notif-target" id="notif-target" hidden>
+                <div class="toolbar__search">
+                  <span class="material-icons-outlined">search</span>
+                  <input type="text" id="notif-user-search" placeholder="جستجوی نام، نام کاربری یا شماره تلفن...">
+                </div>
+                <div class="notif-user-list" id="notif-user-list"></div>
+              </div>
+
+              <label class="field"><span>عنوان</span><input type="text" id="notif-title" required placeholder="مثلاً جایزهٔ ورود روزانه"></label>
+              <label class="field"><span>متن پیام</span><textarea id="notif-text" rows="3" required placeholder="متن نوتیفیکیشن..."></textarea></label>
+              <label class="field"><span>نوع پیام</span>
+                <select id="notif-type"><option value="warning">هشدار</option><option value="news">خبری</option><option value="reward">جایزه</option></select>
+              </label>
+              <div class="field"><span>تگ پیام (چند انتخاب)</span>
+                <div class="notif-tagpick" id="notif-tags"></div>
+              </div>
+
+              <label class="toggle-field">
+                <input type="checkbox" id="notif-schedule-toggle">
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">
+                  <b>زمان‌بندی ارسال</b>
+                  <small>فعال: پیام در زمان مشخص‌شده ارسال می‌شود</small>
+                </span>
+              </label>
+              <label class="field" id="notif-schedule-field" hidden><span>زمان ارسال</span><input type="datetime-local" id="notif-schedule-at"></label>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" id="notif-send"><span class="material-icons-outlined">send</span>ارسال نوتیفیکیشن</button>
+                <button type="button" class="btn-ghost" id="notif-reset">پاک کردن</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- تاریخچهٔ ارسال‌ها با تب عمومی/خصوصی -->
+          <div class="panel">
+            <div class="panel__head"><h2>تاریخچهٔ ارسال‌ها</h2></div>
+            <div class="notif-toolbar">
+              <select class="toolbar__select" id="notif-time-filter">
+                <option value="all">همهٔ زمان‌ها</option>
+                <option value="h1">یک ساعت گذشته</option>
+                <option value="h12">۱۲ ساعت گذشته</option>
+                <option value="d1">روز گذشته</option>
+                <option value="w1">هفته گذشته</option>
+                <option value="mo1">ماه گذشته</option>
+              </select>
+              <div class="toolbar__search">
+                <span class="material-icons-outlined">search</span>
+                <input type="text" id="notif-search" placeholder="جستجو در عنوان و متن پیام...">
+              </div>
+            </div>
+            <div class="notif-htabs">
+              <button type="button" class="notif-htab notif-htab--active" data-htab="public"><span class="material-icons-outlined">public</span>عمومی <span class="badge-count" id="notif-count-public">۰</span></button>
+              <button type="button" class="notif-htab" data-htab="private"><span class="material-icons-outlined">person</span>خصوصی <span class="badge-count" id="notif-count-private">۰</span></button>
+            </div>
+            <div class="notif-tag-chips" id="notif-tag-chips"></div>
+            <div class="notif-list" id="notif-history"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -465,6 +541,41 @@
   <div class="modal">
     <button class="modal__close" id="user-modal-close"><span class="material-icons-outlined">close</span></button>
     <div class="modal__body" id="user-modal-body"></div>
+  </div>
+</div>
+
+<!-- ========== پاپ‌آپ پیش‌نمایش/تأیید ارسال نوتیفیکیشن ========== -->
+<div class="modal-overlay" id="notif-preview-modal" hidden>
+  <div class="modal">
+    <button class="modal__close" id="notif-preview-close"><span class="material-icons-outlined">close</span></button>
+    <h3 class="modal__title">پیش‌نمایش پیام</h3>
+    <div class="notif-preview-body" id="notif-preview-body"></div>
+    <div class="umodal-actions">
+      <button class="btn-primary" id="notif-preview-confirm"><span class="material-icons-outlined">send</span>ارسال</button>
+      <button class="btn-ghost" id="notif-preview-cancel">ویرایش / بازگشت</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== مودال ویرایش پیام ========== -->
+<div class="modal-overlay" id="notif-edit-modal" hidden>
+  <div class="modal">
+    <button class="modal__close" id="notif-edit-close"><span class="material-icons-outlined">close</span></button>
+    <h3 class="modal__title">ویرایش پیام</h3>
+    <form id="notif-edit-form" class="game-form">
+      <label class="field"><span>عنوان</span><input type="text" id="notif-edit-title" required></label>
+      <label class="field"><span>متن پیام</span><textarea id="notif-edit-text" rows="3" required></textarea></label>
+      <label class="field"><span>نوع پیام</span>
+        <select id="notif-edit-type"><option value="warning">هشدار</option><option value="news">خبری</option><option value="reward">جایزه</option></select>
+      </label>
+      <div class="field"><span>تگ پیام (چند انتخاب)</span>
+        <div class="notif-tagpick" id="notif-edit-tags"></div>
+      </div>
+      <div class="umodal-actions">
+        <button type="submit" class="btn-primary">ذخیرهٔ تغییرات</button>
+        <button type="button" class="btn-ghost" id="notif-edit-cancel">انصراف</button>
+      </div>
+    </form>
   </div>
 </div>
 

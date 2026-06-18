@@ -755,6 +755,107 @@ input, select, textarea, button { font-family: inherit; }
 .bnr-stage [contenteditable]:focus { box-shadow: 0 0 0 2px rgba(0,188,212,.55); border-radius: 4px; }
 .bnr-stage [contenteditable][data-ph]:empty::before { content: attr(data-ph); color: rgba(255,255,255,.4); pointer-events: none; }
 .bnr-btn-fields { display: flex; flex-direction: column; gap: 12px; }
+.bnr-btn-target:empty { display: none; }
+
+/* ===== انتشار پیام / نوتیفیکیشن ===== */
+.notif-scope { display: flex; gap: 8px; }
+.notif-scope__btn {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 11px; border-radius: 9px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--text-dim); transition: all .15s;
+}
+.notif-scope__btn .material-icons-outlined { font-size: 18px; }
+.notif-scope__btn:hover { color: var(--text); border-color: var(--border-soft); }
+.notif-scope__btn--active { background: rgba(0,188,212,.12); border-color: var(--primary); color: var(--primary); }
+.notif-target { display: flex; flex-direction: column; gap: 10px; }
+/* تب‌های تاریخچهٔ ارسال */
+.notif-htabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.notif-htab {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+  border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600;
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--text-dim); transition: all .15s;
+}
+.notif-htab .material-icons-outlined { font-size: 16px; }
+.notif-htab:hover { color: var(--text); border-color: var(--border-soft); }
+.notif-htab--active { background: rgba(0,188,212,.12); border-color: var(--primary); color: var(--primary); }
+.notif-item__actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+/* تولبار تاریخچه: فیلتر زمانی (راست) + سرچ */
+.notif-toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+.notif-toolbar .toolbar__search { flex: 1; }
+.notif-toolbar .toolbar__select { flex-shrink: 0; }
+/* چیپ‌های فیلتر تگ */
+.notif-tag-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.notif-chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px;
+  border-radius: 20px; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 600;
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--text-dim); transition: all .15s;
+}
+.notif-chip .material-icons-outlined { font-size: 15px; }
+.notif-chip:hover { color: var(--text); border-color: var(--border-soft); }
+.notif-chip--active { background: rgba(0,188,212,.12); border-color: var(--primary); color: var(--primary); }
+/* بَج نوع پیام (رنگی) */
+.notif-type-badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; background: rgba(255,255,255,.05); border: 1px solid var(--border); }
+/* بَج تگ روی هر پیام */
+.notif-tag-badge {
+  display: inline-flex; align-items: center; font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 6px; white-space: nowrap; color: var(--text-dim);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.notif-item__tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 5px 0; }
+.notif-item__date--sched { color: var(--primary); font-weight: 600; }
+input[type="datetime-local"] { color-scheme: dark; }
+/* انتخابگر چندتایی تگ (چک‌باکس) */
+.notif-tagpick { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-check {
+  display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px;
+  border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600;
+  background: var(--bg-2); border: 1px solid var(--border); color: var(--text-dim); transition: all .15s;
+}
+.tag-check input { display: none; }
+.tag-check .material-icons-outlined { font-size: 15px; }
+.tag-check:hover { color: var(--text); border-color: var(--border-soft); }
+.tag-check--on { background: rgba(0,188,212,.12); border-color: var(--primary); color: var(--primary); }
+.notif-preview-body { margin: 6px 0 16px; }
+.notif-preview-body .notif-item { background: var(--bg-2); }
+.notif-preview__meta { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 12px; margin-bottom: 4px; }
+.notif-preview__meta b { color: var(--text); font-weight: 600; }
+.notif-user-list {
+  display: flex; flex-direction: column; gap: 6px; max-height: 230px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--border-soft) transparent;
+}
+.notif-user {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; width: 100%;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 9px; cursor: pointer;
+  color: var(--text); font-family: inherit; text-align: right; transition: all .15s;
+}
+.notif-user:hover { border-color: var(--border-soft); }
+.notif-user--active { border-color: var(--primary); background: rgba(0,188,212,.08); }
+.notif-user img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.notif-user__meta { flex: 1; min-width: 0; }
+.notif-user__name { font-size: 13px; font-weight: 600; }
+.notif-user__handle { font-size: 11px; color: var(--text-faint); }
+.notif-user__phone { color: var(--text-dim); direction: ltr; unicode-bidi: isolate; margin-right: 6px; }
+.notif-user > .material-icons-outlined { color: var(--primary); font-size: 20px; flex-shrink: 0; }
+
+.notif-list { display: flex; flex-direction: column; gap: 10px; }
+.notif-item { display: flex; gap: 12px; padding: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; }
+.notif-item__icon {
+  flex-shrink: 0; width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); font-size: 20px; color: var(--text-dim);
+}
+.notif-item--success .notif-item__icon { color: var(--green); }
+.notif-item--warning .notif-item__icon { color: var(--gold); }
+.notif-item--info .notif-item__icon { color: var(--primary); }
+.notif-item__body { flex: 1; min-width: 0; }
+.notif-item__top { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.notif-item__title { font-size: 14px; font-weight: 700; }
+.notif-item__text { font-size: 12px; color: var(--text-dim); line-height: 1.7; }
+.notif-item__date { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-faint); margin-top: 6px; }
+.notif-item__date .material-icons-outlined { font-size: 14px; }
+.notif-scope-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+.notif-scope-badge--pub { background: rgba(34,197,94,.15); color: var(--green); }
+.notif-scope-badge--prv { background: rgba(0,188,212,.12); color: var(--primary); }
 
 /* بخش کشویی مشخصات سیستم */
 .umodal-accordion { border-bottom: 1px solid var(--border); }

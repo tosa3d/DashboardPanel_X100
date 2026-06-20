@@ -28,9 +28,9 @@ const ROUTES = {
   connection: 'connection',
   games: 'games',
   'game-detail': 'game-detail',
+  tournaments: 'tournaments',
   // بقیه فعلاً به placeholder میرن
   shop: 'placeholder',
-  tournaments: 'placeholder',
   streaming: 'placeholder',
   community: 'community',
   downloads: 'downloads',
@@ -899,6 +899,320 @@ function initAvatarCropper() {
     const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
     close();
     if (doneCb) doneCb(dataUrl);
+  });
+}
+
+// ============================================
+// تب تورنومنت — بنر، لیست، جزئیات، ثبت‌نام، تیم
+// ============================================
+const TOUR_HERO = [
+  { kind: 'tournament', title: 'قهرمانی بزرگ x100', game: 'Counter-Strike 2', prize: '۵۰٬۰۰۰٬۰۰۰ تومان', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1000&h=420&fit=crop', tag: 'تورنومنت ویژه' },
+  { kind: 'news', title: 'فصل جدید لیگ دوتا ۲ آغاز شد', game: 'Dota 2', img: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=1000&h=420&fit=crop', tag: 'اخبار' },
+  { kind: 'tournament', title: 'کاپ والورانت رمضان', game: 'Valorant', prize: '۲۰٬۰۰۰٬۰۰۰ تومان', img: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1000&h=420&fit=crop', tag: 'تورنومنت ویژه' },
+];
+
+const TOURNAMENTS = [
+  { id: 1, name: 'قهرمانی بزرگ x100', game: 'Counter-Strike 2', region: 'ایران', type: 'team', teamSize: 5, status: 'open', entry: 'ticket', ticketPrice: '۱۵۰٬۰۰۰ تومان', prize: '۵۰٬۰۰۰٬۰۰۰ تومان', joined: 48, max: 64, date: '۱۰ تیر ۱۴۰۴', format: 'BO3 حذفی', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=220&fit=crop', desc: 'بزرگ‌ترین تورنومنت CS2 ایران با جوایز نقدی سنگین و پخش زنده.' },
+  { id: 2, name: 'کاپ هفتگی والورانت', game: 'Valorant', region: 'ایران', type: 'team', teamSize: 5, status: 'open', entry: 'free', prize: '۵٬۰۰۰٬۰۰۰ تومان', joined: 22, max: 32, date: '۵ تیر ۱۴۰۴', format: 'BO1 حذفی', img: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=220&fit=crop', desc: 'تورنومنت رایگان هفتگی والورانت برای همهٔ بازیکنان.' },
+  { id: 3, name: 'مسابقات انفرادی دوتا ۲', game: 'Dota 2', region: 'آسیا', type: 'solo', status: 'live', entry: 'ticket', ticketPrice: '۸۰٬۰۰۰ تومان', prize: '۱۰٬۰۰۰٬۰۰۰ تومان', joined: 64, max: 64, date: 'در حال برگزاری', format: 'BO3', img: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=220&fit=crop', desc: 'مسابقات تک‌نفرهٔ دوتا ۲ سطح آسیا.' },
+  { id: 4, name: 'لیگ پاییزی PUBG', game: 'PUBG', region: 'ایران', type: 'team', teamSize: 4, status: 'soon', entry: 'free', prize: '۸٬۰۰۰٬۰۰۰ تومان', joined: 0, max: 25, date: '۲۰ تیر ۱۴۰۴', format: 'امتیازی', img: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=220&fit=crop', desc: 'لیگ تیمی PUBG با سیستم امتیازی در چند مرحله.' },
+  { id: 5, name: 'جام قهرمانان CS2', game: 'Counter-Strike 2', region: 'اروپا', type: 'team', teamSize: 5, status: 'ended', entry: 'ticket', ticketPrice: '۲۰۰٬۰۰۰ تومان', prize: '۱۰۰٬۰۰۰٬۰۰۰ تومان', joined: 32, max: 32, date: '۱ خرداد ۱۴۰۴', format: 'BO5 فینال', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=220&fit=crop', desc: 'جام بین‌المللی که با قهرمانی تیم Aurora به پایان رسید.' },
+];
+
+const TOUR_STATUS = {
+  open: { label: 'ثبت‌نام باز', cls: 'open' },
+  live: { label: 'در حال برگزاری', cls: 'live' },
+  soon: { label: 'به‌زودی', cls: 'soon' },
+  ended: { label: 'پایان‌یافته', cls: 'ended' },
+};
+
+// وضعیت تیم کاربر (mock)
+let myTeam = null; // { name, desc, members:[{name,role,avatar}] }
+const registeredTours = new Set();
+
+function initTournaments() {
+  // پر کردن فیلتر بازی‌ها از روی تورنومنت‌ها
+  const games = [...new Set(TOURNAMENTS.map((t) => t.game))];
+  const gameSel = document.getElementById('tour-filter-game');
+  if (gameSel) gameSel.innerHTML = '<option value="all">بازی: همه</option>' + games.map((g) => `<option>${g}</option>`).join('');
+
+  ['tour-search', 'tour-filter-game', 'tour-filter-type', 'tour-filter-status'].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener('input', renderTourList);
+    el?.addEventListener('change', renderTourList);
+  });
+
+  initTourHero();
+  renderMyTeam();
+  renderTourList();
+
+  // بستن مودال‌ها
+  document.getElementById('tour-detail-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'tour-detail-modal') e.currentTarget.hidden = true;
+  });
+  document.getElementById('team-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'team-modal') e.currentTarget.hidden = true;
+  });
+}
+
+// ── بنر چرخشی ──
+let tourHeroIdx = 0, tourHeroTimer = null;
+function initTourHero() {
+  const slides = document.getElementById('tour-hero-slides');
+  const dots = document.getElementById('tour-hero-dots');
+  if (!slides) return;
+  slides.innerHTML = TOUR_HERO.map((h, i) => `
+    <div class="tour-hero__slide ${i === 0 ? 'is-active' : ''}" style="background-image:url('${h.img}')">
+      <div class="tour-hero__shade"></div>
+      <div class="tour-hero__content">
+        <span class="tour-hero__tag tour-hero__tag--${h.kind}">${h.tag}</span>
+        <h2 class="tour-hero__title">${h.title}</h2>
+        <div class="tour-hero__meta">
+          <span><span class="material-symbols-outlined">sports_esports</span>${h.game}</span>
+          ${h.prize ? `<span><span class="material-symbols-outlined">emoji_events</span>${h.prize}</span>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+  dots.innerHTML = TOUR_HERO.map((_, i) => `<button class="tour-hero__dot ${i === 0 ? 'is-active' : ''}" data-i="${i}"></button>`).join('');
+
+  function go(i) {
+    tourHeroIdx = (i + TOUR_HERO.length) % TOUR_HERO.length;
+    slides.querySelectorAll('.tour-hero__slide').forEach((s, k) => s.classList.toggle('is-active', k === tourHeroIdx));
+    dots.querySelectorAll('.tour-hero__dot').forEach((d, k) => d.classList.toggle('is-active', k === tourHeroIdx));
+  }
+  function restart() { clearInterval(tourHeroTimer); tourHeroTimer = setInterval(() => go(tourHeroIdx + 1), 5000); }
+  document.getElementById('tour-hero-next').addEventListener('click', () => { go(tourHeroIdx + 1); restart(); });
+  document.getElementById('tour-hero-prev').addEventListener('click', () => { go(tourHeroIdx - 1); restart(); });
+  dots.querySelectorAll('.tour-hero__dot').forEach((d) => d.addEventListener('click', () => { go(Number(d.dataset.i)); restart(); }));
+  restart();
+}
+
+// ── لیست تورنومنت‌ها ──
+function renderTourList() {
+  const q = (document.getElementById('tour-search')?.value || '').trim().toLowerCase();
+  const fGame = document.getElementById('tour-filter-game')?.value || 'all';
+  const fType = document.getElementById('tour-filter-type')?.value || 'all';
+  const fStatus = document.getElementById('tour-filter-status')?.value || 'all';
+
+  const rows = TOURNAMENTS.filter((t) => {
+    const mq = !q || t.name.toLowerCase().includes(q) || t.game.toLowerCase().includes(q);
+    return mq && (fGame === 'all' || t.game === fGame) && (fType === 'all' || t.type === fType) && (fStatus === 'all' || t.status === fStatus);
+  });
+
+  const list = document.getElementById('tour-list');
+  const empty = document.getElementById('tour-empty');
+  document.getElementById('tour-count').textContent = `${faNum(rows.length)} تورنومنت`;
+  if (!rows.length) { list.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+
+  list.innerHTML = rows.map((t) => {
+    const st = TOUR_STATUS[t.status];
+    const reg = registeredTours.has(t.id);
+    return `
+    <div class="tour-card" data-tid="${t.id}">
+      <div class="tour-card__cover" style="background-image:url('${t.img}')">
+        <span class="tour-status tour-status--${st.cls}">${st.label}</span>
+        <span class="tour-entry ${t.entry === 'free' ? 'tour-entry--free' : 'tour-entry--paid'}">
+          <span class="material-symbols-outlined">${t.entry === 'free' ? 'check_circle' : 'confirmation_number'}</span>
+          ${t.entry === 'free' ? 'رایگان' : 'تیکتی'}
+        </span>
+      </div>
+      <div class="tour-card__body">
+        <div class="tour-card__name">${t.name}</div>
+        <div class="tour-card__meta">
+          <span><span class="material-symbols-outlined">sports_esports</span>${t.game}</span>
+          <span><span class="material-symbols-outlined">${t.type === 'team' ? 'groups' : 'person'}</span>${t.type === 'team' ? `تیمی (${faNum(t.teamSize)} نفره)` : 'انفرادی'}</span>
+          <span><span class="material-symbols-outlined">public</span>${t.region}</span>
+        </div>
+        <div class="tour-card__row">
+          <span class="tour-card__prize"><span class="material-symbols-outlined">emoji_events</span>${t.prize}</span>
+          <span class="tour-card__slots">${faNum(t.joined)}/${faNum(t.max)}</span>
+        </div>
+        <div class="tour-card__actions">
+          <button class="tour-btn tour-btn--ghost" data-act="detail">جزئیات</button>
+          <button class="tour-btn tour-btn--primary" data-act="join" ${t.status !== 'open' && t.status !== 'soon' ? 'disabled' : ''}>
+            ${reg ? 'ثبت‌نام شده ✓' : (t.status === 'open' ? 'ثبت‌نام' : st.label)}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.tour-card').forEach((card) => {
+    const tid = Number(card.dataset.tid);
+    card.querySelector('[data-act="detail"]').addEventListener('click', () => openTourDetail(tid));
+    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) joinTour(tid); });
+  });
+}
+
+// ── جزئیات تورنومنت ──
+function openTourDetail(tid) {
+  const t = TOURNAMENTS.find((x) => x.id === tid);
+  if (!t) return;
+  const st = TOUR_STATUS[t.status];
+  const reg = registeredTours.has(tid);
+  document.getElementById('tour-detail-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tour-detail-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__cover" style="background-image:url('${t.img}')">
+      <span class="tour-status tour-status--${st.cls}">${st.label}</span>
+    </div>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">${t.name}</h2>
+      <p class="tmodal__desc">${t.desc}</p>
+      <div class="tmodal__grid">
+        <div class="tmodal__item"><span>بازی</span><b>${t.game}</b></div>
+        <div class="tmodal__item"><span>نوع</span><b>${t.type === 'team' ? `تیمی (${faNum(t.teamSize)} نفره)` : 'انفرادی'}</b></div>
+        <div class="tmodal__item"><span>منطقه</span><b>${t.region}</b></div>
+        <div class="tmodal__item"><span>فرمت</span><b>${t.format}</b></div>
+        <div class="tmodal__item"><span>تاریخ</span><b>${t.date}</b></div>
+        <div class="tmodal__item"><span>شرکت‌کننده</span><b>${faNum(t.joined)} / ${faNum(t.max)}</b></div>
+        <div class="tmodal__item"><span>جایزه</span><b style="color:var(--color-accent-gold,#ffd700)">${t.prize}</b></div>
+        <div class="tmodal__item"><span>ورودی</span><b>${t.entry === 'free' ? 'رایگان' : 'تیکت — ' + t.ticketPrice}</b></div>
+      </div>
+      <button class="tour-btn tour-btn--primary tmodal__cta" ${t.status !== 'open' && t.status !== 'soon' ? 'disabled' : ''} id="tmodal-join">
+        ${reg ? 'ثبت‌نام شده ✓' : (t.status === 'open' ? 'ثبت‌نام در تورنومنت' : st.label)}
+      </button>
+    </div>`;
+  document.getElementById('tour-detail-modal').hidden = false;
+  document.getElementById('tmodal-join')?.addEventListener('click', (e) => { if (!e.currentTarget.disabled) { joinTour(tid); document.getElementById('tour-detail-modal').hidden = true; } });
+}
+
+// ── ثبت‌نام در تورنومنت ──
+function joinTour(tid) {
+  const t = TOURNAMENTS.find((x) => x.id === tid);
+  if (!t) return;
+  if (registeredTours.has(tid)) { alert('قبلاً در این تورنومنت ثبت‌نام کرده‌اید.'); return; }
+  if (t.type === 'team' && !myTeam) {
+    if (confirm('این تورنومنت تیمی است و شما تیمی ندارید. اکنون تیم بسازید؟')) openTeamModal();
+    return;
+  }
+  const cost = t.entry === 'free' ? 'به‌صورت رایگان' : `با پرداخت تیکت (${t.ticketPrice})`;
+  if (confirm(`ثبت‌نام در «${t.name}» ${cost} انجام شود؟`)) {
+    registeredTours.add(tid);
+    t.joined = Math.min(t.max, t.joined + 1);
+    renderTourList();
+  }
+}
+
+// ── تیم من ──
+function renderMyTeam() {
+  const wrap = document.getElementById('tour-myteam');
+  if (!wrap) return;
+  if (!myTeam) {
+    wrap.innerHTML = `
+      <div class="myteam myteam--empty">
+        <div class="myteam__icon"><span class="material-symbols-outlined">groups</span></div>
+        <div class="myteam__text">
+          <div class="myteam__title">هنوز تیمی نداری</div>
+          <div class="myteam__sub">برای شرکت در تورنومنت‌های تیمی، تیم خود را بساز</div>
+        </div>
+        <button class="tour-btn tour-btn--primary" id="myteam-create"><span class="material-symbols-outlined">add</span>ساخت تیم</button>
+      </div>`;
+    document.getElementById('myteam-create').addEventListener('click', openTeamModal);
+  } else {
+    wrap.innerHTML = `
+      <div class="myteam">
+        <div class="myteam__icon myteam__icon--has"><span class="material-symbols-outlined">shield</span></div>
+        <div class="myteam__text">
+          <div class="myteam__title">${myTeam.name} <span class="myteam__cap">کاپیتن: شما</span></div>
+          <div class="myteam__sub">${faNum(myTeam.members.length)} عضو • ${myTeam.desc || 'بدون توضیح'}</div>
+        </div>
+        <button class="tour-btn tour-btn--ghost" id="myteam-manage"><span class="material-symbols-outlined">settings</span>مدیریت تیم</button>
+      </div>`;
+    document.getElementById('myteam-manage').addEventListener('click', openTeamModal);
+  }
+}
+
+// ── مودال تیم ──
+const SUGGEST_PLAYERS = ['ArashGG', 'SaraPlay', 'MiladPro', 'GhostSniper', 'NightWolf_IR', 'Zirak90'];
+function openTeamModal() {
+  const body = document.getElementById('team-modal-body');
+  if (!myTeam) {
+    body.innerHTML = `
+      <button class="tmodal__close" onclick="document.getElementById('team-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+      <div class="tmodal__pad">
+        <h2 class="tmodal__title">ساخت تیم جدید</h2>
+        <label class="tfield"><span>نام تیم (۳ تا ۵۰ کاراکتر، منحصربه‌فرد)</span><input type="text" id="team-name" maxlength="50" placeholder="مثلاً Team Aurora"></label>
+        <label class="tfield"><span>توضیح تیم (اختیاری)</span><textarea id="team-desc" rows="2" placeholder="دربارهٔ تیم..."></textarea></label>
+        <div class="tfield-err" id="team-name-err" hidden></div>
+        <button class="tour-btn tour-btn--primary tmodal__cta" id="team-create-btn">ساخت تیم و کاپیتن شدن</button>
+      </div>`;
+    document.getElementById('team-create-btn').addEventListener('click', () => {
+      const name = document.getElementById('team-name').value.trim();
+      const err = document.getElementById('team-name-err');
+      if (name.length < 3) { err.textContent = 'نام تیم باید حداقل ۳ کاراکتر باشد'; err.hidden = false; return; }
+      myTeam = { name, desc: document.getElementById('team-desc').value.trim(), members: [{ name: 'شما', role: 'captain', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&h=60&fit=crop' }], invites: [], requests: [{ name: 'GhostSniper', avatar: 'https://i.pravatar.cc/60?u=ghost' }] };
+      renderMyTeam();
+      openTeamModal();
+    });
+  } else {
+    body.innerHTML = teamManageHTML();
+    bindTeamManage();
+  }
+  document.getElementById('team-modal').hidden = false;
+}
+
+function teamManageHTML() {
+  const t = myTeam;
+  return `
+    <button class="tmodal__close" onclick="document.getElementById('team-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <div class="team-head">
+        <div class="team-head__badge"><span class="material-symbols-outlined">shield</span></div>
+        <div><h2 class="tmodal__title" style="margin:0">${t.name}</h2><p class="tmodal__desc" style="margin:2px 0 0">${t.desc || 'بدون توضیح'}</p></div>
+      </div>
+
+      <div class="team-sec__title">اعضای تیم (${faNum(t.members.length)})</div>
+      <div class="team-members">
+        ${t.members.map((m, i) => `
+          <div class="team-member">
+            <img src="${m.avatar}" alt="">
+            <span class="team-member__name">${m.name}</span>
+            ${m.role === 'captain' ? '<span class="team-member__cap">کاپیتن</span>' : `<button class="team-member__kick" data-kick="${i}" title="حذف از تیم"><span class="material-symbols-outlined">person_remove</span></button>`}
+          </div>`).join('')}
+      </div>
+
+      <div class="team-sec__title">دعوت بازیکن جدید</div>
+      <div class="team-invite">
+        <select id="team-invite-sel">${SUGGEST_PLAYERS.filter((p) => !t.members.some((m) => m.name === p)).map((p) => `<option>${p}</option>`).join('') || '<option value="">بازیکن دیگری نیست</option>'}</select>
+        <button class="tour-btn tour-btn--primary" id="team-invite-btn">ارسال دعوت</button>
+      </div>
+      ${t.invites.length ? `<div class="team-pending">${t.invites.map((n) => `<span class="team-chip">${n} <span class="team-chip__st">در انتظار</span></span>`).join('')}</div>` : ''}
+
+      ${t.requests.length ? `
+      <div class="team-sec__title">درخواست‌های پیوستن (${faNum(t.requests.length)})</div>
+      <div class="team-requests">
+        ${t.requests.map((r, i) => `
+          <div class="team-req">
+            <img src="${r.avatar}" alt=""><span class="team-req__name">${r.name}</span>
+            <button class="team-req__ok" data-acc="${i}">قبول</button>
+            <button class="team-req__no" data-rej="${i}">رد</button>
+          </div>`).join('')}
+      </div>` : ''}
+
+      <button class="tour-btn tour-btn--danger tmodal__cta" id="team-leave-btn">حذف تیم</button>
+    </div>`;
+}
+
+function bindTeamManage() {
+  const t = myTeam;
+  document.getElementById('team-invite-btn')?.addEventListener('click', () => {
+    const sel = document.getElementById('team-invite-sel');
+    if (sel && sel.value) { t.invites.push(sel.value); openTeamModal(); }
+  });
+  document.querySelectorAll('[data-kick]').forEach((b) => b.addEventListener('click', () => {
+    t.members.splice(Number(b.dataset.kick), 1); renderMyTeam(); openTeamModal();
+  }));
+  document.querySelectorAll('[data-acc]').forEach((b) => b.addEventListener('click', () => {
+    const r = t.requests.splice(Number(b.dataset.acc), 1)[0];
+    t.members.push({ name: r.name, role: 'member', avatar: r.avatar });
+    renderMyTeam(); openTeamModal();
+  }));
+  document.querySelectorAll('[data-rej]').forEach((b) => b.addEventListener('click', () => {
+    t.requests.splice(Number(b.dataset.rej), 1); openTeamModal();
+  }));
+  document.getElementById('team-leave-btn')?.addEventListener('click', () => {
+    if (confirm('تیم حذف شود؟ این عمل قابل بازگشت نیست.')) { myTeam = null; renderMyTeam(); document.getElementById('team-modal').hidden = true; }
   });
 }
 
@@ -2908,6 +3222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initConnectionPage();
   initSubscription();
+  initTournaments();
   initGamesPage();
   initDownloadsPage();
   initProfilePage();

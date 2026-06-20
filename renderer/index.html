@@ -1567,6 +1567,66 @@
 
 
 <!-- ============================================
+     PAGE: TOURNAMENTS (تورنومنت)
+     ============================================ -->
+<div class="page" data-page="tournaments">
+  <div class="tour-page scrollbar-thin">
+
+    <!-- بنر تورنومنت‌های بزرگ + اخبار -->
+    <section class="tour-hero" id="tour-hero">
+      <button class="tour-hero__nav tour-hero__nav--prev" id="tour-hero-prev"><span class="material-symbols-outlined">chevron_right</span></button>
+      <div class="tour-hero__slides" id="tour-hero-slides"></div>
+      <button class="tour-hero__nav tour-hero__nav--next" id="tour-hero-next"><span class="material-symbols-outlined">chevron_left</span></button>
+      <div class="tour-hero__dots" id="tour-hero-dots"></div>
+    </section>
+
+    <!-- نوار من / تیم -->
+    <section class="tour-myteam" id="tour-myteam"></section>
+
+    <!-- نوار ابزار: جستجو + فیلتر -->
+    <div class="tour-toolbar">
+      <div class="tour-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" id="tour-search" placeholder="جستجوی نام تورنومنت...">
+      </div>
+      <select class="tour-select" id="tour-filter-game">
+        <option value="all">بازی: همه</option>
+      </select>
+      <select class="tour-select" id="tour-filter-type">
+        <option value="all">نوع: همه</option>
+        <option value="solo">انفرادی</option>
+        <option value="team">تیمی</option>
+      </select>
+      <select class="tour-select" id="tour-filter-status">
+        <option value="all">وضعیت: همه</option>
+        <option value="open">ثبت‌نام باز</option>
+        <option value="live">در حال برگزاری</option>
+        <option value="soon">به‌زودی</option>
+        <option value="ended">پایان‌یافته</option>
+      </select>
+      <span class="tour-count" id="tour-count"></span>
+    </div>
+
+    <!-- لیست تورنومنت‌ها -->
+    <div class="tour-list" id="tour-list"></div>
+    <div class="tour-empty" id="tour-empty" hidden>تورنومنتی با این فیلتر یافت نشد</div>
+
+  </div>
+</div>
+
+
+<!-- مودال جزئیات تورنومنت -->
+<div class="tmodal-overlay" id="tour-detail-modal" hidden>
+  <div class="tmodal" id="tour-detail-body"></div>
+</div>
+
+<!-- مودال مدیریت تیم -->
+<div class="tmodal-overlay" id="team-modal" hidden>
+  <div class="tmodal tmodal--team" id="team-modal-body"></div>
+</div>
+
+
+<!-- ============================================
      PAGE: PLACEHOLDER (for not-yet-built pages)
      ============================================ -->
 <div class="page" data-page="placeholder">

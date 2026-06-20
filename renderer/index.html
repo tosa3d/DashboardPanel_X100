@@ -830,13 +830,22 @@
             </div>
           </div>
 
-          <!-- اطلاعات اکانت: نوع + روز مانده -->
-          <div class="shecan__account shecan__account--silver">
-            <img class="shecan__account-badge" src="assets/badge-silver.png" alt="نقره‌ای">
-            <div class="shecan__account-days">
-              <span class="material-symbols-outlined" style="font-size:13px">calendar_today</span>
-              <span>۱۵ روز مانده</span>
+          <!-- اطلاعات اکانت: نوع فعال + روز مانده + ارتقا -->
+          <div class="shecan__account-col">
+            <div class="shecan__account" id="shecan-account">
+              <span class="material-symbols-outlined shecan__account-icon" id="shecan-account-icon">workspace_premium</span>
+              <div class="shecan__account-info">
+                <span class="shecan__account-tier" id="shecan-account-tier">رایگان</span>
+                <div class="shecan__account-days">
+                  <span class="material-symbols-outlined" style="font-size:13px">calendar_today</span>
+                  <span>۱۵ روز مانده</span>
+                </div>
+              </div>
             </div>
+            <button class="shecan__upgrade" id="shecan-upgrade-btn" hidden>
+              <span class="material-symbols-outlined">upgrade</span>
+              ارتقای اشتراک
+            </button>
           </div>
         </div>
 
@@ -925,22 +934,84 @@
 
     </div>
 
-    <!-- Bottom: Security Banner -->
-    <div class="conn-card security-banner">
-      <div class="security-banner__content">
-        <h3 class="security-banner__title">امنیت حساب کاربری</h3>
-        <p class="security-banner__desc">
-          x100 با استفاده از پروتکل‌های رمزنگاری پیشرفته، امنیت حساب‌های بازی شما را تضمین می‌کند.
-          هیچ‌گونه اطلاعات ورود شما در سرورهای ما ذخیره نمی‌شود و تمام ارتباطات بصورت مستقیم به پلتفرم‌های اصلی برقرار می‌گردد.
-        </p>
-        <a href="#" class="security-banner__link">
-          <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span>
-          مطالعه بیشتر درباره امنیت
-        </a>
+    <!-- Bottom: انتخاب و خرید تحریم‌شکن -->
+    <div class="conn-card sub-section" id="sub-section">
+      <div class="sub-section__head">
+        <h3 class="sub-section__title">انتخاب و خرید تحریم‌شکن</h3>
+        <p class="sub-section__sub">اشتراک مناسب خود را انتخاب کنید</p>
       </div>
-      <div class="security-banner__art">
-        <div class="security-banner__art-glow"></div>
-        <span class="material-symbols-outlined security-banner__art-icon">lock</span>
+      <div class="sub-grid">
+
+        <!-- رایگان -->
+        <div class="sub-card" data-tier="free">
+          <div class="sub-card__head">
+            <span class="material-symbols-outlined sub-card__icon" style="color:#9aa6ad">workspace_premium</span>
+            <div class="sub-card__title-wrap">
+              <div class="sub-card__name">تحریم‌شکن رایگان</div>
+              <div class="sub-card__price">رایگان</div>
+            </div>
+          </div>
+          <ul class="sub-card__features">
+            <li><span class="material-symbols-outlined">check</span>سرعت پایه</li>
+            <li><span class="material-symbols-outlined">check</span>۱ سرور اشتراکی</li>
+            <li class="sub-feat--off"><span class="material-symbols-outlined">close</span>پشتیبانی محدود</li>
+          </ul>
+          <button class="sub-card__buy">خرید</button>
+        </div>
+
+        <!-- برنزی -->
+        <div class="sub-card" data-tier="bronze">
+          <div class="sub-card__head">
+            <span class="material-symbols-outlined sub-card__icon" style="color:#cd7f32">workspace_premium</span>
+            <div class="sub-card__title-wrap">
+              <div class="sub-card__name">تحریم‌شکن برنزی</div>
+              <div class="sub-card__price">۴۹٬۰۰۰ تومان / ماه</div>
+            </div>
+          </div>
+          <ul class="sub-card__features">
+            <li><span class="material-symbols-outlined">check</span>سرعت متوسط</li>
+            <li><span class="material-symbols-outlined">check</span>۵ سرور</li>
+            <li><span class="material-symbols-outlined">check</span>بدون تبلیغات</li>
+          </ul>
+          <button class="sub-card__buy">خرید</button>
+        </div>
+
+        <!-- نقره‌ای -->
+        <div class="sub-card" data-tier="silver">
+          <div class="sub-card__head">
+            <span class="material-symbols-outlined sub-card__icon" style="color:#c0c0c0">workspace_premium</span>
+            <div class="sub-card__title-wrap">
+              <div class="sub-card__name">تحریم‌شکن نقره‌ای</div>
+              <div class="sub-card__price">۹۹٬۰۰۰ تومان / ماه</div>
+            </div>
+          </div>
+          <ul class="sub-card__features">
+            <li><span class="material-symbols-outlined">check</span>سرعت بالا</li>
+            <li><span class="material-symbols-outlined">check</span>سرورهای مخصوص بازی</li>
+            <li><span class="material-symbols-outlined">check</span>پینگ پایین</li>
+          </ul>
+          <button class="sub-card__buy">خرید</button>
+        </div>
+
+        <!-- طلایی -->
+        <div class="sub-card sub-card--gold" data-tier="gold">
+          <span class="sub-card__ribbon">پیشنهادی</span>
+          <div class="sub-card__head">
+            <span class="material-symbols-outlined sub-card__icon" style="color:#ffd700">workspace_premium</span>
+            <div class="sub-card__title-wrap">
+              <div class="sub-card__name">تحریم‌شکن طلایی</div>
+              <div class="sub-card__price">۱۹۹٬۰۰۰ تومان / ماه</div>
+            </div>
+          </div>
+          <ul class="sub-card__features">
+            <li><span class="material-symbols-outlined">check</span>سرعت نامحدود</li>
+            <li><span class="material-symbols-outlined">check</span>همهٔ سرورها</li>
+            <li><span class="material-symbols-outlined">check</span>کمترین پینگ ممکن</li>
+            <li><span class="material-symbols-outlined">check</span>پشتیبانی اولویت‌دار ۲۴/۷</li>
+          </ul>
+          <button class="sub-card__buy">خرید</button>
+        </div>
+
       </div>
     </div>
 

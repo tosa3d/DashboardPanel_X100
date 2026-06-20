@@ -1731,6 +1731,15 @@
   filter: drop-shadow(0 4px 20px rgba(217,119,6,0.45));
 }
 
+.shecan__account-icon {
+  font-size: 56px !important;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+  transition: transform var(--dur-base);
+}
+.shecan__account:hover .shecan__account-icon { transform: scale(1.06); }
+.shecan__account-info { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.shecan__account-tier { font-size: 14px; font-weight: 700; color: var(--color-on-surface); }
+
 .shecan__account-days {
   display: flex;
   align-items: center;
@@ -1741,6 +1750,77 @@
   font-family: var(--font-mono);
   white-space: nowrap;
 }
+
+/* ستون اکانت: بَج + دکمه ارتقا */
+.shecan__account-col {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; gap: var(--space-3);
+  min-width: 130px;
+}
+.shecan__account-col .shecan__account { min-width: 0; width: 100%; }
+
+/* دکمه ارتقا */
+.shecan__upgrade {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 8px; border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, rgba(255,196,0,.16), rgba(255,196,0,.08));
+  border: 1px solid rgba(255,196,0,.35);
+  color: #ffd24a; font-size: 13px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: background .15s; white-space: nowrap;
+}
+.shecan__upgrade:hover { background: rgba(255,196,0,.22); }
+.shecan__upgrade .material-symbols-outlined { font-size: 18px; }
+
+/* === انتخاب و خرید تحریم‌شکن === */
+.sub-section { padding: var(--space-6); }
+.sub-section__head { margin-bottom: var(--space-5); }
+.sub-section__title { font-size: 18px; font-weight: 700; color: var(--color-on-surface); }
+.sub-section__sub { font-size: 13px; color: var(--color-on-surface-variant); margin-top: 4px; }
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+.sub-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  transition: border-color .15s, transform .15s;
+}
+.sub-card:hover { transform: translateY(-3px); border-color: var(--color-outline); }
+.sub-card--active { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary), 0 8px 28px rgba(0,188,212,.12); }
+.sub-card--gold { border-color: rgba(255,196,0,.35); }
+.sub-card__ribbon {
+  position: absolute; top: 12px; left: 12px;
+  background: #ffd24a; color: #3a2c00; font-size: 10px; font-weight: 800;
+  padding: 3px 10px; border-radius: 20px;
+}
+.sub-card__head { display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-4); }
+.sub-card__icon { font-size: 40px !important; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(0,0,0,.4)); }
+.sub-card__name { font-size: 15px; font-weight: 700; color: var(--color-on-surface); }
+.sub-card__price { font-size: 12px; color: var(--color-on-surface-variant); margin-top: 2px; }
+.sub-card__features { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; gap: 9px; flex: 1; }
+.sub-card__features li {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--color-on-surface-variant);
+}
+.sub-card__features .material-symbols-outlined { font-size: 17px; }
+.sub-card__features li .material-symbols-outlined { color: var(--color-accent-green, #22c55e); }
+.sub-card__features li.sub-feat--off { opacity: .55; }
+.sub-card__features li.sub-feat--off .material-symbols-outlined { color: var(--color-outline); }
+.sub-card__buy {
+  padding: 11px; border-radius: var(--radius-lg);
+  background: var(--color-primary); color: #042b30;
+  border: none; font-size: 14px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: filter .15s;
+}
+.sub-card__buy:hover { filter: brightness(1.1); }
+.sub-card__buy:disabled { background: rgba(255,255,255,0.07); color: var(--color-on-surface-variant); cursor: default; }
+.sub-card--gold .sub-card__buy { background: #ffd24a; }
 
 
 /* === ردیف انتخاب سرویس + دکمه اتصال === */

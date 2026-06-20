@@ -521,6 +521,54 @@ function initGamesPage() {
 // ============================================
 // Connection Page Interactions
 // ============================================
+// اشتراک فعلی تحریم‌شکن
+const SUB_TIERS = {
+  free:   { name: 'رایگان',  color: '#9aa6ad' },
+  bronze: { name: 'برنزی',   color: '#cd7f32' },
+  silver: { name: 'نقره‌ای', color: '#c0c0c0' },
+  gold:   { name: 'طلایی',   color: '#ffd700' },
+};
+let currentTier = 'free';
+
+function renderSubscription() {
+  const t = SUB_TIERS[currentTier];
+  const icon = document.getElementById('shecan-account-icon');
+  const tierLbl = document.getElementById('shecan-account-tier');
+  if (icon) icon.style.color = t.color;
+  if (tierLbl) tierLbl.textContent = t.name;
+
+  // دکمه ارتقا فقط وقتی پایین‌تر از طلایی باشیم
+  const up = document.getElementById('shecan-upgrade-btn');
+  if (up) up.hidden = (currentTier === 'gold');
+
+  // علامت‌گذاری کارت فعال
+  document.querySelectorAll('.sub-card').forEach((c) => {
+    const active = c.dataset.tier === currentTier;
+    c.classList.toggle('sub-card--active', active);
+    const buy = c.querySelector('.sub-card__buy');
+    if (buy) { buy.textContent = active ? 'اشتراک فعلی' : 'خرید'; buy.disabled = active; }
+  });
+}
+
+function initSubscription() {
+  // ارتقا → اسکرول به سکشن خرید
+  document.getElementById('shecan-upgrade-btn')?.addEventListener('click', () => {
+    document.getElementById('sub-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  // خرید هر پک
+  document.querySelectorAll('.sub-card__buy').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tier = btn.closest('.sub-card').dataset.tier;
+      if (tier === currentTier) return;
+      if (confirm(`اشتراک «${SUB_TIERS[tier].name}» فعال شود؟`)) {
+        currentTier = tier;
+        renderSubscription();
+      }
+    });
+  });
+  renderSubscription();
+}
+
 function initConnectionPage() {
   // دکمه اتصال تحریم شکن
   const btn      = $('#shecan-connect-btn');
@@ -2859,6 +2907,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs('#leaderboard-tabs', () => {/* mock: می‌تونه فیلتر کنه */});
 
   initConnectionPage();
+  initSubscription();
   initGamesPage();
   initDownloadsPage();
   initProfilePage();

@@ -671,6 +671,189 @@ function initConnectionPage() {
 // ============================================
 // Hero Thumbnails
 // ============================================
+// تبدیل ارقام به فارسی
+const faNum = (s) => String(s).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+// ============================================
+// ورود با OTP (شماره موبایل + کد پیامک) و سپس اسپلش
+// ============================================
+function initOtpLogin() {
+  const screen = document.getElementById('otp-screen');
+  const splash = document.getElementById('app-splash');
+  if (!screen) { if (splash) splash.classList.remove('splash--pending'); return; }
+
+  const stepPhone = document.getElementById('otp-step-phone');
+  const stepCode = document.getElementById('otp-step-code');
+  const phoneInput = document.getElementById('otp-phone-input');
+  const phoneErr = document.getElementById('otp-phone-err');
+  const codeErr = document.getElementById('otp-code-err');
+  const digits = Array.from(document.querySelectorAll('.otp-digit'));
+  const phoneDisplay = document.getElementById('otp-phone-display');
+  const resendBtn = document.getElementById('otp-resend-btn');
+  const timerEl = document.getElementById('otp-timer');
+  let timerId = null;
+
+  // فقط رقم در شماره
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = phoneInput.value.replace(/\D/g, '');
+    phoneErr.hidden = true;
+  });
+
+  function startTimer() {
+    let t = 30;
+    resendBtn.disabled = true;
+    clearInterval(timerId);
+    const fmt = (n) => faNum(String(n).padStart(2, '0'));
+    timerEl.textContent = `۰۰:${fmt(t)}`;
+    timerEl.hidden = false;
+    timerId = setInterval(() => {
+      t -= 1;
+      timerEl.textContent = `۰۰:${fmt(Math.max(t, 0))}`;
+      if (t <= 0) { clearInterval(timerId); resendBtn.disabled = false; timerEl.hidden = true; }
+    }, 1000);
+  }
+
+  function gotoCode() {
+    const phone = phoneInput.value.trim();
+    if (phone.length < 10) { phoneErr.hidden = false; return; }
+    phoneDisplay.textContent = '۰' + faNum(phone);
+    stepPhone.hidden = true;
+    stepCode.hidden = false;
+    digits.forEach((d) => (d.value = ''));
+    codeErr.hidden = true;
+    startTimer();
+    setTimeout(() => digits[0].focus(), 50);
+  }
+
+  document.getElementById('otp-send-btn').addEventListener('click', gotoCode);
+  phoneInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') gotoCode(); });
+
+  // ورودی‌های کد — پرش خودکار
+  digits.forEach((d, i) => {
+    d.addEventListener('input', () => {
+      d.value = d.value.replace(/\D/g, '').slice(0, 1);
+      codeErr.hidden = true;
+      if (d.value && i < digits.length - 1) digits[i + 1].focus();
+    });
+    d.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !d.value && i > 0) digits[i - 1].focus();
+      if (e.key === 'Enter') verify();
+    });
+    d.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const txt = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, digits.length);
+      txt.split('').forEach((ch, k) => { if (digits[k]) digits[k].value = ch; });
+      if (digits[txt.length - 1]) digits[Math.min(txt.length, digits.length) - 1].focus();
+    });
+  });
+
+  function verify() {
+    const code = digits.map((d) => d.value).join('');
+    if (code.length < digits.length) { codeErr.hidden = false; return; }
+    // دمو: هر کدی پذیرفته می‌شود
+    clearInterval(timerId);
+    screen.classList.add('otp-screen--hidden');
+    runSplashThenApp(splash);
+  }
+  document.getElementById('otp-verify-btn').addEventListener('click', verify);
+
+  resendBtn.addEventListener('click', () => { if (!resendBtn.disabled) startTimer(); });
+  document.getElementById('otp-back-btn').addEventListener('click', () => {
+    stepCode.hidden = true;
+    stepPhone.hidden = false;
+    clearInterval(timerId);
+  });
+}
+
+function runSplashThenApp(splash) {
+  if (!splash) return;
+  splash.classList.remove('splash--pending'); // نمایش + شروع انیمیشن نور
+  setTimeout(() => splash.classList.add('splash--hidden'), 3000);
+  setTimeout(() => splash.remove(), 3700);
+}
+
+// ============================================
+// کراپر دایره‌ای عکس پروفایل (مثل تلگرام/اینستا)
+// ============================================
+function initAvatarCropper() {
+  const modal = document.getElementById('crop-modal');
+  const stage = document.getElementById('crop-stage');
+  const img = document.getElementById('crop-img');
+  const zoom = document.getElementById('crop-zoom');
+  if (!modal || !stage || !img || !zoom) return;
+
+  const STAGE = 300, OUT = 512;
+  let iw = 0, ih = 0, baseScale = 1, scale = 1, tx = 0, ty = 0;
+  let dragging = false, sx = 0, sy = 0, doneCb = null;
+
+  function clamp() {
+    const w = iw * scale, h = ih * scale;
+    tx = Math.min(0, Math.max(STAGE - w, tx));
+    ty = Math.min(0, Math.max(STAGE - h, ty));
+  }
+  function apply() {
+    img.style.width = (iw * scale) + 'px';
+    img.style.height = (ih * scale) + 'px';
+    img.style.left = tx + 'px';
+    img.style.top = ty + 'px';
+  }
+  function openWith(file, cb) {
+    doneCb = cb;
+    const url = URL.createObjectURL(file);
+    const probe = new Image();
+    probe.onload = () => {
+      iw = probe.naturalWidth; ih = probe.naturalHeight;
+      baseScale = Math.max(STAGE / iw, STAGE / ih);
+      scale = baseScale;
+      zoom.value = 1;
+      img.src = url;
+      tx = (STAGE - iw * scale) / 2;
+      ty = (STAGE - ih * scale) / 2;
+      clamp(); apply();
+      modal.hidden = false;
+    };
+    probe.src = url;
+  }
+  window.__openAvatarCropper = openWith;
+
+  stage.addEventListener('pointerdown', (e) => {
+    dragging = true; sx = e.clientX - tx; sy = e.clientY - ty;
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    tx = e.clientX - sx; ty = e.clientY - sy;
+    clamp(); apply();
+  });
+  const endDrag = () => { dragging = false; };
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  zoom.addEventListener('input', () => {
+    const c = STAGE / 2;
+    const prev = scale;
+    scale = baseScale * parseFloat(zoom.value);
+    const k = scale / prev;
+    tx = c - (c - tx) * k;
+    ty = c - (c - ty) * k;
+    clamp(); apply();
+  });
+
+  function close() { modal.hidden = true; }
+  document.getElementById('crop-cancel').addEventListener('click', close);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+  document.getElementById('crop-confirm').addEventListener('click', () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = OUT; canvas.height = OUT;
+    const ctx = canvas.getContext('2d');
+    const r = OUT / STAGE;
+    ctx.drawImage(img, tx * r, ty * r, iw * scale * r, ih * scale * r);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    close();
+    if (doneCb) doneCb(dataUrl);
+  });
+}
+
 function initHeroThumbs() {
   const thumbs = $$('#hero-thumbs .hero-thumb');
   const heroBgImg  = document.getElementById('hero-bg-img');
@@ -2622,7 +2805,46 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // آواتار هدر → صفحه پروفایل
+  // ورود با OTP، سپس اسپلش لودینگ
+  initOtpLogin();
+
   document.getElementById('hdr-avatar-btn')?.addEventListener('click', () => showPage('profile'));
+
+  initAvatarCropper();
+
+  // همگام‌سازی همهٔ آواتارهای کاربر با عکس نهایی
+  function applyUserAvatar(src) {
+    document.querySelectorAll('#prof-avatar-img, #profile-avatar-img, .app-header__avatar img')
+      .forEach((el) => { el.src = src; });
+  }
+
+  // آپلود عکس پروفایل (صفحهٔ شخصی شبکهٔ اجتماعی)
+  const profAvatarBtn = document.getElementById('prof-avatar-upload-btn');
+  const profAvatarInput = document.getElementById('prof-avatar-input');
+  profAvatarBtn?.addEventListener('click', () => profAvatarInput?.click());
+  profAvatarInput?.addEventListener('change', () => {
+    const f = profAvatarInput.files[0];
+    if (f) window.__openAvatarCropper(f, applyUserAvatar);
+    profAvatarInput.value = '';
+  });
+
+  // آپلود عکس صفحهٔ پروفایل (از آواتار هدر)
+  const profCardBtn = document.getElementById('profile-avatar-upload-btn');
+  const profCardInput = document.getElementById('profile-avatar-input');
+  profCardBtn?.addEventListener('click', () => profCardInput?.click());
+  profCardInput?.addEventListener('change', () => {
+    const f = profCardInput.files[0];
+    if (f) window.__openAvatarCropper(f, applyUserAvatar);
+    profCardInput.value = '';
+  });
+
+  // خروج از حساب کاربری (دکمهٔ بالا-چپ صفحهٔ پروفایل)
+  document.getElementById('profile-logout-btn')?.addEventListener('click', () => {
+    if (confirm('از حساب کاربری خارج می‌شوید؟')) {
+      window.location.reload();
+    }
+  });
+
   initFriendsPanel();
   initCommunityPage();
   initHeroThumbs();

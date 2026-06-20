@@ -15,6 +15,52 @@
 </head>
 <body>
 
+<!-- ========== ورود با OTP (قبل از لودینگ) ========== -->
+<div class="otp-screen" id="otp-screen">
+  <div class="otp-card">
+    <div class="otp-brand">x100</div>
+
+    <!-- مرحله ۱: شماره موبایل -->
+    <div class="otp-step" id="otp-step-phone">
+      <h2 class="otp-title">ورود / ثبت‌نام</h2>
+      <p class="otp-sub">شماره موبایل خود را وارد کنید</p>
+      <div class="otp-phone">
+        <span class="otp-phone__flag">🇮🇷</span>
+        <span class="otp-phone__prefix">+۹۸</span>
+        <input type="tel" id="otp-phone-input" inputmode="numeric" maxlength="10" placeholder="9123456789" autocomplete="off">
+      </div>
+      <div class="otp-err" id="otp-phone-err" hidden>شماره موبایل معتبر نیست</div>
+      <button class="otp-btn" id="otp-send-btn">ارسال کد پیامک</button>
+    </div>
+
+    <!-- مرحله ۲: کد تأیید -->
+    <div class="otp-step" id="otp-step-code" hidden>
+      <h2 class="otp-title">کد تأیید</h2>
+      <p class="otp-sub">کد پیامک‌شده به <span id="otp-phone-display" dir="ltr"></span> را وارد کنید</p>
+      <div class="otp-inputs" id="otp-inputs" dir="ltr">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
+      </div>
+      <div class="otp-err" id="otp-code-err" hidden>کد وارد شده کامل نیست</div>
+      <button class="otp-btn" id="otp-verify-btn">تأیید و ورود</button>
+      <div class="otp-resend">
+        <button id="otp-resend-btn" disabled>ارسال مجدد کد</button>
+        <span id="otp-timer">۰۰:۳۰</span>
+      </div>
+      <button class="otp-back" id="otp-back-btn">‹ تغییر شماره موبایل</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== اسپلش لودینگ اولیه ========== -->
+<div class="splash splash--pending" id="app-splash">
+  <div class="splash__logo">x100</div>
+  <div class="splash__beam"><div class="splash__beam-fill"></div></div>
+</div>
+
 <!-- ========== HEADER ========== -->
 <header class="app-header">
   <!-- Right: Brand & User -->
@@ -1289,12 +1335,18 @@
 <div class="page" data-page="profile">
   <div class="profile-page">
     <div class="profile-card glass-panel">
+      <button class="profile-logout-btn" id="profile-logout-btn" title="خروج از حساب">
+        <span class="material-symbols-outlined">logout</span>
+        خروج
+      </button>
 
       <!-- ── Avatar ── -->
       <div class="profile-card__avatar-wrap">
         <div class="profile-card__avatar">
           <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhUP1O6W6OoKKw4Umv2fieIfdFZedKbKczzSjt0-0BzEoztx6QXtC9qSysKbt_YKeGsJeOoWzJReEzHt5__Wag1FfDKNsgk5i1j23-7BexQd4VgReH4h_QgH-L0lrIWcgqhkfSWfusZeGWXTgzyYCQaxkNMosEHHBo0PWOpE6Q7jWxKGT9JX32tZJiPjIh18HzGkXqpim15_UPUI7DWDZnu0_0Z9fyFxdC5pRUgaVh8yPQBEdBOkVS6iC1honbljcnW1Jylaz1g8o" alt="آواتار کاربر" id="profile-avatar-img">
         </div>
+        <button class="profile-card__avatar-upload" id="profile-avatar-upload-btn" title="آپلود عکس پروفایل"><span class="material-symbols-outlined">photo_camera</span></button>
+        <input type="file" id="profile-avatar-input" accept="image/*" hidden>
         <span class="badge badge--primary profile-card__badge">پریمیوم</span>
       </div>
 
@@ -1341,6 +1393,36 @@
             spellcheck="false"
           >
           <p class="profile-form__hint">این نام در بخش‌های عمومی لانچر نمایش داده می‌شود</p>
+        </div>
+
+        <!-- سن و جنسیت -->
+        <div class="profile-form__row">
+          <div class="profile-form__field">
+            <label class="profile-form__label" for="profile-age">
+              <span class="material-symbols-outlined">cake</span>
+              سن
+            </label>
+            <input
+              id="profile-age"
+              class="profile-form__input"
+              type="number"
+              min="1" max="120"
+              placeholder="مثلاً ۲۲"
+              autocomplete="off"
+            >
+          </div>
+          <div class="profile-form__field">
+            <label class="profile-form__label" for="profile-gender">
+              <span class="material-symbols-outlined">wc</span>
+              جنسیت
+            </label>
+            <select id="profile-gender" class="profile-form__input profile-form__select">
+              <option value="">انتخاب کنید…</option>
+              <option value="male">مرد</option>
+              <option value="female">زن</option>
+              <option value="other">ترجیح می‌دهم نگویم</option>
+            </select>
+          </div>
         </div>
 
         <!-- ثبت تغییر -->
@@ -1601,8 +1683,9 @@
           <!-- زیر بنر: آواتار راست، توضیحات چپش -->
           <div class="prof-header">
             <div class="prof-header__avatar-col">
-              <img class="prof-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=220&h=220&fit=crop" alt="نرگس احمدی">
-              <button class="prof-avatar-upload" title="آپلود عکس پروفایل"><span class="material-symbols-outlined">photo_camera</span></button>
+              <img class="prof-avatar" id="prof-avatar-img" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=220&h=220&fit=crop" alt="نرگس احمدی">
+              <button class="prof-avatar-upload" id="prof-avatar-upload-btn" title="آپلود عکس پروفایل"><span class="material-symbols-outlined">photo_camera</span></button>
+              <input type="file" id="prof-avatar-input" accept="image/*" hidden>
             </div>
             <div class="prof-header__info">
               <div class="prof-name-row">
@@ -2328,6 +2411,26 @@
     <div class="modal-dialog__foot">
       <button class="btn btn--ghost" id="confirm-no">انصراف</button>
       <button class="btn btn--primary" id="confirm-yes"></button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== مودال برش عکس پروفایل (دایره‌ای) ========== -->
+<div class="crop-modal" id="crop-modal" hidden>
+  <div class="crop-box">
+    <div class="crop-box__title">جابه‌جا و زوم کن تا عکس داخل دایره بشینه</div>
+    <div class="crop-stage" id="crop-stage">
+      <img id="crop-img" alt="" draggable="false">
+      <div class="crop-ring"></div>
+    </div>
+    <div class="crop-zoom">
+      <span class="material-symbols-outlined">image</span>
+      <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1">
+      <span class="material-symbols-outlined">zoom_in</span>
+    </div>
+    <div class="crop-actions">
+      <button class="btn" id="crop-cancel">انصراف</button>
+      <button class="btn btn--primary" id="crop-confirm"><span class="material-symbols-outlined" style="font-size:16px;vertical-align:-3px">check</span> تأیید</button>
     </div>
   </div>
 </div>

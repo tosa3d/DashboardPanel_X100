@@ -130,6 +130,7 @@
   background: transparent;
 }
 
+
 .btn--icon-danger:hover {
   background: rgba(0, 188, 212, 0.2);
   color: var(--color-primary);
@@ -3887,6 +3888,7 @@
    ============================================ */
 
 .profile-page {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -3894,7 +3896,24 @@
   padding: calc(var(--header-height) + var(--space-12)) var(--margin-desktop) var(--space-12);
 }
 
+/* دکمه خروج — بالا سمت چپ صفحهٔ پروفایل */
+.profile-logout-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  background: rgba(229, 56, 59, 0.12);
+  border: 1px solid rgba(229, 56, 59, 0.35);
+  color: #ff6b6e; font-size: 13px; font-weight: 700; font-family: inherit;
+  cursor: pointer; transition: background 0.15s;
+}
+.profile-logout-btn:hover { background: rgba(229, 56, 59, 0.22); }
+.profile-logout-btn .material-symbols-outlined { font-size: 18px; }
+
 .profile-card {
+  position: relative;
   width: 100%;
   max-width: 460px;
   border-radius: var(--radius-3xl);
@@ -3934,6 +3953,173 @@
   padding: 3px 12px;
   border-radius: var(--radius-full);
 }
+
+/* دکمه آپلود عکس روی آواتار پروفایل */
+.profile-card__avatar-upload {
+  position: absolute;
+  top: 70px;
+  left: calc(50% - 48px);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #fff;
+  border: 3px solid var(--color-surface);
+  cursor: pointer;
+  transition: filter 0.15s;
+  z-index: 2;
+}
+.profile-card__avatar-upload:hover { filter: brightness(1.12); }
+.profile-card__avatar-upload .material-symbols-outlined { font-size: 16px; }
+
+/* ─── صفحهٔ ورود OTP ─── */
+.otp-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  background: radial-gradient(circle at 50% 35%, #0f1a24 0%, #08080c 70%);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.otp-screen--hidden { display: none; }
+.otp-card {
+  width: 380px; max-width: 100%;
+  background: rgba(20, 20, 28, 0.7);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 20px; padding: 36px 30px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  text-align: center;
+}
+.otp-brand {
+  font-size: 40px; font-weight: 800; letter-spacing: -2px; color: #29c0e8;
+  text-shadow: 0 0 22px rgba(0,188,212,.7);
+  margin-bottom: 18px;
+}
+.otp-title { font-size: 20px; font-weight: 700; color: var(--color-on-surface); }
+.otp-sub { font-size: 13px; color: var(--color-on-surface-variant); margin: 6px 0 22px; line-height: 1.7; }
+.otp-phone {
+  display: flex; align-items: center; gap: 8px; direction: ltr;
+  background: var(--color-surface-container-low, #1b1b1e);
+  border: 1px solid var(--color-border-soft); border-radius: 12px;
+  padding: 0 14px; transition: border-color .15s;
+}
+.otp-phone:focus-within { border-color: var(--color-primary); }
+.otp-phone__flag { font-size: 18px; }
+.otp-phone__prefix { font-size: 14px; color: var(--color-on-surface-variant); font-weight: 600; }
+.otp-phone input {
+  flex: 1; background: none; border: none; outline: none;
+  color: var(--color-on-surface); font-size: 16px; letter-spacing: 1px;
+  padding: 14px 0; font-family: inherit;
+}
+.otp-err {
+  background: rgba(229,56,59,.12); color: #ff8a8c;
+  border: 1px solid rgba(229,56,59,.3); border-radius: 8px;
+  padding: 7px 12px; font-size: 12px; margin-top: 12px;
+}
+.otp-btn {
+  width: 100%; margin-top: 18px;
+  background: var(--color-primary); color: #042b30; border: none;
+  border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: filter .15s; font-family: inherit;
+}
+.otp-btn:hover { filter: brightness(1.1); }
+.otp-inputs { display: flex; gap: 10px; justify-content: center; }
+.otp-digit {
+  width: 52px; height: 60px; text-align: center;
+  background: var(--color-surface-container-low, #1b1b1e);
+  border: 1px solid var(--color-border-soft); border-radius: 12px;
+  color: var(--color-on-surface); font-size: 26px; font-weight: 700;
+  outline: none; transition: border-color .15s; font-family: inherit;
+}
+.otp-digit:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(0,188,212,.15); }
+.otp-resend {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 16px; font-size: 12px; color: var(--color-on-surface-variant);
+}
+.otp-resend button {
+  background: none; border: none; color: var(--color-primary); cursor: pointer;
+  font-size: 12px; font-family: inherit; font-weight: 600;
+}
+.otp-resend button:disabled { color: var(--color-outline); cursor: default; }
+.otp-back {
+  margin-top: 14px; background: none; border: none; cursor: pointer;
+  color: var(--color-on-surface-variant); font-size: 13px; font-family: inherit;
+}
+.otp-back:hover { color: var(--color-on-surface); }
+
+/* ─── اسپلش لودینگ اولیه ─── */
+.splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: radial-gradient(circle at 50% 44%, #0f1a24 0%, #08080c 70%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+.splash--pending { display: none; }
+.splash--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.splash__logo {
+  font-size: 92px; font-weight: 800; letter-spacing: -2px;
+  color: #29c0e8;
+  text-shadow: 0 0 18px rgba(0,188,212,.95), 0 0 42px rgba(0,188,212,.6), 0 0 90px rgba(0,188,212,.35);
+  animation: splashPulse 2s ease-in-out infinite;
+}
+@keyframes splashPulse {
+  0%, 100% { opacity: .85; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}
+.splash__beam {
+  position: absolute; bottom: 16%; left: 14%; right: 14%; height: 2px;
+  background: rgba(0,188,212,.07); border-radius: 4px;
+}
+.splash__beam-fill {
+  position: absolute; left: 0; top: 0; height: 100%; width: 0;
+  background: linear-gradient(to right, rgba(0,188,212,0) 0%, rgba(0,188,212,.5) 60%, rgba(0,188,212,1) 100%);
+  box-shadow: 0 0 18px 2px rgba(0,188,212,.7);
+  border-radius: 4px;
+  animation: splashBeam 2.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.splash__beam-fill::after {
+  content: ''; position: absolute; right: -3px; top: 50%; transform: translateY(-50%);
+  width: 9px; height: 9px; border-radius: 50%; background: #eaffff;
+  box-shadow: 0 0 16px 5px rgba(0,188,212,.95);
+}
+@keyframes splashBeam {
+  0%   { width: 0; }
+  100% { width: 100%; }
+}
+
+/* ─── کراپر دایره‌ای عکس پروفایل ─── */
+.crop-modal {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.crop-box {
+  width: 360px; max-width: 100%;
+  background: var(--color-surface-container, #1f1f22);
+  border: 1px solid var(--color-border-soft);
+  border-radius: 18px; padding: 22px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.crop-box__title { font-size: 14px; color: var(--color-on-surface-variant); text-align: center; margin-bottom: 16px; }
+.crop-stage {
+  position: relative; width: 300px; height: 300px; margin: 0 auto;
+  overflow: hidden; border-radius: 12px; background: #0a0a0c;
+  cursor: grab; touch-action: none; user-select: none;
+}
+.crop-stage:active { cursor: grabbing; }
+.crop-stage #crop-img { position: absolute; top: 0; left: 0; max-width: none; pointer-events: none; }
+.crop-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+}
+.crop-zoom { display: flex; align-items: center; gap: 10px; margin: 18px 4px 4px; }
+.crop-zoom .material-symbols-outlined { color: var(--color-on-surface-variant); font-size: 18px; }
+.crop-zoom input[type="range"] { flex: 1; accent-color: var(--color-primary); cursor: pointer; }
+.crop-actions { display: flex; gap: 10px; margin-top: 18px; }
+.crop-actions .btn { flex: 1; justify-content: center; }
 
 /* ─── Name ─── */
 .profile-card__head {
@@ -4041,6 +4227,20 @@
 .profile-form__input::placeholder {
   color: var(--color-on-surface-variant);
   opacity: 0.45;
+}
+
+/* ردیف سن و جنسیت */
+.profile-form__row {
+  display: flex;
+  gap: var(--space-4);
+}
+.profile-form__row .profile-form__field { flex: 1; min-width: 0; }
+.profile-form__select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238a9aa0' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left var(--space-4) center;
 }
 
 .profile-form__input--error {

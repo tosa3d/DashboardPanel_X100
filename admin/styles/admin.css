@@ -121,6 +121,83 @@ input, select, textarea, button { font-family: inherit; }
 .admin-nav__subitem .material-icons-outlined { font-size: 18px; }
 .admin-nav__subitem:hover { background: var(--surface); color: var(--text); }
 .admin-nav__subitem--active { background: rgba(0,188,212,.08); color: var(--primary); border-right-color: var(--primary); font-weight: 600; }
+.admin-nav__badge {
+  margin-right: auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* زیربخش‌های کاربران */
+.users-pane { display: none; }
+.users-pane--active { display: block; }
+
+/* تأیید عکس/آواتار */
+.avatar-stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.avatar-stat {
+  flex: 1; min-width: 130px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px; cursor: pointer; text-align: right; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+.avatar-stat:hover { border-color: var(--border-soft); }
+.avatar-stat:active { transform: scale(.98); }
+.avatar-stat--active { border-color: var(--primary) !important; box-shadow: 0 0 0 1px var(--primary); }
+.avatar-stat--reject .avatar-stat__num { color: var(--red); }
+.avatar-stat__num { font-size: 22px; font-weight: 800; color: var(--text); }
+.avatar-stat__lbl { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.avatar-stat--warn { border-color: rgba(255,196,0,.4); }
+.avatar-stat--warn .avatar-stat__num { color: var(--gold); }
+.avatar-stat--ok .avatar-stat__num { color: var(--green); }
+.avatar-stat--bad .avatar-stat__num { color: var(--text-faint); }
+.avatar-stat--report { border-color: rgba(249,115,22,.4); }
+.avatar-stat--report .avatar-stat__num { color: #f97316; }
+.avatar-review__report { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #f97316; margin-top: 5px; }
+.avatar-review__report .material-icons-outlined { font-size: 14px; }
+.avatar-review__ai { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-dim); margin-top: 6px; flex-wrap: wrap; }
+.avatar-review__ai .material-icons-outlined { font-size: 15px; color: var(--primary); }
+.avatar-review__ainote { font-size: 11px; color: var(--text-faint); margin-top: 3px; line-height: 1.6; }
+.avatar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.avatar-review { display: flex; gap: 12px; align-items: center; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.avatar-review__img { width: 76px; height: 76px; flex-shrink: 0; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); }
+.avatar-review__img img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-review__body { flex: 1; min-width: 0; }
+.avatar-review__name { font-size: 14px; font-weight: 700; color: var(--text); }
+.avatar-review__handle { font-size: 11px; color: var(--text-faint); font-weight: 400; direction: ltr; }
+.avatar-review__status { display: inline-block; font-size: 11px; font-weight: 700; margin-top: 5px; }
+.avatar-review__date { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-faint); margin-top: 5px; }
+.avatar-review__date .material-icons-outlined { font-size: 13px; }
+.avatar-review__reason { font-size: 11px; color: var(--red); margin-top: 5px; line-height: 1.6; }
+.avatar-review__actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.ar-btn {
+  display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 8px;
+  border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.ar-btn .material-icons-outlined { font-size: 16px; }
+.ar-btn--ok { background: var(--primary); color: #042b30; }
+.ar-btn--ok:hover { background: var(--primary-dim); }
+.ar-btn--no { background: rgba(229,56,59,.12); color: var(--red); border-color: rgba(229,56,59,.4); }
+.ar-btn--no:hover { background: rgba(229,56,59,.22); }
+.ar-btn--ghost { background: var(--surface-2); color: var(--text-dim); border-color: var(--border); }
+.ar-btn--ghost:hover { color: var(--text); border-color: var(--border-soft); }
+
+/* تراکنش — سکهٔ پاداش بازی */
+.coin-rule { font-size: 12px; color: var(--text-dim); line-height: 1.9; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.coin-rule b { color: var(--gold); font-weight: 700; }
+.coin-stats { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.coin-stat { flex: 1; min-width: 110px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.coin-stat__num { font-size: 18px; font-weight: 800; color: var(--gold); direction: ltr; }
+.coin-stat__lbl { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.coin-tx-list { display: flex; flex-direction: column; gap: 8px; }
+.coin-tx { display: flex; align-items: center; gap: 12px; padding: 11px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; }
+.coin-tx__icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: rgba(255,196,0,.12); color: var(--gold); font-size: 19px; }
+.coin-tx__body { flex: 1; min-width: 0; }
+.coin-tx__top { display: flex; align-items: center; gap: 8px; }
+.coin-tx__user { font-size: 13px; font-weight: 700; color: var(--text); }
+.coin-tx__game { font-size: 11px; color: var(--text-dim); background: var(--surface); border: 1px solid var(--border); padding: 1px 8px; border-radius: 20px; direction: ltr; }
+.coin-tx__meta { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+.coin-tx__meta .material-icons-outlined { font-size: 13px; }
+.coin-tx__amount { flex-shrink: 0; text-align: left; }
+.coin-tx__earned { font-size: 14px; font-weight: 800; color: var(--green); direction: ltr; }
+.coin-tx__cap { display: block; font-size: 10px; color: var(--gold); margin-top: 2px; }
 .admin-logout {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 14px; border-radius: 10px;

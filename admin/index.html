@@ -40,10 +40,18 @@
     <div class="admin-sidebar__brand">x100<span>Admin</span></div>
     <nav class="admin-nav">
       <button class="admin-nav__item admin-nav__item--active" data-view="overview"><span class="material-icons-outlined">dashboard</span>داشبورد</button>
-      <button class="admin-nav__item" data-view="users"><span class="material-icons-outlined">group</span>کاربران</button>
+      <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">group</span>کاربران<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
+      <div class="admin-nav__sub" hidden>
+        <button class="admin-nav__subitem" data-view="users" data-usub="list"><span class="material-icons-outlined">groups</span>لیست کاربران</button>
+        <button class="admin-nav__subitem" data-view="users" data-usub="avatars"><span class="material-icons-outlined">verified_user</span>تأیید عکس<span class="admin-nav__badge" id="nav-avatar-badge" hidden></span></button>
+      </div>
       <button class="admin-nav__item" data-view="games"><span class="material-icons-outlined">sports_esports</span>انتشار بازی</button>
       <button class="admin-nav__item" data-view="launcher"><span class="material-icons-outlined">rocket_launch</span>لانچر</button>
       <button class="admin-nav__item" data-view="servers"><span class="material-icons-outlined">dns</span>سرورها</button>
+      <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">receipt_long</span>تراکنش<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
+      <div class="admin-nav__sub" hidden>
+        <button class="admin-nav__subitem" data-view="transactions"><span class="material-icons-outlined">paid</span>سکه / پاداش بازی</button>
+      </div>
       <button class="admin-nav__item admin-nav__parent"><span class="material-icons-outlined">campaign</span>انتشار محتوا<span class="material-icons-outlined admin-nav__caret">expand_more</span></button>
       <div class="admin-nav__sub" hidden>
         <button class="admin-nav__subitem" data-view="publish" data-pub="home"><span class="material-icons-outlined">home</span>خانه</button>
@@ -92,6 +100,8 @@
 
     <!-- ===== کاربران ===== -->
     <section class="admin-view" data-view="users">
+      <!-- زیربخش: لیست کاربران -->
+      <div class="users-pane users-pane--active" data-usub="list">
       <div class="toolbar">
         <div class="toolbar__search">
           <span class="material-icons-outlined">search</span>
@@ -133,6 +143,28 @@
           <tbody id="users-tbody"></tbody>
         </table>
         <div class="empty-state" id="users-empty" hidden>کاربری با این فیلتر یافت نشد</div>
+      </div>
+      </div><!-- /users-pane list -->
+
+      <!-- زیربخش: تأیید عکس کاربران (بررسی هوشمند دومرحله‌ای) -->
+      <div class="users-pane" data-usub="avatars">
+        <div class="avatar-stats" id="avatar-stats"></div>
+        <div class="toolbar">
+          <span class="toolbar__count" style="font-weight:700;color:var(--text)"><span class="material-icons-outlined" style="vertical-align:-5px;color:var(--primary)">smart_toy</span> بررسی هوشمند آواتار</span>
+          <select class="toolbar__select" id="avatar-filter">
+            <option value="suspicious">مشکوک (نیاز به بررسی)</option>
+            <option value="reported">گزارش‌شده توسط کاربران</option>
+            <option value="autoApproved">تأیید خودکار AI</option>
+            <option value="autoRejected">رد خودکار AI</option>
+            <option value="approved">تأیید نهایی</option>
+            <option value="rejected">رد نهایی</option>
+            <option value="all">همه</option>
+          </select>
+          <button type="button" class="btn-primary btn-primary--sm" id="avatar-simulate"><span class="material-icons-outlined">cloud_upload</span>شبیه‌سازی آپلود</button>
+          <button type="button" class="btn-ghost btn-ghost--sm" id="avatar-report"><span class="material-icons-outlined">flag</span>شبیه‌سازی گزارش</button>
+          <span class="toolbar__count" id="avatar-count"></span>
+        </div>
+        <div class="avatar-grid" id="avatar-grid"></div>
       </div>
     </section>
 
@@ -352,6 +384,38 @@
             </div>
             <div class="servers-list" id="servers-list"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== تراکنش: سکه / پاداش بازی ===== -->
+    <section class="admin-view" data-view="transactions">
+      <div class="games-layout">
+        <!-- تنظیمات سکه -->
+        <div class="panel">
+          <div class="panel__head"><h2>تنظیمات سکهٔ پاداش بازی</h2></div>
+          <form id="coin-settings-form" class="game-form">
+            <div class="field-row">
+              <label class="field"><span>سکه به ازای هر بازه</span><input type="number" id="cs-perInterval" min="0" value="10"></label>
+              <label class="field"><span>طول بازه (دقیقه)</span><input type="number" id="cs-interval" min="1" value="30"></label>
+            </div>
+            <div class="field-row">
+              <label class="field"><span>سکهٔ پایهٔ هر نشست</span><input type="number" id="cs-perSession" min="0" value="5"></label>
+              <label class="field"><span>سقف سکهٔ روزانه</span><input type="number" id="cs-dailyCap" min="0" value="200"></label>
+            </div>
+            <div class="coin-rule" id="coin-rule"></div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">ذخیرهٔ تنظیمات</button>
+              <button type="button" class="btn-ghost" id="coin-simulate"><span class="material-icons-outlined">sports_esports</span>شبیه‌سازی نشست بازی</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- تراکنش‌های پاداش بازی -->
+        <div class="panel">
+          <div class="panel__head"><h2>تراکنش‌های پاداش بازی <span class="badge-count" id="coin-tx-count">۰</span></h2></div>
+          <div class="coin-stats" id="coin-stats"></div>
+          <div class="coin-tx-list" id="coin-tx-list"></div>
         </div>
       </div>
     </section>

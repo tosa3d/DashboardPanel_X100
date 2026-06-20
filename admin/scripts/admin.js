@@ -115,7 +115,7 @@ function initLogin() {
 // ============================================
 // ناوبری بین نماها
 // ============================================
-const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'انتشار بازی', launcher: 'لانچر', servers: 'سرورها', publish: 'انتشار محتوا' };
+const VIEW_TITLE = { overview: 'داشبورد', users: 'کاربران', games: 'انتشار بازی', launcher: 'لانچر', servers: 'سرورها', transactions: 'تراکنش', publish: 'انتشار محتوا' };
 function initNav() {
   const showView = (view) => {
     document.querySelectorAll('.admin-view').forEach((v) => {
@@ -137,25 +137,193 @@ function initNav() {
     });
   });
 
-  // والد «انتشار» — باز/بسته کردن منوی کشویی
-  const parent = document.querySelector('.admin-nav__parent');
-  if (parent) {
+  // والدهای کشویی (کاربران / انتشار محتوا) — باز/بسته کردن منو
+  document.querySelectorAll('.admin-nav__parent').forEach((parent) => {
     const sub = parent.nextElementSibling;
     parent.addEventListener('click', () => {
       const open = sub.hidden;
       sub.hidden = !open;
       parent.classList.toggle('admin-nav__parent--open', open);
     });
-  }
+  });
 
-  // زیرگزینه‌های انتشار (خانه / لانچر / صفحهٔ بازی‌ها)
+  // زیرگزینه‌ها — بسته به نوع، به بخش مربوطه می‌روند
   document.querySelectorAll('.admin-nav__subitem').forEach((sub) => {
     sub.addEventListener('click', () => {
       clearActive();
-      showView('publish');
-      setPubTarget(sub.dataset.pub); // زیرگزینهٔ فعال را هم خودش ست می‌کند
+      sub.classList.add('admin-nav__subitem--active');
+      showView(sub.dataset.view);
+      if (sub.dataset.pub) setPubTarget(sub.dataset.pub);
+      if (sub.dataset.usub) setUsersTab(sub.dataset.usub);
     });
   });
+}
+
+// زیربخش‌های کاربران (لیست / تأیید عکس)
+function setUsersTab(tab) {
+  document.querySelectorAll('.users-pane').forEach((p) => p.classList.toggle('users-pane--active', p.dataset.usub === tab));
+  document.querySelectorAll('.admin-nav__subitem[data-usub]').forEach((s) => s.classList.toggle('admin-nav__subitem--active', s.dataset.usub === tab));
+  if (tab === 'avatars') renderAvatarReviews();
+}
+
+// ============================================
+// تأیید عکس/آواتار کاربران
+// ============================================
+const AVATAR_STATUS = {
+  suspicious:   { label: 'مشکوک — نیاز به بررسی', color: 'var(--gold)' },
+  autoApproved: { label: 'تأیید خودکار (AI)',      color: 'var(--green)' },
+  autoRejected: { label: 'رد خودکار (AI)',          color: 'var(--text-faint)' },
+  approved:     { label: 'تأیید نهایی (ادمین)',     color: 'var(--green)' },
+  rejected:     { label: 'رد نهایی (ادمین)',        color: 'var(--red)' },
+  reported:     { label: 'گزارش‌شده توسط کاربران',   color: '#f97316' },
+};
+const AI_VERDICT = {
+  safe:       { label: 'سالم',    color: 'var(--green)' },
+  suspicious: { label: 'مشکوک',   color: 'var(--gold)' },
+  unsafe:     { label: 'نامناسب', color: 'var(--red)' },
+};
+let AVATAR_REVIEWS = [
+  { id: 1, userId: 3,  name: 'آرش کریمی',  username: '@ArashGG',      imageUrl: 'https://i.pravatar.cc/300?u=arashnew', status: 'suspicious', createdAt: '۲ ساعت پیش', reason: '', ai: { verdict: 'suspicious', score: 58, note: 'احتمال محتوای نامناسب — نیاز به بررسی انسانی' } },
+  { id: 2, userId: 8,  name: 'پیمان شریفی', username: '@NightWolf_IR', imageUrl: 'https://i.pravatar.cc/300?u=wolfnew',  status: 'suspicious', createdAt: '۵ ساعت پیش', reason: '', ai: { verdict: 'suspicious', score: 47, note: 'متن/لوگوی ناشناس روی تصویر' } },
+  { id: 3, userId: 11, name: 'مریم اکبری', username: '@MaryGamer',    imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop', status: 'autoApproved', createdAt: 'دیروز', reason: '', ai: { verdict: 'safe', score: 94, note: 'تصویر چهرهٔ سالم تشخیص داده شد' } },
+  { id: 4, userId: 5,  name: 'میلاد نوری', username: '@MiladPro',     imageUrl: 'https://i.pravatar.cc/300?u=miladnew', status: 'approved', createdAt: '۲ روز پیش', reason: '', ai: { verdict: 'suspicious', score: 61, note: 'پس از بررسی انسانی تأیید شد' } },
+  { id: 5, userId: 12, name: 'کاوه مرادی', username: '@KavehX',       imageUrl: 'https://i.pravatar.cc/300?u=kavehnew', status: 'autoRejected', createdAt: '۳ روز پیش', reason: 'محتوای نامناسب با اطمینان بالا', ai: { verdict: 'unsafe', score: 91, note: 'محتوای نامناسب با اطمینان بالا' } },
+  { id: 6, userId: 1, name: 'احسان رضایی', username: '@ehsan_gamer', imageUrl: 'https://i.pravatar.cc/300?u=ehsanrep', status: 'reported', createdAt: '۱ ساعت پیش', reason: '', reportCount: 4, ai: { verdict: 'safe', score: 88, note: 'AI سالم تشخیص داد، اما کاربران گزارش کرده‌اند' } },
+  { id: 7, userId: 4, name: 'سارا محمدی', username: '@SaraPlay', imageUrl: 'https://i.pravatar.cc/300?u=sararep', status: 'reported', createdAt: '۳ ساعت پیش', reason: '', reportCount: 2, ai: { verdict: 'safe', score: 90, note: 'گزارش‌شده توسط کاربران' } },
+];
+let avatarFilter = 'suspicious';
+let avatarSeq = 8;
+
+// شبیه‌سازی موتور بررسی هوش مصنوعی روی یک آپلود جدید
+function runAiVerdict() {
+  const r = Math.random();
+  if (r < 0.5) return { verdict: 'safe', score: 85 + Math.floor(Math.random() * 14), note: 'تصویر سالم تشخیص داده شد', status: 'autoApproved' };
+  if (r < 0.78) return { verdict: 'suspicious', score: 42 + Math.floor(Math.random() * 22), note: 'موارد مشکوک شناسایی شد — نیاز به بررسی انسانی', status: 'suspicious' };
+  return { verdict: 'unsafe', score: 80 + Math.floor(Math.random() * 19), note: 'محتوای نامناسب با اطمینان بالا', status: 'autoRejected' };
+}
+
+function renderAvatarReviews() {
+  const counts = { suspicious: 0, reported: 0, autoApproved: 0, autoRejected: 0, approved: 0, rejected: 0 };
+  AVATAR_REVIEWS.forEach((a) => { if (counts[a.status] !== undefined) counts[a.status]++; });
+
+  const navBadge = document.getElementById('nav-avatar-badge');
+  const needReview = counts.suspicious + counts.reported;
+  if (navBadge) { navBadge.textContent = faNum(needReview); navBadge.hidden = !needReview; }
+
+  const statsEl = document.getElementById('avatar-stats');
+  if (statsEl) {
+    const statDefs = [
+      { key: 'suspicious',   label: 'مشکوک (بررسی)',  cls: 'avatar-stat--warn' },
+      { key: 'reported',     label: 'گزارش کاربران',   cls: 'avatar-stat--report' },
+      { key: 'autoApproved', label: 'تأیید خودکار AI', cls: 'avatar-stat--ok' },
+      { key: 'approved',     label: 'تأیید نهایی',     cls: 'avatar-stat--ok' },
+      { key: 'rejected',     label: 'رد نهایی',        cls: 'avatar-stat--reject' },
+    ];
+    statsEl.innerHTML = statDefs.map((d) =>
+      `<button type="button" class="avatar-stat ${d.cls} ${avatarFilter === d.key ? 'avatar-stat--active' : ''}" data-fstatus="${d.key}">
+        <div class="avatar-stat__num">${faNum(counts[d.key] || 0)}</div>
+        <div class="avatar-stat__lbl">${d.label}</div>
+      </button>`).join('');
+    statsEl.querySelectorAll('[data-fstatus]').forEach((c) => c.addEventListener('click', () => {
+      avatarFilter = c.dataset.fstatus;
+      const f = document.getElementById('avatar-filter'); if (f) f.value = avatarFilter;
+      renderAvatarReviews();
+    }));
+  }
+
+  const grid = document.getElementById('avatar-grid');
+  if (!grid) return;
+  const rows = avatarFilter === 'all' ? AVATAR_REVIEWS : AVATAR_REVIEWS.filter((a) => a.status === avatarFilter);
+  document.getElementById('avatar-count').textContent = `${faNum(rows.length)} مورد`;
+  if (!rows.length) {
+    grid.innerHTML = '<div class="empty-state">موردی در این وضعیت نیست</div>';
+    return;
+  }
+  grid.innerHTML = rows.map((a) => {
+    const st = AVATAR_STATUS[a.status] || AVATAR_STATUS.suspicious;
+    const ai = a.ai || { verdict: 'suspicious', score: 50, note: '' };
+    const av = AI_VERDICT[ai.verdict] || AI_VERDICT.suspicious;
+    const canApprove = a.status !== 'approved'; // روی همه (حتی تأیید خودکار AI) امکان تأیید دستی
+    const canReject = a.status !== 'rejected';   // روی همه امکان رد دستی
+    return `
+    <div class="avatar-review" data-aid="${a.id}" data-uid="${a.userId}">
+      <div class="avatar-review__img"><img src="${a.imageUrl}" alt=""></div>
+      <div class="avatar-review__body">
+        <div class="avatar-review__name">${a.name} <span class="avatar-review__handle">${a.username}</span></div>
+        <span class="avatar-review__status" style="color:${st.color}">● ${st.label}</span>
+        ${a.reportCount ? `<div class="avatar-review__report"><span class="material-icons-outlined">flag</span>${faNum(a.reportCount)} گزارش کاربر</div>` : ''}
+        <div class="avatar-review__ai"><span class="material-icons-outlined">smart_toy</span>هوش مصنوعی: <b style="color:${av.color}">${av.label}</b> · ${faNum(ai.score)}٪ اطمینان</div>
+        ${ai.note ? `<div class="avatar-review__ainote">${ai.note}</div>` : ''}
+        ${a.reason ? `<div class="avatar-review__reason">دلیل رد: ${a.reason}</div>` : ''}
+        <div class="avatar-review__date"><span class="material-icons-outlined">schedule</span>${a.createdAt}</div>
+      </div>
+      <div class="avatar-review__actions">
+        ${canApprove ? `<button class="ar-btn ar-btn--ok" data-act="approve"><span class="material-icons-outlined">check</span>تأیید</button>` : ''}
+        ${canReject ? `<button class="ar-btn ar-btn--no" data-act="reject"><span class="material-icons-outlined">close</span>رد</button>` : ''}
+        <button class="ar-btn ar-btn--ghost" data-act="profile"><span class="material-icons-outlined">person</span>پروفایل</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('[data-act]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.avatar-review');
+      const a = AVATAR_REVIEWS.find((x) => x.id === Number(card.dataset.aid));
+      if (!a) return;
+      if (btn.dataset.act === 'approve') {
+        a.status = 'approved'; a.reason = '';
+        renderAvatarReviews();
+      } else if (btn.dataset.act === 'reject') {
+        const reason = prompt('دلیل رد عکس (به کاربر نمایش داده می‌شود):', (a.ai && a.ai.note) || 'عکس نامناسب است');
+        if (reason === null) return;
+        a.status = 'rejected'; a.reason = reason.trim() || 'عکس تأیید نشد';
+        renderAvatarReviews();
+      } else if (btn.dataset.act === 'profile') {
+        openUserModal(Number(card.dataset.uid));
+      }
+    });
+  });
+}
+
+function initAvatarReviews() {
+  const filter = document.getElementById('avatar-filter');
+  if (filter) filter.addEventListener('change', (e) => { avatarFilter = e.target.value; renderAvatarReviews(); });
+
+  // شبیه‌سازی آپلود کاربر → بررسی فوری AI و قرارگیری در وضعیت مناسب
+  const sim = document.getElementById('avatar-simulate');
+  if (sim) sim.addEventListener('click', () => {
+    const u = USERS[Math.floor(Math.random() * USERS.length)];
+    const v = runAiVerdict();
+    AVATAR_REVIEWS.unshift({
+      id: avatarSeq++, userId: u.id, name: u.name, username: u.handle,
+      imageUrl: 'https://i.pravatar.cc/300?u=sim' + avatarSeq + Math.floor(Math.random() * 9999),
+      status: v.status, createdAt: 'هم‌اکنون',
+      reason: v.status === 'autoRejected' ? v.note : '',
+      ai: { verdict: v.verdict, score: v.score, note: v.note },
+    });
+    avatarFilter = v.status;
+    if (filter) filter.value = v.status;
+    renderAvatarReviews();
+  });
+
+  // شبیه‌سازی گزارش کاربر روی یک عکس تأییدشده
+  const rep = document.getElementById('avatar-report');
+  if (rep) rep.addEventListener('click', () => {
+    const candidates = AVATAR_REVIEWS.filter((a) => a.status === 'autoApproved' || a.status === 'approved');
+    let target = candidates[Math.floor(Math.random() * candidates.length)];
+    if (!target) {
+      const u = USERS[Math.floor(Math.random() * USERS.length)];
+      target = { id: avatarSeq++, userId: u.id, name: u.name, username: u.handle, imageUrl: 'https://i.pravatar.cc/300?u=rep' + avatarSeq, status: 'autoApproved', createdAt: 'دیروز', reason: '', reportCount: 0, ai: { verdict: 'safe', score: 90, note: '' } };
+      AVATAR_REVIEWS.unshift(target);
+    }
+    target.reportCount = (target.reportCount || 0) + 1;
+    target.status = 'reported';
+    avatarFilter = 'reported';
+    if (filter) filter.value = 'reported';
+    renderAvatarReviews();
+  });
+
+  renderAvatarReviews();
 }
 
 // ============================================
@@ -1805,6 +1973,102 @@ function initPublish() {
 }
 
 // ============================================
+// تراکنش — سکه بر اساس میزان بازی (Play Reward)
+// ============================================
+let COIN_SETTINGS = { coinsPerInterval: 10, intervalMinutes: 30, coinsPerSession: 5, dailyCap: 200 };
+const coinDailyEarned = {}; // userId → سکهٔ کسب‌شدهٔ امروز (برای سقف روزانه)
+const COIN_GAMES = ['DOTA 2', 'Counter-Strike 2', 'VALORANT', 'PUBG', 'Apex Legends', 'Rainbow Six Siege'];
+let COIN_TX = [
+  { id: 1, userId: 1,  name: 'احسان رضایی', game: 'DOTA 2',          minutes: 95,  coinsEarned: 35,  totalCoins: 1480000, capped: false, date: '۴۵ دقیقه پیش' },
+  { id: 2, userId: 3,  name: 'آرش کریمی',  game: 'VALORANT',         minutes: 40,  coinsEarned: 15,  totalCoins: 540000,  capped: false, date: '۲ ساعت پیش' },
+  { id: 3, userId: 8,  name: 'پیمان شریفی', game: 'Counter-Strike 2', minutes: 25,  coinsEarned: 5,   totalCoins: 67000,   capped: false, date: '۳ ساعت پیش' },
+  { id: 4, userId: 11, name: 'مریم اکبری', game: 'Apex Legends',     minutes: 130, coinsEarned: 200, totalCoins: 1100000, capped: true,  date: 'دیروز' },
+];
+let coinTxSeq = 5;
+
+function readCoinSettings() {
+  return {
+    coinsPerInterval: Math.max(0, parseInt(document.getElementById('cs-perInterval').value, 10) || 0),
+    intervalMinutes: Math.max(1, parseInt(document.getElementById('cs-interval').value, 10) || 1),
+    coinsPerSession: Math.max(0, parseInt(document.getElementById('cs-perSession').value, 10) || 0),
+    dailyCap: Math.max(0, parseInt(document.getElementById('cs-dailyCap').value, 10) || 0),
+  };
+}
+
+function computeSessionCoins(minutes) {
+  const s = COIN_SETTINGS;
+  return Math.floor(minutes / Math.max(1, s.intervalMinutes)) * s.coinsPerInterval + s.coinsPerSession;
+}
+
+function renderCoinRule() {
+  const el = document.getElementById('coin-rule');
+  if (!el) return;
+  const s = COIN_SETTINGS;
+  el.innerHTML = `هر <b>${faNum(s.intervalMinutes)}</b> دقیقه = <b>${faNum(s.coinsPerInterval)}</b> سکه، به‌علاوهٔ <b>${faNum(s.coinsPerSession)}</b> سکهٔ پایه برای هر نشست · سقف روزانه <b>${faNum(s.dailyCap)}</b> سکه`;
+}
+
+function renderCoinTx() {
+  renderCoinRule();
+  const list = document.getElementById('coin-tx-list');
+  if (!list) return;
+  document.getElementById('coin-tx-count').textContent = faNum(COIN_TX.length);
+
+  const totalDistributed = COIN_TX.reduce((s, t) => s + t.coinsEarned, 0);
+  const statsEl = document.getElementById('coin-stats');
+  if (statsEl) statsEl.innerHTML = `
+    <div class="coin-stat"><div class="coin-stat__num">${faPrice(totalDistributed)}</div><div class="coin-stat__lbl">کل سکهٔ توزیع‌شده</div></div>
+    <div class="coin-stat"><div class="coin-stat__num">${faNum(COIN_TX.length)}</div><div class="coin-stat__lbl">تعداد نشست‌ها</div></div>
+    <div class="coin-stat"><div class="coin-stat__num">${faNum(COIN_TX.filter((t) => t.capped).length)}</div><div class="coin-stat__lbl">به سقف روزانه رسیده</div></div>`;
+
+  if (!COIN_TX.length) { list.innerHTML = '<div class="empty-state">هنوز تراکنشی ثبت نشده است</div>'; return; }
+  list.innerHTML = COIN_TX.map((t) => `
+    <div class="coin-tx">
+      <span class="coin-tx__icon material-icons-outlined">paid</span>
+      <div class="coin-tx__body">
+        <div class="coin-tx__top"><span class="coin-tx__user">${t.name}</span><span class="coin-tx__game">${t.game}</span></div>
+        <div class="coin-tx__meta"><span class="material-icons-outlined">timer</span>${faNum(t.minutes)} دقیقه<span class="material-icons-outlined">schedule</span>${t.date}</div>
+      </div>
+      <div class="coin-tx__amount">
+        <span class="coin-tx__earned">+${faPrice(t.coinsEarned)}</span>
+        ${t.capped ? '<span class="coin-tx__cap">سقف روزانه</span>' : ''}
+      </div>
+    </div>`).join('');
+}
+
+function initCoins() {
+  ['cs-perInterval', 'cs-interval', 'cs-perSession', 'cs-dailyCap'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', () => { COIN_SETTINGS = readCoinSettings(); renderCoinRule(); });
+  });
+
+  document.getElementById('coin-settings-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    COIN_SETTINGS = readCoinSettings();
+    renderCoinRule();
+    alert('تنظیمات سکه ذخیره شد.');
+  });
+
+  // شبیه‌سازی گزارش نشست بازی توسط کلاینت → محاسبهٔ سکه سمت سرور
+  document.getElementById('coin-simulate')?.addEventListener('click', () => {
+    COIN_SETTINGS = readCoinSettings();
+    const u = USERS[Math.floor(Math.random() * USERS.length)];
+    const game = COIN_GAMES[Math.floor(Math.random() * COIN_GAMES.length)];
+    const minutes = 10 + Math.floor(Math.random() * 120);
+    let earned = computeSessionCoins(minutes);
+    const already = coinDailyEarned[u.id] || 0;
+    const room = Math.max(0, COIN_SETTINGS.dailyCap - already);
+    const capped = earned > room;
+    earned = Math.min(earned, room);
+    coinDailyEarned[u.id] = already + earned;
+    u.coins = (u.coins || 0) + earned;
+    COIN_TX.unshift({ id: coinTxSeq++, userId: u.id, name: u.name, game, minutes, coinsEarned: earned, totalCoins: u.coins, capped, date: 'هم‌اکنون' });
+    renderCoinTx();
+    renderOverview();
+  });
+
+  renderCoinTx();
+}
+
+// ============================================
 function bootDashboard() {
   renderOverview();
   renderUsers();
@@ -1825,4 +2089,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initGameBanners();
   initHomeBanners();
   initNotif();
+  initAvatarReviews();
+  initCoins();
 });

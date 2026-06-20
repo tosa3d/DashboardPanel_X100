@@ -2912,3 +2912,138 @@
 }
 .req-empty .material-symbols-outlined { font-size: 44px; opacity: 0.35; }
 .req-empty span { font-size: 13px; }
+
+/* ============================================
+   تب تورنومنت
+   ============================================ */
+.tour-page {
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  padding: var(--space-6) var(--margin-desktop) var(--space-12);
+  direction: rtl;
+}
+
+/* بنر چرخشی */
+.tour-hero { position: relative; height: 280px; border-radius: var(--radius-2xl); overflow: hidden; margin-bottom: var(--space-6); }
+.tour-hero__slides { width: 100%; height: 100%; }
+.tour-hero__slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity .5s ease; display: flex; align-items: flex-end; }
+.tour-hero__slide.is-active { opacity: 1; }
+.tour-hero__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,.1) 60%, transparent); }
+.tour-hero__content { position: relative; z-index: 2; padding: var(--space-8); }
+.tour-hero__tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+.tour-hero__tag--tournament { background: var(--color-primary); color: #042b30; }
+.tour-hero__tag--news { background: rgba(255,196,0,.9); color: #3a2c00; }
+.tour-hero__title { font-size: 30px; font-weight: 800; color: #fff; margin: 0 0 8px; }
+.tour-hero__meta { display: flex; gap: 18px; color: #ddd; font-size: 14px; }
+.tour-hero__meta span { display: inline-flex; align-items: center; gap: 6px; }
+.tour-hero__meta .material-symbols-outlined { font-size: 18px; color: var(--color-primary); }
+.tour-hero__nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.15); color: #fff; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .15s, background .15s; }
+.tour-hero:hover .tour-hero__nav { opacity: 1; }
+.tour-hero__nav:hover { background: rgba(0,0,0,.8); }
+.tour-hero__nav--prev { right: 12px; }
+.tour-hero__nav--next { left: 12px; }
+.tour-hero__dots { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; gap: 6px; }
+.tour-hero__dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); border: none; cursor: pointer; padding: 0; }
+.tour-hero__dot.is-active { background: var(--color-primary); width: 22px; border-radius: 5px; }
+
+/* نوار تیم من */
+.tour-myteam { margin-bottom: var(--space-5); }
+.myteam { display: flex; align-items: center; gap: var(--space-4); background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); padding: var(--space-4) var(--space-5); }
+.myteam__icon { width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,.05); color: var(--color-on-surface-variant); }
+.myteam__icon--has { background: rgba(0,188,212,.15); color: var(--color-primary); }
+.myteam__icon .material-symbols-outlined { font-size: 26px; }
+.myteam__text { flex: 1; min-width: 0; }
+.myteam__title { font-size: 15px; font-weight: 700; color: var(--color-on-surface); display: flex; align-items: center; gap: 8px; }
+.myteam__cap { font-size: 11px; font-weight: 600; color: var(--color-primary); background: rgba(0,188,212,.12); padding: 2px 8px; border-radius: 20px; }
+.myteam__sub { font-size: 12px; color: var(--color-on-surface-variant); margin-top: 3px; }
+
+/* نوار ابزار */
+.tour-toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5); }
+.tour-search { flex: 1; min-width: 220px; display: flex; align-items: center; gap: 8px; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: 10px; padding: 0 14px; }
+.tour-search:focus-within { border-color: var(--color-primary); }
+.tour-search .material-symbols-outlined { color: var(--color-outline); font-size: 20px; }
+.tour-search input { flex: 1; background: none; border: none; outline: none; color: var(--color-on-surface); font-size: 13px; padding: 11px 0; font-family: inherit; }
+.tour-select { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: 10px; padding: 11px 14px; color: var(--color-on-surface); font-size: 13px; cursor: pointer; outline: none; font-family: inherit; }
+.tour-select:focus { border-color: var(--color-primary); }
+.tour-count { font-size: 12px; color: var(--color-on-surface-variant); margin-right: auto; }
+
+/* لیست کارت‌ها */
+.tour-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-5); }
+.tour-empty { text-align: center; color: var(--color-outline); padding: 50px; font-size: 14px; }
+.tour-card { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); overflow: hidden; transition: border-color .15s, transform .15s; }
+.tour-card:hover { border-color: var(--color-primary); transform: translateY(-3px); }
+.tour-card__cover { position: relative; aspect-ratio: 16/9; background-size: cover; background-position: center; background-color: #15151d; }
+.tour-status { position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.tour-status--open { background: rgba(34,197,94,.9); color: #052e16; }
+.tour-status--live { background: rgba(229,56,59,.9); color: #fff; }
+.tour-status--soon { background: rgba(255,196,0,.9); color: #3a2c00; }
+.tour-status--ended { background: rgba(120,120,140,.85); color: #fff; }
+.tour-entry { position: absolute; bottom: 10px; left: 10px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; backdrop-filter: blur(4px); }
+.tour-entry .material-symbols-outlined { font-size: 14px; }
+.tour-entry--free { background: rgba(34,197,94,.2); color: #4ade80; }
+.tour-entry--paid { background: rgba(255,196,0,.2); color: #ffd24a; }
+.tour-card__body { padding: var(--space-4); }
+.tour-card__name { font-size: 16px; font-weight: 700; color: var(--color-on-surface); margin-bottom: 10px; }
+.tour-card__meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.tour-card__meta span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-on-surface-variant); }
+.tour-card__meta .material-symbols-outlined { font-size: 16px; color: var(--color-outline); }
+.tour-card__row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tour-card__prize { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 700; color: var(--color-accent-gold, #ffd700); }
+.tour-card__prize .material-symbols-outlined { font-size: 17px; }
+.tour-card__slots { font-size: 12px; color: var(--color-on-surface-variant); font-family: var(--font-mono); }
+.tour-card__actions { display: flex; gap: 8px; }
+.tour-btn { padding: 9px 14px; border-radius: 9px; border: none; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: filter .15s, background .15s; }
+.tour-btn--primary { flex: 1; background: var(--color-primary); color: #042b30; }
+.tour-btn--primary:hover { filter: brightness(1.1); }
+.tour-btn--primary:disabled { background: rgba(255,255,255,.07); color: var(--color-on-surface-variant); cursor: default; }
+.tour-btn--ghost { background: rgba(255,255,255,.05); color: var(--color-on-surface); border: 1px solid var(--color-border-soft); }
+.tour-btn--ghost:hover { border-color: var(--color-outline); }
+.tour-btn--danger { background: rgba(229,56,59,.12); color: #ff8a8c; border: 1px solid rgba(229,56,59,.35); }
+.tour-btn--danger:hover { background: rgba(229,56,59,.22); }
+
+/* مودال تورنومنت / تیم */
+.tmodal-overlay { position: fixed; inset: 0; z-index: 150; background: rgba(0,0,0,.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.tmodal { width: 560px; max-width: 100%; max-height: 88vh; overflow-y: auto; background: var(--color-surface-container, #1f1f22); border: 1px solid var(--color-border-soft); border-radius: 18px; position: relative; }
+.tmodal--team { width: 520px; }
+.tmodal__close { position: absolute; top: 12px; left: 12px; z-index: 3; width: 34px; height: 34px; border-radius: 8px; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.15); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tmodal__close:hover { background: rgba(0,0,0,.8); }
+.tmodal__cover { height: 180px; background-size: cover; background-position: center; position: relative; }
+.tmodal__pad { padding: var(--space-6); }
+.tmodal__title { font-size: 22px; font-weight: 800; color: var(--color-on-surface); }
+.tmodal__desc { font-size: 13px; color: var(--color-on-surface-variant); line-height: 1.7; margin: 8px 0 18px; }
+.tmodal__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--color-border-subtle); border: 1px solid var(--color-border-subtle); border-radius: 12px; overflow: hidden; margin-bottom: var(--space-5); }
+.tmodal__item { background: var(--color-surface-container, #1f1f22); padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; }
+.tmodal__item span { font-size: 12px; color: var(--color-on-surface-variant); }
+.tmodal__item b { font-size: 13px; color: var(--color-on-surface); }
+.tmodal__cta { width: 100%; margin-top: 4px; }
+
+/* فیلدهای ساخت تیم */
+.tfield { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.tfield span { font-size: 12px; color: var(--color-on-surface-variant); }
+.tfield input, .tfield textarea { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: 10px; padding: 11px 14px; color: var(--color-on-surface); font-size: 14px; outline: none; font-family: inherit; resize: vertical; }
+.tfield input:focus, .tfield textarea:focus { border-color: var(--color-primary); }
+.tfield-err { background: rgba(229,56,59,.12); color: #ff8a8c; border: 1px solid rgba(229,56,59,.3); border-radius: 8px; padding: 7px 12px; font-size: 12px; margin-bottom: 12px; }
+
+/* مدیریت تیم */
+.team-head { display: flex; align-items: center; gap: 14px; margin-bottom: var(--space-5); }
+.team-head__badge { width: 52px; height: 52px; border-radius: 12px; background: rgba(0,188,212,.15); color: var(--color-primary); display: flex; align-items: center; justify-content: center; }
+.team-head__badge .material-symbols-outlined { font-size: 28px; }
+.team-sec__title { font-size: 13px; font-weight: 700; color: var(--color-on-surface-variant); margin: 18px 0 10px; }
+.team-members { display: flex; flex-direction: column; gap: 8px; }
+.team-member { display: flex; align-items: center; gap: 10px; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 10px; padding: 8px 12px; }
+.team-member img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.team-member__name { flex: 1; font-size: 14px; font-weight: 600; color: var(--color-on-surface); }
+.team-member__cap { font-size: 11px; font-weight: 700; color: var(--color-primary); background: rgba(0,188,212,.12); padding: 3px 10px; border-radius: 20px; }
+.team-member__kick { width: 30px; height: 30px; border-radius: 7px; background: rgba(229,56,59,.1); border: 1px solid rgba(229,56,59,.3); color: #ff8a8c; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.team-member__kick .material-symbols-outlined { font-size: 16px; }
+.team-invite { display: flex; gap: 8px; }
+.team-invite select { flex: 1; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: 10px; padding: 10px 12px; color: var(--color-on-surface); font-size: 13px; font-family: inherit; outline: none; }
+.team-pending { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.team-chip { font-size: 12px; background: rgba(255,255,255,.05); border: 1px solid var(--color-border-subtle); border-radius: 20px; padding: 4px 10px; color: var(--color-on-surface); }
+.team-chip__st { color: var(--color-accent-gold, #ffd700); font-size: 10px; margin-right: 4px; }
+.team-requests { display: flex; flex-direction: column; gap: 8px; }
+.team-req { display: flex; align-items: center; gap: 10px; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 10px; padding: 8px 12px; }
+.team-req img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.team-req__name { flex: 1; font-size: 13px; color: var(--color-on-surface); }
+.team-req__ok { background: var(--color-primary); color: #042b30; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.team-req__no { background: rgba(255,255,255,.05); color: var(--color-on-surface-variant); border: 1px solid var(--color-border-soft); border-radius: 8px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit; }

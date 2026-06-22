@@ -1572,6 +1572,9 @@
 <div class="page" data-page="tournaments">
   <div class="tour-page scrollbar-thin">
 
+    <!-- پنل مسابقات -->
+    <div class="tour-pane" data-tpane="matches">
+
     <!-- بنر تورنومنت‌های بزرگ + اخبار -->
     <section class="tour-hero" id="tour-hero">
       <button class="tour-hero__nav tour-hero__nav--prev" id="tour-hero-prev"><span class="material-symbols-outlined">chevron_right</span></button>
@@ -1583,33 +1586,102 @@
     <!-- نوار من / تیم -->
     <section class="tour-myteam" id="tour-myteam"></section>
 
-    <!-- نوار ابزار: جستجو + فیلتر -->
+    <!-- بنرهای مسابقهٔ زنده در حال اجرا -->
+    <div class="tour-live" id="tour-live"></div>
+
+    <!-- نوار جستجو و فیلتر -->
     <div class="tour-toolbar">
       <div class="tour-search">
         <span class="material-symbols-outlined">search</span>
-        <input type="text" id="tour-search" placeholder="جستجوی نام تورنومنت...">
+        <input type="text" id="m-search" placeholder="جستجوی نام تورنومنت...">
       </div>
-      <select class="tour-select" id="tour-filter-game">
-        <option value="all">بازی: همه</option>
-      </select>
-      <select class="tour-select" id="tour-filter-type">
-        <option value="all">نوع: همه</option>
-        <option value="solo">انفرادی</option>
-        <option value="team">تیمی</option>
-      </select>
-      <select class="tour-select" id="tour-filter-status">
+      <select class="tour-select" id="m-filter-game"><option value="all">بازی: همه</option></select>
+      <select class="tour-select" id="m-filter-status">
         <option value="all">وضعیت: همه</option>
-        <option value="open">ثبت‌نام باز</option>
+        <option value="open">در حال ثبت‌نام</option>
+        <option value="soon">در انتظار برگزاری</option>
         <option value="live">در حال برگزاری</option>
-        <option value="soon">به‌زودی</option>
-        <option value="ended">پایان‌یافته</option>
+        <option value="ended">برگزار شده</option>
       </select>
-      <span class="tour-count" id="tour-count"></span>
     </div>
 
-    <!-- لیست تورنومنت‌ها -->
-    <div class="tour-list" id="tour-list"></div>
-    <div class="tour-empty" id="tour-empty" hidden>تورنومنتی با این فیلتر یافت نشد</div>
+    <!-- سکشن تورنومنت‌های رسمی -->
+    <section class="tour-sec">
+      <div class="tour-sec__head">
+        <h3 class="tour-sec__title"><span class="material-symbols-outlined">verified</span>تورنومنت‌های رسمی</h3>
+        <button class="tour-seeall" data-scope="official">مشاهده همه</button>
+      </div>
+      <div class="tour-rail" id="tour-rail-official"></div>
+    </section>
+
+    <!-- سکشن تورنومنت‌های کاربران -->
+    <section class="tour-sec">
+      <div class="tour-sec__head">
+        <h3 class="tour-sec__title"><span class="material-symbols-outlined">groups</span>تورنومنت‌های دیگر</h3>
+        <button class="tour-seeall" data-scope="user">مشاهده همه</button>
+      </div>
+      <div class="tour-rail" id="tour-rail-user"></div>
+    </section>
+
+    </div><!-- /pane matches -->
+
+    <!-- پنل مشاهده همه (فیلتر و جستجو) -->
+    <div class="tour-pane" data-tpane="all" hidden>
+      <button class="tour-back" id="tour-all-back"><span class="material-symbols-outlined">arrow_forward</span>بازگشت</button>
+      <h2 class="tb__title" id="tour-all-title" style="margin-bottom:16px">همهٔ تورنومنت‌ها</h2>
+      <div class="tour-toolbar">
+        <div class="tour-search">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="tour-search" placeholder="جستجوی نام تورنومنت...">
+        </div>
+        <select class="tour-select" id="tour-filter-scope">
+          <option value="all">برگزارکننده: همه</option>
+          <option value="official">رسمی</option>
+          <option value="user">کاربران</option>
+        </select>
+        <select class="tour-select" id="tour-filter-game"><option value="all">بازی: همه</option></select>
+        <select class="tour-select" id="tour-filter-type">
+          <option value="all">نوع: همه</option>
+          <option value="solo">انفرادی</option>
+          <option value="team">تیمی</option>
+        </select>
+        <select class="tour-select" id="tour-filter-status">
+          <option value="all">وضعیت: همه</option>
+          <option value="open">ثبت‌نام باز</option>
+          <option value="live">در حال برگزاری</option>
+          <option value="soon">به‌زودی</option>
+          <option value="ended">پایان‌یافته</option>
+        </select>
+        <span class="tour-count" id="tour-count"></span>
+      </div>
+      <div class="tour-list" id="tour-all-list"></div>
+      <div class="tour-empty" id="tour-all-empty" hidden>تورنومنتی با این فیلتر یافت نشد</div>
+    </div>
+
+    <!-- پنل ساخت تیم -->
+    <div class="tour-pane" data-tpane="team" hidden>
+      <div class="tb">
+        <button class="tour-back" id="tb-back"><span class="material-symbols-outlined">arrow_forward</span>بازگشت به مسابقات</button>
+        <div class="tb__head">
+          <div>
+            <h2 class="tb__title">تیم‌های من</h2>
+            <p class="tb__sub">برای هر بازی می‌توانی هر چند تیم که خواستی بسازی</p>
+          </div>
+          <button class="tour-btn tour-btn--primary" id="tb-add-team"><span class="material-symbols-outlined">add</span>افزودن تیم جدید</button>
+        </div>
+
+        <div class="tb-toolbar">
+          <div class="tour-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="tb-search" placeholder="جستجوی نام تیم...">
+          </div>
+          <select class="tour-select" id="tb-filter-game"><option value="all">بازی: همه</option></select>
+        </div>
+
+        <div class="tb-teams" id="tb-teams"></div>
+        <div class="tb-empty" id="tb-empty" hidden>هنوز تیمی نساختی — روی «افزودن تیم جدید» بزن</div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -1623,6 +1695,11 @@
 <!-- مودال مدیریت تیم -->
 <div class="tmodal-overlay" id="team-modal" hidden>
   <div class="tmodal tmodal--team" id="team-modal-body"></div>
+</div>
+
+<!-- پاپ‌اپ عمومی ساخت تیم (انتخاب دوست / درخواست‌ها) -->
+<div class="tmodal-overlay" id="tb-popup" hidden>
+  <div class="tmodal tmodal--team" id="tb-popup-body"></div>
 </div>
 
 
@@ -1940,6 +2017,185 @@
                   <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>58</span></button>
                   <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>204</span></button>
                   <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۱۸K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست VIP قفل‌شده -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۲ روز پیش</span>
+                  <span class="tw-vip-tag"><span class="material-symbols-outlined">workspace_premium</span>VIP</span>
+                </div>
+                <div class="tw-post__text">آموزش کامل بیلد حرفه‌ای Necromancer برای سیزن جدید 🎓 (مخصوص اعضای ویژه)</div>
+                <div class="tw-post__media tw-post__media--wide tw-locked">
+                  <img src="https://images.unsplash.com/photo-1542751110-97427bbecf20?w=640&h=360&fit=crop" alt="">
+                  <div class="tw-lock">
+                    <span class="material-symbols-outlined">lock</span>
+                    <div class="tw-lock__title">محتوای ویژهٔ اعضای VIP</div>
+                    <button class="tw-lock__btn">ارتقا به VIP</button>
+                  </div>
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۴۱</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۲۲</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۳۱۰</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۹.۲K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست فروشگاهی -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۳ روز پیش</span>
+                  <span class="tw-shop-tag"><span class="material-symbols-outlined">storefront</span>فروشگاه</span>
+                </div>
+                <div class="tw-post__text">اکانت پر آیتم Diablo IV رو گذاشتم برای فروش 🛒 لول ۱۰۰ با بیلد کامل</div>
+                <div class="tw-shop-card">
+                  <img class="tw-shop-card__img" src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=200&h=140&fit=crop" alt="">
+                  <div class="tw-shop-card__info">
+                    <div class="tw-shop-card__title">اکانت Diablo IV — لول ۱۰۰</div>
+                    <div class="tw-shop-card__price"><span class="coin-x">X</span> ۲٬۵۰۰٬۰۰۰</div>
+                  </div>
+                  <button class="tw-shop-card__btn">خرید</button>
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۱۸</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۷</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۹۵</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۴.۱K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست معمولی -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۴ روز پیش</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">امشب با تیم رفتیم اسکریم، کلی خندیدیم 😂 دوستای خوب نصف لذت بازیه ❤️</div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۱۱</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۴</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۷۲</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۳.۳K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست VIP قفل‌شده دوم -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۶ روز پیش</span>
+                  <span class="tw-vip-tag"><span class="material-symbols-outlined">workspace_premium</span>VIP</span>
+                </div>
+                <div class="tw-post__text">ریپلی کامل مسابقهٔ فینال با تحلیل خودم 🎬 فقط برای اعضای ویژه</div>
+                <div class="tw-post__media tw-post__media--square tw-locked">
+                  <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500&h=500&fit=crop" alt="">
+                  <div class="tw-lock">
+                    <span class="material-symbols-outlined">lock</span>
+                    <div class="tw-lock__title">محتوای ویژهٔ اعضای VIP</div>
+                    <button class="tw-lock__btn">ارتقا به VIP</button>
+                  </div>
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۲۹</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۱۵</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۱۸۸</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۷.۶K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست فروشگاهی دوم -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۱ هفته پیش</span>
+                  <span class="tw-shop-tag"><span class="material-symbols-outlined">storefront</span>فروشگاه</span>
+                </div>
+                <div class="tw-post__text">گیفت‌کارت استیم با قیمت ویژه موجوده 🎁</div>
+                <div class="tw-shop-card">
+                  <img class="tw-shop-card__img" src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=200&h=140&fit=crop" alt="">
+                  <div class="tw-shop-card__info">
+                    <div class="tw-shop-card__title">گیفت‌کارت Steam ۵۰$</div>
+                    <div class="tw-shop-card__price"><span class="coin-x">X</span> ۱٬۲۰۰٬۰۰۰</div>
+                  </div>
+                  <button class="tw-shop-card__btn">خرید</button>
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۶</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۳</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۵۴</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۲.۹K</span></button>
+                  <div class="tw-act-spacer"></div>
+                  <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
+                  <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- پست معمولی دوم -->
+            <div class="tw-post">
+              <img class="tw-post__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=88&h=88&fit=crop" alt="">
+              <div class="tw-post__body">
+                <div class="tw-post__head">
+                  <span class="tw-post__name">نرگس احمدی <span class="tw-post__verify">✓</span></span>
+                  <span class="tw-post__handle">@narges_gamer</span>
+                  <span class="tw-post__dot">·</span>
+                  <span class="tw-post__time">۱ هفته پیش</span>
+                  <button class="tw-post__more"><span class="material-symbols-outlined">more_horiz</span></button>
+                </div>
+                <div class="tw-post__text">بالاخره ۱۰۰۰ تا فالوور شدیم 🎉 ممنون از همهٔ شما که همراهی می‌کنید 💜</div>
+                <div class="tw-post__media tw-post__media--wide">
+                  <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=640&h=360&fit=crop" alt="">
+                </div>
+                <div class="tw-post__actions">
+                  <button class="tw-act tw-act--reply"><span class="material-symbols-outlined">chat_bubble</span><span>۸۸</span></button>
+                  <button class="tw-act tw-act--rt"><span class="material-symbols-outlined">repeat</span><span>۴۲</span></button>
+                  <button class="tw-act tw-act--like"><span class="material-symbols-outlined">favorite</span><span>۵۳۰</span></button>
+                  <button class="tw-act tw-act--views"><span class="material-symbols-outlined">bar_chart</span><span>۲۲K</span></button>
                   <div class="tw-act-spacer"></div>
                   <button class="tw-act tw-act--bookmark"><span class="material-symbols-outlined">bookmark</span></button>
                   <button class="tw-act tw-act--share"><span class="material-symbols-outlined">share</span></button>

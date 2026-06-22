@@ -2456,6 +2456,44 @@
 }
 .tw-post__media-badge .material-symbols-outlined { font-size: 14px; color: #ff4444; }
 
+/* برچسب VIP و فروشگاه در هدر پست */
+.tw-vip-tag, .tw-shop-tag {
+  margin-right: auto; display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+}
+.tw-vip-tag { background: rgba(255,196,0,.15); color: #ffcf3a; }
+.tw-shop-tag { background: rgba(0,188,212,.15); color: var(--color-primary); }
+.tw-vip-tag .material-symbols-outlined, .tw-shop-tag .material-symbols-outlined { font-size: 14px; }
+
+/* محتوای قفل‌شدهٔ VIP */
+.tw-locked img { filter: blur(14px) brightness(.55); }
+.tw-lock {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  color: #fff; text-align: center;
+}
+.tw-lock .material-symbols-outlined { font-size: 34px; color: #ffcf3a; }
+.tw-lock__title { font-size: 13px; font-weight: 700; }
+.tw-lock__btn {
+  margin-top: 4px; background: linear-gradient(135deg, #ffcf3a, #f0a500); color: #3a2c00;
+  border: none; border-radius: 10px; padding: 8px 18px; font-size: 13px; font-weight: 800;
+  font-family: inherit; cursor: pointer; transition: filter .15s;
+}
+.tw-lock__btn:hover { filter: brightness(1.08); }
+
+/* کارت فروشگاهی داخل پست */
+.tw-shop-card {
+  display: flex; align-items: center; gap: 12px; margin-top: 6px;
+  background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft);
+  border-radius: 14px; padding: 10px; overflow: hidden;
+}
+.tw-shop-card__img { width: 90px; height: 64px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.tw-shop-card__info { flex: 1; min-width: 0; }
+.tw-shop-card__title { font-size: 13px; font-weight: 700; color: var(--color-on-surface); }
+.tw-shop-card__price { display: inline-flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 700; color: #ffe066; direction: ltr; margin-top: 5px; }
+.tw-shop-card__btn { flex-shrink: 0; background: var(--color-primary); color: #042b30; border: none; border-radius: 9px; padding: 9px 18px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: filter .15s; }
+.tw-shop-card__btn:hover { filter: brightness(1.1); }
+
 /* Action bar */
 .tw-post__actions {
   display: flex;
@@ -2924,7 +2962,60 @@
 }
 
 /* بنر چرخشی */
-.tour-hero { position: relative; height: 280px; border-radius: var(--radius-2xl); overflow: hidden; margin-bottom: var(--space-6); }
+.tour-hero { position: relative; height: 340px; border-radius: var(--radius-2xl); overflow: hidden; margin-bottom: var(--space-6); }
+
+/* بنرهای مسابقهٔ زنده (۱۶:۹) */
+.tour-live { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-6); }
+.live-card { position: relative; aspect-ratio: 21 / 9; border-radius: var(--radius-xl); overflow: hidden; background-size: cover; background-position: center; background-color: #15151d; }
+.live-card__shade { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.92), rgba(0,0,0,.5)); }
+.live-card__game { position: absolute; top: 12px; left: 12px; z-index: 2; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(4px); }
+.live-card__badge { position: absolute; top: 12px; right: 12px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; background: rgba(229,56,59,.92); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: pulse-dot 1.4s ease-in-out infinite; }
+.live-card__body { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; padding: var(--space-5); }
+.live-card__matchup { flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--space-8); padding-top: 14px; }
+.live-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.live-side__logo { width: 74px; height: 74px; border-radius: 50%; object-fit: cover; border: 3px solid var(--color-primary); background: #0c0c12; }
+.live-side__name { font-size: 16px; font-weight: 800; color: #fff; }
+.live-roster { display: flex; gap: 5px; }
+.live-roster img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(255,255,255,.3); display: block; }
+
+/* تول‌تیپ آواتار + کلیک‌خور */
+.av-tip { position: relative; display: inline-flex; cursor: pointer; transition: transform .12s; }
+.av-tip:hover { transform: translateY(-2px); }
+.av-tip:hover img { border-color: var(--color-primary); }
+.av-tip::after {
+  content: attr(data-name);
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.92); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 3px 9px; border-radius: 6px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 5;
+}
+.av-tip:hover::after { opacity: 1; }
+.live-vs { font-size: 26px; font-weight: 900; color: var(--color-primary); flex-shrink: 0; }
+.live-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.live-card__tour { font-size: 13px; color: #ddd; font-weight: 600; min-width: 0; }
+.live-watch { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--color-primary); color: #042b30; border: none; border-radius: 10px; padding: 9px 16px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: filter .15s; white-space: nowrap; flex-shrink: 0; }
+.live-watch:hover { filter: brightness(1.1); }
+.live-watch .material-symbols-outlined { font-size: 18px; }
+.live-watch--off { background: rgba(255,255,255,.08); color: var(--color-on-surface-variant); cursor: not-allowed; }
+@media (max-width: 760px) { .tour-live { grid-template-columns: 1fr; } }
+
+/* سکشن‌های ریل افقی */
+.tour-sec { margin-bottom: var(--space-6); }
+.tour-sec__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+.tour-sec__title { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--color-on-surface); }
+.tour-sec__title .material-symbols-outlined { font-size: 22px; color: var(--color-primary); }
+.tour-seeall { background: none; border: none; color: var(--color-primary); font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.tour-seeall:hover { text-decoration: underline; }
+.tour-rail {
+  display: flex; gap: var(--space-4); overflow-x: auto; padding-bottom: 8px;
+  scroll-snap-type: x proximity; scrollbar-width: thin;
+}
+.tour-rail::-webkit-scrollbar { height: 8px; }
+.tour-rail::-webkit-scrollbar-thumb { background: var(--color-border-soft); border-radius: 4px; }
+.tour-rail > .tour-card { flex: 0 0 300px; scroll-snap-align: start; }
+.tour-rail--all { flex-wrap: wrap; overflow-x: visible; }
+.tour-rail--all > .tour-card { flex: 0 0 300px; }
 .tour-hero__slides { width: 100%; height: 100%; }
 .tour-hero__slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transition: opacity .5s ease; display: flex; align-items: flex-end; }
 .tour-hero__slide.is-active { opacity: 1; }
@@ -2956,6 +3047,9 @@
 .myteam__title { font-size: 15px; font-weight: 700; color: var(--color-on-surface); display: flex; align-items: center; gap: 8px; }
 .myteam__cap { font-size: 11px; font-weight: 600; color: var(--color-primary); background: rgba(0,188,212,.12); padding: 2px 8px; border-radius: 20px; }
 .myteam__sub { font-size: 12px; color: var(--color-on-surface-variant); margin-top: 3px; }
+.myteam__actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.myteam__actions .tour-btn { display: inline-flex; align-items: center; gap: 6px; }
+.myteam__actions .material-symbols-outlined { font-size: 18px; }
 
 /* نوار ابزار */
 .tour-toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5); }
@@ -3047,3 +3141,114 @@
 .team-req__name { flex: 1; font-size: 13px; color: var(--color-on-surface); }
 .team-req__ok { background: var(--color-primary); color: #042b30; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
 .team-req__no { background: rgba(255,255,255,.05); color: var(--color-on-surface-variant); border: 1px solid var(--color-border-soft); border-radius: 8px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+.tour-pane[hidden] { display: none !important; }
+
+/* دکمه بازگشت صفحهٔ ساخت تیم */
+.tour-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.05); border: 1px solid var(--color-border-soft);
+  color: var(--color-on-surface-variant); border-radius: 10px; padding: 9px 16px;
+  font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
+  margin-bottom: var(--space-5); transition: color .15s, border-color .15s;
+}
+.tour-back:hover { color: var(--color-on-surface); border-color: var(--color-outline); }
+.tour-back .material-symbols-outlined { font-size: 18px; }
+
+/* صفحهٔ ساخت تیم */
+.tb { width: 100%; }
+.tb-toolbar { display: flex; gap: var(--space-3); margin-bottom: var(--space-5); flex-wrap: wrap; }
+.tb-toolbar .tour-search { flex: 1; min-width: 220px; }
+.tb__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: var(--space-5); flex-wrap: wrap; }
+.tb__title { font-size: 22px; font-weight: 800; color: var(--color-on-surface); margin: 0; }
+.tb__sub { font-size: 13px; color: var(--color-on-surface-variant); margin: 4px 0 0; }
+.tb__head-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.tb__head-actions .tour-btn { display: inline-flex; align-items: center; gap: 6px; }
+.tb__head-actions .material-symbols-outlined { font-size: 18px; }
+.tb-badge { background: var(--color-primary); color: #042b30; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+.tb-form { display: flex; gap: var(--space-4); margin-bottom: var(--space-6); }
+.tb-form .tfield { flex: 1; margin-bottom: 0; }
+.tb-form select { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: 10px; padding: 11px 14px; color: var(--color-on-surface); font-size: 14px; font-family: inherit; outline: none; }
+.tb__roster-title { font-size: 13px; font-weight: 700; color: var(--color-on-surface-variant); margin-bottom: 12px; }
+.tb-slots { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: var(--space-4); }
+.tb-slot {
+  position: relative; width: 92px; aspect-ratio: 4/5; border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  font-family: inherit; cursor: default;
+}
+.tb-slot--empty {
+  background: var(--color-surface-container-low, #1b1b1e);
+  border: 2px dashed var(--color-border-soft); color: var(--color-outline); cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.tb-slot--empty:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.tb-slot__plus { font-size: 24px; }
+.tb-slot__hint { font-size: 10px; }
+.tb-slot--filled { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); }
+.tb-slot--captain { border-color: var(--color-primary); background: rgba(0,188,212,.08); }
+.tb-slot__avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.tb-slot__name { font-size: 11px; font-weight: 700; color: var(--color-on-surface); text-align: center; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.tb-slot__role { font-size: 9px; font-weight: 700; padding: 1px 7px; border-radius: 20px; background: rgba(0,188,212,.15); color: var(--color-primary); }
+.tb-slot__role--pending { background: rgba(255,196,0,.15); color: #ffd24a; }
+.tb-slot__role--joined { background: rgba(34,197,94,.15); color: #4ade80; }
+.tb-slot__remove { position: absolute; top: 4px; left: 4px; width: 20px; height: 20px; border-radius: 5px; background: rgba(229,56,59,.12); border: 1px solid rgba(229,56,59,.3); color: #ff8a8c; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tb-slot__remove .material-symbols-outlined { font-size: 13px; }
+
+/* ردیف بالای بدنهٔ تیم: فرم راست (کوچک) + درخواست‌ها چپ */
+.tb-team__top { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-4); }
+.tb-team__top .tb-form { margin-bottom: 0; gap: 10px; }
+.tb-team__top .tb-form .tfield { width: 180px; margin-bottom: 0; }
+.tb-team__top .tb-form .tfield input, .tb-team__top .tb-form .tfield select { padding: 9px 12px; font-size: 13px; }
+.tb-team__top .tb-team__reqs { margin-bottom: 0; }
+
+/* لیست دوستان در پاپ‌اپ دعوت */
+.tb-friends { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; }
+.tb-friend { display: flex; align-items: center; gap: 10px; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 10px; padding: 8px 12px; cursor: pointer; font-family: inherit; transition: border-color .15s; }
+.tb-friend:hover { border-color: var(--color-primary); }
+.tb-friend img { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; }
+.tb-friend__info { flex: 1; min-width: 0; text-align: right; display: flex; flex-direction: column; }
+.tb-friend__name { font-size: 14px; font-weight: 600; color: var(--color-on-surface); }
+.tb-friend__sub { font-size: 11px; color: var(--color-on-surface-variant); }
+.tb-friend__dot { width: 9px; height: 9px; border-radius: 50%; background: #555; flex-shrink: 0; }
+.tb-friend__dot.is-on { background: #3ba55d; }
+.tb-friend__add { color: var(--color-primary); line-height: 0; }
+.tb-friend__add .material-symbols-outlined { font-size: 22px; }
+
+@media (max-width: 720px) { .tb-slots { grid-template-columns: repeat(2, 1fr); } .tb-form { flex-direction: column; } }
+
+/* آکاردئون تیم‌ها */
+.tb-empty { text-align: center; color: var(--color-outline); padding: 40px; font-size: 14px; }
+.tb-teams { display: flex; flex-direction: column; gap: var(--space-4); }
+.tb-team { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); overflow: hidden; }
+.tb-team__head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 6px 6px; }
+.tb-team__toggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; color: var(--color-on-surface); font-family: inherit; padding: 10px; text-align: right; }
+.tb-team__chev { color: var(--color-outline); transition: transform .2s; flex-shrink: 0; }
+.tb-team--open .tb-team__chev { transform: rotate(180deg); }
+.tb-team__shield { color: var(--color-primary); flex-shrink: 0; }
+.tb-team__name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb-team__game { font-size: 11px; color: var(--color-primary); background: rgba(0,188,212,.12); padding: 2px 9px; border-radius: 20px; flex-shrink: 0; }
+.tb-team__count { font-size: 12px; color: var(--color-on-surface-variant); font-family: var(--font-mono); margin-right: auto; flex-shrink: 0; }
+.tb-team__del { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; background: rgba(229,56,59,.1); border: 1px solid rgba(229,56,59,.3); color: #ff8a8c; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.tb-team__del .material-symbols-outlined { font-size: 18px; }
+.tb-team__body { display: none; padding: var(--space-4); border-top: 1px solid var(--color-border-subtle); }
+.tb-team--open .tb-team__body { display: block; }
+.tb-team__reqs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: var(--space-4); }
+.tb-team__reqs .tour-btn { display: inline-flex; align-items: center; gap: 6px; }
+.tb-team__reqs .material-symbols-outlined { font-size: 17px; }
+.tb-team__reqs .tb-badge { background: var(--color-primary); color: #042b30; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; }
+
+/* تاریخچهٔ بازی‌های تیم */
+.match-list { display: flex; flex-direction: column; gap: 10px; max-height: 56vh; overflow-y: auto; }
+.match-row { display: flex; gap: 12px; align-items: flex-start; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 12px; padding: 12px 14px; }
+.match-res { flex-shrink: 0; font-size: 12px; font-weight: 800; padding: 5px 12px; border-radius: 8px; align-self: center; }
+.match-row--win .match-res { background: rgba(34,197,94,.15); color: #4ade80; }
+.match-row--loss .match-res { background: rgba(229,56,59,.15); color: #ff8a8c; }
+.match-row--win { border-right: 3px solid #22c55e; }
+.match-row--loss { border-right: 3px solid #e5383b; }
+.match-info { flex: 1; min-width: 0; }
+.match-vs { font-size: 14px; color: var(--color-on-surface); }
+.match-vs b { color: var(--color-primary); }
+.match-tour { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-on-surface-variant); margin-top: 4px; }
+.match-tour .material-symbols-outlined { font-size: 15px; color: var(--color-accent-gold, #ffd700); }
+.match-members { font-size: 11px; color: var(--color-on-surface-variant); margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.match-chip { background: rgba(255,255,255,.06); border: 1px solid var(--color-border-subtle); border-radius: 20px; padding: 2px 9px; color: var(--color-on-surface); font-size: 11px; }

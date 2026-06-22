@@ -920,39 +920,452 @@ const TOURNAMENTS = [
 ];
 
 const TOUR_STATUS = {
-  open: { label: 'ثبت‌نام باز', cls: 'open' },
+  open: { label: 'در حال ثبت‌نام', cls: 'open' },
   live: { label: 'در حال برگزاری', cls: 'live' },
-  soon: { label: 'به‌زودی', cls: 'soon' },
-  ended: { label: 'پایان‌یافته', cls: 'ended' },
+  soon: { label: 'در انتظار برگزاری', cls: 'soon' },
+  ended: { label: 'برگزار شده', cls: 'ended' },
 };
+
+// تورنومنت‌های موجود = رسمی؛ افزودن تورنومنت‌های ساختهٔ کاربران
+TOURNAMENTS.forEach((t) => { if (t.official === undefined) t.official = true; });
+TOURNAMENTS.push(
+  { id: 101, official: false, creator: 'ArashGG', name: 'مسابقهٔ دوستانهٔ دوتا', game: 'Dota 2', region: 'ایران', type: 'team', teamSize: 5, status: 'open', entry: 'free', prize: '۵۰۰٬۰۰۰ تومان', joined: 6, max: 16, date: '۸ تیر ۱۴۰۴', format: 'BO1', img: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=400&h=220&fit=crop', desc: 'مسابقهٔ دوستانه که توسط ArashGG برگزار می‌شود.' },
+  { id: 102, official: false, creator: 'SaraPlay', name: 'کاپ شبانهٔ والورانت', game: 'Valorant', region: 'ایران', type: 'team', teamSize: 5, status: 'open', entry: 'ticket', ticketPrice: '۵۰٬۰۰۰ تومان', prize: '۱٬۰۰۰٬۰۰۰ تومان', joined: 10, max: 16, date: '۱۲ تیر ۱۴۰۴', format: 'BO1 حذفی', img: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=400&h=220&fit=crop', desc: 'مسابقهٔ شبانه برای گیمرهای والورانت، میزبان SaraPlay.' },
+  { id: 103, official: false, creator: 'MiladPro', name: 'لیگ محلی CS2', game: 'Counter-Strike 2', region: 'ایران', type: 'team', teamSize: 5, status: 'soon', entry: 'free', prize: 'مدال افتخار', joined: 0, max: 8, date: '۲۵ تیر ۱۴۰۴', format: 'BO3', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=220&fit=crop', desc: 'لیگ دوستانهٔ CS2 بین تیم‌های محلی.' },
+  { id: 104, official: false, creator: 'Zirak90', name: 'مسابقهٔ انفرادی PUBG', game: 'PUBG', region: 'ایران', type: 'solo', status: 'open', entry: 'free', prize: '۳۰۰٬۰۰۰ تومان', joined: 18, max: 50, date: '۱۵ تیر ۱۴۰۴', format: 'امتیازی', img: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=220&fit=crop', desc: 'مسابقهٔ سولوی PUBG برای همه.' },
+);
 
 // وضعیت تیم کاربر (mock)
 let myTeam = null; // { name, desc, members:[{name,role,avatar}] }
 const registeredTours = new Set();
 
 function initTournaments() {
-  // پر کردن فیلتر بازی‌ها از روی تورنومنت‌ها
-  const games = [...new Set(TOURNAMENTS.map((t) => t.game))];
-  const gameSel = document.getElementById('tour-filter-game');
-  if (gameSel) gameSel.innerHTML = '<option value="all">بازی: همه</option>' + games.map((g) => `<option>${g}</option>`).join('');
-
-  ['tour-search', 'tour-filter-game', 'tour-filter-type', 'tour-filter-status'].forEach((id) => {
-    const el = document.getElementById(id);
-    el?.addEventListener('input', renderTourList);
-    el?.addEventListener('change', renderTourList);
-  });
-
   initTourHero();
   renderMyTeam();
-  renderTourList();
+  renderRails();
+  renderLiveMatches();
+  initTeamBuilder();
+
+  // پر کردن فیلتر بازی (صفحهٔ همه + نوار بالای سکشن‌ها)
+  const gamesOpts = '<option value="all">بازی: همه</option>' + [...new Set(TOURNAMENTS.map((t) => t.game))].map((g) => `<option>${g}</option>`).join('');
+  const gameSel = document.getElementById('tour-filter-game');
+  if (gameSel) gameSel.innerHTML = gamesOpts;
+  const mGameSel = document.getElementById('m-filter-game');
+  if (mGameSel) mGameSel.innerHTML = gamesOpts;
+
+  // فیلتر/سرچ نوار بالای سکشن‌ها → رفرش ریل‌ها
+  ['m-search', 'm-filter-game', 'm-filter-status'].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener('input', renderRails);
+    el?.addEventListener('change', renderRails);
+  });
+
+  // «مشاهده همه» → باز کردن صفحهٔ همه با اسکوپ مربوطه
+  document.querySelectorAll('.tour-seeall').forEach((btn) => {
+    btn.addEventListener('click', () => openAllPane(btn.dataset.scope));
+  });
+  document.getElementById('tour-all-back')?.addEventListener('click', showMatchesPane);
+  ['tour-search', 'tour-filter-scope', 'tour-filter-game', 'tour-filter-type', 'tour-filter-status'].forEach((id) => {
+    const el = document.getElementById(id);
+    el?.addEventListener('input', renderAllList);
+    el?.addEventListener('change', renderAllList);
+  });
+
+  // بازگشت از صفحهٔ ساخت تیم به مسابقات
+  document.getElementById('tb-back')?.addEventListener('click', showMatchesPane);
 
   // بستن مودال‌ها
-  document.getElementById('tour-detail-modal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'tour-detail-modal') e.currentTarget.hidden = true;
+  ['tour-detail-modal', 'team-modal', 'tb-popup'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('click', (e) => {
+      if (e.target.id === id) e.currentTarget.hidden = true;
+    });
   });
-  document.getElementById('team-modal')?.addEventListener('click', (e) => {
-    if (e.target.id === 'team-modal') e.currentTarget.hidden = true;
+}
+
+function showTourPane(name) {
+  document.querySelectorAll('.tour-pane').forEach((p) => { p.hidden = (p.dataset.tpane !== name); });
+}
+function showTeamPane() { showTourPane('team'); }
+function showMatchesPane() { showTourPane('matches'); }
+
+// ── مسابقات زندهٔ مهم (۲ بنر، ۱۶:۹) ──
+const LIVE_MATCHES = [
+  {
+    game: 'Dota 2', tournament: 'قهرمانی بزرگ x100 — فینال',
+    bg: 'https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=700&h=394&fit=crop',
+    streamLive: true, viewers: '۲٬۴۰۰',
+    teamA: { name: 'Aurora', logo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Aurora&backgroundColor=0a4a52', players: [{ n: 'Sajjad', s: 'da1' }, { n: 'Kian', s: 'da2' }, { n: 'Pooya', s: 'da3' }, { n: 'Hossein', s: 'da4' }, { n: 'Amir', s: 'da5' }] },
+    teamB: { name: 'Blaze', logo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Blaze&backgroundColor=5a1a1a', players: [{ n: 'Danial', s: 'db1' }, { n: 'Sina', s: 'db2' }, { n: 'Erfan', s: 'db3' }, { n: 'Yasin', s: 'db4' }, { n: 'Mehdi', s: 'db5' }] },
+  },
+  {
+    game: 'Counter-Strike 2', tournament: 'کاپ CS2 — نیمه‌نهایی',
+    bg: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=700&h=394&fit=crop',
+    streamLive: false,
+    teamA: { name: 'Nightmare', logo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Nightmare&backgroundColor=2a1a4a', players: [{ n: 'Reza', s: 'ca1' }, { n: 'Ali', s: 'ca2' }, { n: 'Kaveh', s: 'ca3' }, { n: 'Nima', s: 'ca4' }, { n: 'Saeed', s: 'ca5' }] },
+    teamB: { name: 'Phoenix', logo: 'https://api.dicebear.com/7.x/bottts/svg?seed=Phoenix&backgroundColor=5a3a0a', players: [{ n: 'Arman', s: 'cb1' }, { n: 'Milad', s: 'cb2' }, { n: 'Behzad', s: 'cb3' }, { n: 'Omid', s: 'cb4' }, { n: 'Vahid', s: 'cb5' }] },
+  },
+];
+
+function liveSideHTML(team) {
+  return `
+    <div class="live-side">
+      <span class="av-tip" data-name="${team.name}" data-profile><img class="live-side__logo" src="${team.logo}" alt=""></span>
+      <span class="live-side__name">${team.name}</span>
+      <div class="live-roster">${team.players.map((p) => `<span class="av-tip" data-name="${p.n}" data-profile><img src="https://i.pravatar.cc/40?u=${p.s}" alt=""></span>`).join('')}</div>
+    </div>`;
+}
+
+function renderLiveMatches() {
+  const wrap = document.getElementById('tour-live');
+  if (!wrap) return;
+  wrap.innerHTML = LIVE_MATCHES.map((m, i) => `
+    <div class="live-card" style="background-image:url('${m.bg}')">
+      <div class="live-card__shade"></div>
+      <span class="live-card__game">${m.game}</span>
+      <span class="live-card__badge"><span class="live-dot"></span>در حال اجرا</span>
+      <div class="live-card__body">
+        <div class="live-card__matchup">
+          ${liveSideHTML(m.teamA)}
+          <span class="live-vs">VS</span>
+          ${liveSideHTML(m.teamB)}
+        </div>
+        <div class="live-card__foot">
+          <span class="live-card__tour">${m.tournament}</span>
+          <button class="live-watch ${m.streamLive ? '' : 'live-watch--off'}" data-live="${i}" ${m.streamLive ? '' : 'disabled'}>
+            <span class="material-symbols-outlined">${m.streamLive ? 'live_tv' : 'videocam_off'}</span>
+            ${m.streamLive ? `مشاهدهٔ استریم${m.viewers ? ' · ' + m.viewers : ''}` : 'استریم در دسترس نیست'}
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+  wrap.querySelectorAll('.live-watch:not([disabled])').forEach((b) => b.addEventListener('click', () => {
+    alert('در حال اتصال به استریم زنده... (به‌زودی به پخش‌کنندهٔ ما وصل می‌شود)');
+  }));
+  // کلیک روی آواتار → پروفایل بازیکن
+  wrap.querySelectorAll('[data-profile]').forEach((el) => el.addEventListener('click', () => showPage('profile')));
+}
+
+// ── صفحهٔ مشاهده همه ──
+function openAllPane(scope) {
+  const scopeSel = document.getElementById('tour-filter-scope');
+  if (scopeSel) scopeSel.value = scope || 'all';
+  document.getElementById('tour-all-title').textContent =
+    scope === 'official' ? 'تورنومنت‌های رسمی' : scope === 'user' ? 'تورنومنت‌های دیگر' : 'همهٔ تورنومنت‌ها';
+  showTourPane('all');
+  renderAllList();
+}
+
+function renderAllList() {
+  const q = (document.getElementById('tour-search')?.value || '').trim().toLowerCase();
+  const scope = document.getElementById('tour-filter-scope')?.value || 'all';
+  const fGame = document.getElementById('tour-filter-game')?.value || 'all';
+  const fType = document.getElementById('tour-filter-type')?.value || 'all';
+  const fStatus = document.getElementById('tour-filter-status')?.value || 'all';
+
+  const rows = TOURNAMENTS.filter((t) => {
+    const mq = !q || t.name.toLowerCase().includes(q) || t.game.toLowerCase().includes(q) || (t.creator || '').toLowerCase().includes(q);
+    const mScope = scope === 'all' || (scope === 'official' ? t.official : !t.official);
+    return mq && mScope && (fGame === 'all' || t.game === fGame) && (fType === 'all' || t.type === fType) && (fStatus === 'all' || t.status === fStatus);
   });
+
+  const list = document.getElementById('tour-all-list');
+  const empty = document.getElementById('tour-all-empty');
+  document.getElementById('tour-count').textContent = `${faNum(rows.length)} تورنومنت`;
+  if (!rows.length) { list.innerHTML = ''; empty.hidden = false; return; }
+  empty.hidden = true;
+  list.innerHTML = rows.map(tourCardHTML).join('');
+  list.querySelectorAll('.tour-card').forEach((card) => {
+    const tid = Number(card.dataset.tid);
+    card.querySelector('[data-act="detail"]').addEventListener('click', () => openTourDetail(tid));
+    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) joinTour(tid); });
+  });
+}
+
+// ============================================
+// ساخت تیم — صفحهٔ اختصاصی با ۵ اسلات و دعوت دوستان
+// ============================================
+const FRIENDS = [
+  { name: 'ArashGG', sub: 'Diablo IV', avatar: 'https://i.pravatar.cc/60?u=arash', online: true },
+  { name: 'SaraPlay', sub: 'Dota 2', avatar: 'https://i.pravatar.cc/60?u=sara', online: true },
+  { name: 'NightWolf_IR', sub: 'آنلاین', avatar: 'https://i.pravatar.cc/60?u=wolf7', online: true },
+  { name: 'MiladPro', sub: 'آفلاین', avatar: 'https://i.pravatar.cc/60?u=milad88', online: false },
+  { name: 'GhostSniper', sub: 'آفلاین', avatar: 'https://i.pravatar.cc/60?u=ghost', online: false },
+  { name: 'Zirak90', sub: 'آفلاین', avatar: 'https://i.pravatar.cc/60?u=zirak9', online: false },
+];
+const ME = { name: 'شما', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=60&h=60&fit=crop' };
+
+let tbTeams = [];
+let tbTeamSeq = 1;
+
+function tbGames() { return [...new Set(TOURNAMENTS.map((t) => t.game))]; }
+function tbFindTeam(id) { return tbTeams.find((t) => t.id === id); }
+
+function makeTeam() {
+  return {
+    id: tbTeamSeq++,
+    name: '',
+    game: tbGames()[0] || '',
+    members: [{ captain: true, name: ME.name, avatar: ME.avatar }],
+    sent: [],
+    incoming: [
+      { name: 'KavehX', avatar: 'https://i.pravatar.cc/60?u=kaveh' },
+      { name: 'RezaT', avatar: 'https://i.pravatar.cc/60?u=reza' },
+    ],
+    matches: [
+      { result: 'win', opponent: 'Team Blaze', tournament: 'کاپ هفتگی والورانت', members: ['شما', 'ArashGG', 'SaraPlay'], date: '۲ تیر ۱۴۰۴' },
+      { result: 'loss', opponent: 'Aurora', tournament: 'قهرمانی بزرگ x100', members: ['شما', 'MiladPro'], date: '۲۸ خرداد ۱۴۰۴' },
+      { result: 'win', opponent: 'Nightmare', tournament: 'کاپ هفتگی والورانت', members: ['شما', 'NightWolf_IR', 'GhostSniper'], date: '۲۰ خرداد ۱۴۰۴' },
+    ],
+    open: true,
+  };
+}
+
+function initTeamBuilder() {
+  document.getElementById('tb-add-team')?.addEventListener('click', openCreateTeamPopup);
+
+  const gameSel = document.getElementById('tb-filter-game');
+  if (gameSel) gameSel.innerHTML = '<option value="all">بازی: همه</option>' + tbGames().map((g) => `<option>${g}</option>`).join('');
+  document.getElementById('tb-search')?.addEventListener('input', renderTeams);
+  gameSel?.addEventListener('change', renderTeams);
+
+  renderTeams();
+}
+
+function openCreateTeamPopup() {
+  const gameOpts = tbGames().map((g) => `<option>${g}</option>`).join('');
+  document.getElementById('tb-popup-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">ساخت تیم جدید</h2>
+      <p class="tmodal__desc">نام تیم و بازی را وارد کن</p>
+      <label class="tfield"><span>نام تیم (حداقل ۳ کاراکتر)</span><input type="text" id="ct-name" maxlength="50" placeholder="مثلاً Team Aurora"></label>
+      <label class="tfield"><span>انتخاب بازی</span><select id="ct-game">${gameOpts}</select></label>
+      <div class="tfield-err" id="ct-err" hidden></div>
+      <button class="tour-btn tour-btn--primary tmodal__cta" id="ct-create">ساخت تیم</button>
+    </div>`;
+  document.getElementById('tb-popup').hidden = false;
+  setTimeout(() => document.getElementById('ct-name')?.focus(), 50);
+  document.getElementById('ct-create').addEventListener('click', () => {
+    const name = document.getElementById('ct-name').value.trim();
+    const err = document.getElementById('ct-err');
+    if (name.length < 3) { err.textContent = 'نام تیم باید حداقل ۳ کاراکتر باشد'; err.hidden = false; return; }
+    const team = makeTeam();
+    team.name = name;
+    team.game = document.getElementById('ct-game').value;
+    tbTeams.unshift(team);
+    document.getElementById('tb-popup').hidden = true;
+    renderTeams();
+    renderMyTeam();
+  });
+}
+
+function renderTeams() {
+  const wrap = document.getElementById('tb-teams');
+  const empty = document.getElementById('tb-empty');
+  if (!wrap) return;
+  const q = (document.getElementById('tb-search')?.value || '').trim().toLowerCase();
+  const fGame = document.getElementById('tb-filter-game')?.value || 'all';
+  const rows = tbTeams.filter((t) => {
+    const mq = !q || (t.name || '').toLowerCase().includes(q);
+    return mq && (fGame === 'all' || t.game === fGame);
+  });
+  if (!rows.length) {
+    wrap.innerHTML = '';
+    if (empty) { empty.hidden = false; empty.textContent = tbTeams.length ? 'تیمی با این فیلتر یافت نشد' : 'هنوز تیمی نساختی — روی «افزودن تیم جدید» بزن'; }
+    return;
+  }
+  if (empty) empty.hidden = true;
+  wrap.innerHTML = rows.map((t) => teamAccordionHTML(t)).join('');
+  rows.forEach((t) => bindTeamAccordion(t));
+}
+
+function teamAccordionHTML(t) {
+  const count = t.members.length;
+  const gameOpts = tbGames().map((g) => `<option ${g === t.game ? 'selected' : ''}>${g}</option>`).join('');
+  return `
+  <div class="tb-team ${t.open ? 'tb-team--open' : ''}" data-team="${t.id}">
+    <div class="tb-team__head">
+      <button type="button" class="tb-team__toggle">
+        <span class="material-symbols-outlined tb-team__chev">expand_more</span>
+        <span class="material-symbols-outlined tb-team__shield">shield</span>
+        <span class="tb-team__name">${t.name || 'تیم بدون نام'}</span>
+        <span class="tb-team__game">${t.game}</span>
+        <span class="tb-team__count">${faNum(count)} نفر</span>
+      </button>
+      <button type="button" class="tb-team__del" data-del title="حذف تیم"><span class="material-symbols-outlined">delete</span></button>
+    </div>
+    <div class="tb-team__body">
+      <div class="tb-team__top">
+        <div class="tb-form">
+          <label class="tfield"><span>نام تیم</span><input type="text" class="tb-name" maxlength="50" value="${(t.name || '').replace(/"/g,'&quot;')}" placeholder="مثلاً Team Aurora"></label>
+          <label class="tfield"><span>انتخاب بازی</span><select class="tb-game">${gameOpts}</select></label>
+        </div>
+        <div class="tb-team__reqs">
+          <button class="tour-btn tour-btn--ghost" data-incoming><span class="material-symbols-outlined">inbox</span>دریافتی <span class="tb-badge">${faNum(t.incoming.length)}</span></button>
+          <button class="tour-btn tour-btn--ghost" data-sent><span class="material-symbols-outlined">outbox</span>ارسالی <span class="tb-badge">${faNum(t.sent.length)}</span></button>
+          <button class="tour-btn tour-btn--ghost" data-history><span class="material-symbols-outlined">history</span>تاریخچه بازی‌ها</button>
+        </div>
+      </div>
+      <div class="tb__roster-title">اعضای تیم</div>
+      <div class="tb-slots">${slotsHTML(t)}</div>
+    </div>
+  </div>`;
+}
+
+function slotsHTML(t) {
+  const cells = t.members.map((s, i) => `
+    <div class="tb-slot tb-slot--filled ${s.captain ? 'tb-slot--captain' : ''}">
+      <img class="tb-slot__avatar" src="${s.avatar}" alt="">
+      <div class="tb-slot__name">${s.name}</div>
+      ${s.captain ? '<span class="tb-slot__role">کاپیتن</span>' : `<span class="tb-slot__role ${s.status === 'pending' ? 'tb-slot__role--pending' : 'tb-slot__role--joined'}">${s.status === 'pending' ? 'در انتظار' : 'عضو'}</span>`}
+      ${s.captain ? '' : `<button class="tb-slot__remove" data-rm="${i}"><span class="material-symbols-outlined">close</span></button>`}
+    </div>`);
+  // همیشه یک خانهٔ + در انتها برای افزودن نامحدود
+  cells.push(`<button class="tb-slot tb-slot--empty" data-add><span class="material-symbols-outlined tb-slot__plus">add</span><span class="tb-slot__hint">دعوت هم‌تیمی</span></button>`);
+  return cells.join('');
+}
+
+function bindTeamAccordion(t) {
+  const card = document.querySelector(`.tb-team[data-team="${t.id}"]`);
+  if (!card) return;
+  card.querySelector('.tb-team__toggle').addEventListener('click', () => {
+    t.open = !t.open; card.classList.toggle('tb-team--open', t.open);
+  });
+  card.querySelector('[data-del]').addEventListener('click', () => {
+    if (confirm(`تیم «${t.name || 'بدون نام'}» حذف شود؟`)) { tbTeams = tbTeams.filter((x) => x.id !== t.id); renderTeams(); renderMyTeam(); }
+  });
+  card.querySelector('.tb-name').addEventListener('input', (e) => {
+    t.name = e.target.value; card.querySelector('.tb-team__name').textContent = t.name || 'تیم بدون نام'; renderMyTeam();
+  });
+  card.querySelector('.tb-game').addEventListener('change', (e) => {
+    t.game = e.target.value; card.querySelector('.tb-team__game').textContent = t.game;
+  });
+  card.querySelector('[data-incoming]').addEventListener('click', () => openIncomingPopup(t.id));
+  card.querySelector('[data-sent]').addEventListener('click', () => openSentPopup(t.id));
+  card.querySelector('[data-history]').addEventListener('click', () => openHistoryPopup(t.id));
+  bindSlotHandlers(t, card);
+}
+
+function bindSlotHandlers(t, card) {
+  card.querySelector('[data-add]')?.addEventListener('click', () => openFriendPicker(t.id));
+  card.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => {
+    const i = Number(b.dataset.rm); const removed = t.members[i];
+    if (removed) t.sent = t.sent.filter((x) => x.name !== removed.name);
+    t.members.splice(i, 1); refreshTeamCard(t);
+  }));
+}
+
+function refreshTeamCard(t) {
+  const card = document.querySelector(`.tb-team[data-team="${t.id}"]`);
+  if (!card) return;
+  card.querySelector('.tb-slots').innerHTML = slotsHTML(t);
+  card.querySelector('.tb-team__count').textContent = `${faNum(t.members.length)} نفر`;
+  card.querySelector('[data-incoming] .tb-badge').textContent = faNum(t.incoming.length);
+  card.querySelector('[data-sent] .tb-badge').textContent = faNum(t.sent.length);
+  bindSlotHandlers(t, card);
+}
+
+function tbClosePopup() { document.getElementById('tb-popup').hidden = true; }
+
+function openFriendPicker(teamId) {
+  const t = tbFindTeam(teamId); if (!t) return;
+  const inTeam = new Set(t.members.map((s) => s.name));
+  const available = FRIENDS.filter((f) => !inTeam.has(f.name));
+  document.getElementById('tb-popup-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">دعوت هم‌تیمی</h2>
+      <p class="tmodal__desc">یکی از دوستانت را برای ارسال درخواست انتخاب کن</p>
+      <div class="tb-friends">
+        ${available.length ? available.map((f) => `
+          <button class="tb-friend" data-name="${f.name}">
+            <img src="${f.avatar}" alt="">
+            <div class="tb-friend__info"><span class="tb-friend__name">${f.name}</span><span class="tb-friend__sub">${f.sub}</span></div>
+            <span class="tb-friend__dot ${f.online ? 'is-on' : ''}"></span>
+            <span class="tb-friend__add"><span class="material-symbols-outlined">person_add</span></span>
+          </button>`).join('') : '<div class="req-empty"><span class="material-symbols-outlined">group_off</span><span>دوستی برای دعوت باقی نمانده</span></div>'}
+      </div>
+    </div>`;
+  document.getElementById('tb-popup').hidden = false;
+  document.querySelectorAll('.tb-friend').forEach((b) => b.addEventListener('click', () => {
+    const f = FRIENDS.find((x) => x.name === b.dataset.name);
+    const status = Math.random() < 0.45 ? 'pending' : 'joined';
+    t.members.push({ name: f.name, avatar: f.avatar, status });
+    if (status === 'pending') t.sent.push({ name: f.name, avatar: f.avatar });
+    refreshTeamCard(t); tbClosePopup();
+  }));
+}
+
+function openIncomingPopup(teamId) {
+  const t = tbFindTeam(teamId); if (!t) return;
+  document.getElementById('tb-popup-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">درخواست‌های دریافتی</h2>
+      <p class="tmodal__desc">بازیکنانی که می‌خواهند به «${t.name || 'تیم'}» بپیوندند</p>
+      <div class="team-requests" id="tb-inc-list">
+        ${t.incoming.length ? t.incoming.map((r, i) => `
+          <div class="team-req"><img src="${r.avatar}" alt=""><span class="team-req__name">${r.name}</span>
+            <button class="team-req__ok" data-acc="${i}">قبول</button><button class="team-req__no" data-rej="${i}">رد</button></div>`).join('') : '<div class="req-empty"><span class="material-symbols-outlined">inbox</span><span>درخواستی نداری</span></div>'}
+      </div>
+    </div>`;
+  document.getElementById('tb-popup').hidden = false;
+  document.querySelectorAll('#tb-inc-list [data-acc]').forEach((b) => b.addEventListener('click', () => {
+    const r = t.incoming[Number(b.dataset.acc)];
+    t.members.push({ name: r.name, avatar: r.avatar, status: 'joined' });
+    t.incoming.splice(Number(b.dataset.acc), 1);
+    refreshTeamCard(t); openIncomingPopup(teamId);
+  }));
+  document.querySelectorAll('#tb-inc-list [data-rej]').forEach((b) => b.addEventListener('click', () => {
+    t.incoming.splice(Number(b.dataset.rej), 1); refreshTeamCard(t); openIncomingPopup(teamId);
+  }));
+}
+
+function openSentPopup(teamId) {
+  const t = tbFindTeam(teamId); if (!t) return;
+  document.getElementById('tb-popup-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">درخواست‌های ارسالی</h2>
+      <p class="tmodal__desc">دعوت‌هایی که فرستادی و در انتظار پاسخ‌اند</p>
+      <div class="team-requests" id="tb-snt-list">
+        ${t.sent.length ? t.sent.map((r, i) => `
+          <div class="team-req"><img src="${r.avatar}" alt=""><span class="team-req__name">${r.name}</span>
+            <span class="team-chip__st" style="margin-left:8px">در انتظار</span><button class="team-req__no" data-cancel="${i}">لغو</button></div>`).join('') : '<div class="req-empty"><span class="material-symbols-outlined">outbox</span><span>درخواستی ارسال نشده</span></div>'}
+      </div>
+    </div>`;
+  document.getElementById('tb-popup').hidden = false;
+  document.querySelectorAll('#tb-snt-list [data-cancel]').forEach((b) => b.addEventListener('click', () => {
+    const r = t.sent[Number(b.dataset.cancel)];
+    const si = t.members.findIndex((s) => s && !s.captain && s.name === r.name);
+    if (si !== -1) t.members.splice(si, 1);
+    t.sent.splice(Number(b.dataset.cancel), 1);
+    refreshTeamCard(t); openSentPopup(teamId);
+  }));
+}
+
+function openHistoryPopup(teamId) {
+  const t = tbFindTeam(teamId); if (!t) return;
+  const wins = t.matches.filter((m) => m.result === 'win').length;
+  const losses = t.matches.filter((m) => m.result === 'loss').length;
+  document.getElementById('tb-popup-body').innerHTML = `
+    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad">
+      <h2 class="tmodal__title">تاریخچهٔ بازی‌های ${t.name || 'تیم'}</h2>
+      <p class="tmodal__desc">${faNum(wins)} برد • ${faNum(losses)} باخت</p>
+      <div class="match-list">
+        ${t.matches.length ? t.matches.map((m) => `
+          <div class="match-row match-row--${m.result}">
+            <span class="match-res">${m.result === 'win' ? 'برد' : 'باخت'}</span>
+            <div class="match-info">
+              <div class="match-vs">در مقابل <b>${m.opponent}</b></div>
+              <div class="match-tour"><span class="material-symbols-outlined">emoji_events</span>${m.tournament} • ${m.date}</div>
+              <div class="match-members">اعضای شرکت‌کننده: ${m.members.map((n) => `<span class="match-chip">${n}</span>`).join('')}</div>
+            </div>
+          </div>`).join('') : '<div class="req-empty"><span class="material-symbols-outlined">history</span><span>هنوز بازی‌ای ثبت نشده</span></div>'}
+      </div>
+    </div>`;
+  document.getElementById('tb-popup').hidden = false;
 }
 
 // ── بنر چرخشی ──
@@ -988,27 +1401,10 @@ function initTourHero() {
 }
 
 // ── لیست تورنومنت‌ها ──
-function renderTourList() {
-  const q = (document.getElementById('tour-search')?.value || '').trim().toLowerCase();
-  const fGame = document.getElementById('tour-filter-game')?.value || 'all';
-  const fType = document.getElementById('tour-filter-type')?.value || 'all';
-  const fStatus = document.getElementById('tour-filter-status')?.value || 'all';
-
-  const rows = TOURNAMENTS.filter((t) => {
-    const mq = !q || t.name.toLowerCase().includes(q) || t.game.toLowerCase().includes(q);
-    return mq && (fGame === 'all' || t.game === fGame) && (fType === 'all' || t.type === fType) && (fStatus === 'all' || t.status === fStatus);
-  });
-
-  const list = document.getElementById('tour-list');
-  const empty = document.getElementById('tour-empty');
-  document.getElementById('tour-count').textContent = `${faNum(rows.length)} تورنومنت`;
-  if (!rows.length) { list.innerHTML = ''; empty.hidden = false; return; }
-  empty.hidden = true;
-
-  list.innerHTML = rows.map((t) => {
-    const st = TOUR_STATUS[t.status];
-    const reg = registeredTours.has(t.id);
-    return `
+function tourCardHTML(t) {
+  const st = TOUR_STATUS[t.status];
+  const reg = registeredTours.has(t.id);
+  return `
     <div class="tour-card" data-tid="${t.id}">
       <div class="tour-card__cover" style="background-image:url('${t.img}')">
         <span class="tour-status tour-status--${st.cls}">${st.label}</span>
@@ -1022,7 +1418,7 @@ function renderTourList() {
         <div class="tour-card__meta">
           <span><span class="material-symbols-outlined">sports_esports</span>${t.game}</span>
           <span><span class="material-symbols-outlined">${t.type === 'team' ? 'groups' : 'person'}</span>${t.type === 'team' ? `تیمی (${faNum(t.teamSize)} نفره)` : 'انفرادی'}</span>
-          <span><span class="material-symbols-outlined">public</span>${t.region}</span>
+          ${t.creator ? `<span><span class="material-symbols-outlined">person</span>میزبان: ${t.creator}</span>` : `<span><span class="material-symbols-outlined">public</span>${t.region}</span>`}
         </div>
         <div class="tour-card__row">
           <span class="tour-card__prize"><span class="material-symbols-outlined">emoji_events</span>${t.prize}</span>
@@ -1036,9 +1432,28 @@ function renderTourList() {
         </div>
       </div>
     </div>`;
-  }).join('');
+}
 
-  list.querySelectorAll('.tour-card').forEach((card) => {
+function renderRails() {
+  const q = (document.getElementById('m-search')?.value || '').trim().toLowerCase();
+  const fGame = document.getElementById('m-filter-game')?.value || 'all';
+  const fStatus = document.getElementById('m-filter-status')?.value || 'all';
+  const match = (t) => {
+    const mq = !q || t.name.toLowerCase().includes(q) || t.game.toLowerCase().includes(q);
+    return mq && (fGame === 'all' || t.game === fGame) && (fStatus === 'all' || t.status === fStatus);
+  };
+  const order = { open: 1, soon: 2, live: 3, ended: 4 };
+  const byStatus = (a, b) => (order[a.status] || 9) - (order[b.status] || 9);
+  renderRail('tour-rail-official', TOURNAMENTS.filter((t) => t.official && match(t)).sort(byStatus));
+  renderRail('tour-rail-user', TOURNAMENTS.filter((t) => !t.official && match(t)).sort(byStatus));
+}
+
+function renderRail(id, rows) {
+  const rail = document.getElementById(id);
+  if (!rail) return;
+  if (!rows.length) { rail.innerHTML = '<div class="tour-empty">تورنومنتی موجود نیست</div>'; return; }
+  rail.innerHTML = rows.map(tourCardHTML).join('');
+  rail.querySelectorAll('.tour-card').forEach((card) => {
     const tid = Number(card.dataset.tid);
     card.querySelector('[data-act="detail"]').addEventListener('click', () => openTourDetail(tid));
     card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) joinTour(tid); });
@@ -1082,15 +1497,16 @@ function joinTour(tid) {
   const t = TOURNAMENTS.find((x) => x.id === tid);
   if (!t) return;
   if (registeredTours.has(tid)) { alert('قبلاً در این تورنومنت ثبت‌نام کرده‌اید.'); return; }
-  if (t.type === 'team' && !myTeam) {
-    if (confirm('این تورنومنت تیمی است و شما تیمی ندارید. اکنون تیم بسازید؟')) openTeamModal();
+  if (t.type === 'team' && !tbTeams.length) {
+    if (confirm('این تورنومنت تیمی است و شما تیمی ندارید. اکنون تیم بسازید؟')) { showTeamPane(); document.getElementById('tb-add-team')?.click(); }
     return;
   }
   const cost = t.entry === 'free' ? 'به‌صورت رایگان' : `با پرداخت تیکت (${t.ticketPrice})`;
   if (confirm(`ثبت‌نام در «${t.name}» ${cost} انجام شود؟`)) {
     registeredTours.add(tid);
     t.joined = Math.min(t.max, t.joined + 1);
-    renderTourList();
+    renderRails();
+    if (!document.querySelector('.tour-pane[data-tpane="all"]').hidden) renderAllList();
   }
 }
 
@@ -1098,7 +1514,7 @@ function joinTour(tid) {
 function renderMyTeam() {
   const wrap = document.getElementById('tour-myteam');
   if (!wrap) return;
-  if (!myTeam) {
+  if (!tbTeams.length) {
     wrap.innerHTML = `
       <div class="myteam myteam--empty">
         <div class="myteam__icon"><span class="material-symbols-outlined">groups</span></div>
@@ -1106,20 +1522,29 @@ function renderMyTeam() {
           <div class="myteam__title">هنوز تیمی نداری</div>
           <div class="myteam__sub">برای شرکت در تورنومنت‌های تیمی، تیم خود را بساز</div>
         </div>
-        <button class="tour-btn tour-btn--primary" id="myteam-create"><span class="material-symbols-outlined">add</span>ساخت تیم</button>
+        <div class="myteam__actions">
+          <button class="tour-btn tour-btn--primary" id="myteam-create"><span class="material-symbols-outlined">add</span>ساخت تیم</button>
+          <button class="tour-btn tour-btn--ghost" id="myteam-create-tour"><span class="material-symbols-outlined">emoji_events</span>ایجاد تورنومنت</button>
+        </div>
       </div>`;
-    document.getElementById('myteam-create').addEventListener('click', openTeamModal);
+    document.getElementById('myteam-create').addEventListener('click', () => { showTeamPane(); if (!tbTeams.length) document.getElementById('tb-add-team')?.click(); });
+    document.getElementById('myteam-create-tour').addEventListener('click', () => alert('ایجاد تورنومنت — به‌زودی'));
   } else {
+    const names = tbTeams.map((t) => t.name || 'بدون نام').join('، ');
     wrap.innerHTML = `
       <div class="myteam">
         <div class="myteam__icon myteam__icon--has"><span class="material-symbols-outlined">shield</span></div>
         <div class="myteam__text">
-          <div class="myteam__title">${myTeam.name} <span class="myteam__cap">کاپیتن: شما</span></div>
-          <div class="myteam__sub">${faNum(myTeam.members.length)} عضو • ${myTeam.desc || 'بدون توضیح'}</div>
+          <div class="myteam__title">تیم‌های من <span class="myteam__cap">${faNum(tbTeams.length)} تیم</span></div>
+          <div class="myteam__sub">${names}</div>
         </div>
-        <button class="tour-btn tour-btn--ghost" id="myteam-manage"><span class="material-symbols-outlined">settings</span>مدیریت تیم</button>
+        <div class="myteam__actions">
+          <button class="tour-btn tour-btn--ghost" id="myteam-manage"><span class="material-symbols-outlined">settings</span>مدیریت تیم‌ها</button>
+          <button class="tour-btn tour-btn--primary" id="myteam-create-tour"><span class="material-symbols-outlined">emoji_events</span>ایجاد تورنومنت</button>
+        </div>
       </div>`;
-    document.getElementById('myteam-manage').addEventListener('click', openTeamModal);
+    document.getElementById('myteam-manage').addEventListener('click', showTeamPane);
+    document.getElementById('myteam-create-tour').addEventListener('click', () => alert('ایجاد تورنومنت — به‌زودی'));
   }
 }
 

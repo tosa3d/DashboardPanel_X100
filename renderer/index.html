@@ -30,14 +30,29 @@
         <input type="tel" id="otp-phone-input" inputmode="numeric" maxlength="10" placeholder="9123456789" autocomplete="off">
       </div>
       <div class="otp-err" id="otp-phone-err" hidden>شماره موبایل معتبر نیست</div>
-      <button class="otp-btn" id="otp-send-btn">ارسال کد پیامک</button>
+      <button class="otp-btn" id="otp-send-btn">ورود</button>
     </div>
 
-    <!-- مرحله ۲: کد تأیید -->
+    <!-- مرحله ۲: ورود با رمز عبور (کاربر قدیمی) -->
+    <div class="otp-step" id="otp-step-pass" hidden>
+      <h2 class="otp-title">ورود با رمز عبور</h2>
+      <p class="otp-sub">رمز عبور حساب <span id="otp-pass-phone" dir="ltr"></span> را وارد کنید</p>
+      <label class="otp-pass-field">
+        <span class="material-symbols-outlined">lock</span>
+        <input type="password" id="otp-pass-input" placeholder="رمز عبور" autocomplete="current-password">
+      </label>
+      <div class="otp-err" id="otp-pass-err" hidden>رمز عبور را وارد کنید</div>
+      <button class="otp-btn" id="otp-pass-login">ورود</button>
+      <button class="otp-alt" id="otp-use-otp"><span class="material-symbols-outlined">sms</span>ورود با رمز موقت (کد پیامک)</button>
+      <button class="otp-back" id="otp-pass-back">‹ تغییر شماره موبایل</button>
+    </div>
+
+    <!-- مرحله ۳: کد تأیید -->
     <div class="otp-step" id="otp-step-code" hidden>
       <h2 class="otp-title">کد تأیید</h2>
       <p class="otp-sub">کد پیامک‌شده به <span id="otp-phone-display" dir="ltr"></span> را وارد کنید</p>
       <div class="otp-inputs" id="otp-inputs" dir="ltr">
+        <input class="otp-digit" inputmode="numeric" maxlength="1">
         <input class="otp-digit" inputmode="numeric" maxlength="1">
         <input class="otp-digit" inputmode="numeric" maxlength="1">
         <input class="otp-digit" inputmode="numeric" maxlength="1">
@@ -50,7 +65,7 @@
         <button id="otp-resend-btn" disabled>ارسال مجدد کد</button>
         <span id="otp-timer">۰۰:۳۰</span>
       </div>
-      <button class="otp-back" id="otp-back-btn">‹ تغییر شماره موبایل</button>
+      <button class="otp-back" id="otp-back-btn">‹ بازگشت</button>
     </div>
   </div>
 </div>
@@ -360,9 +375,9 @@
         <h2 class="hero__title" id="hero-title">VALORANT</h2>
         <h3 class="hero__subtitle" id="hero-subtitle">آمادگی، دقت، پیروزی</h3>
         <p class="hero__desc" id="hero-desc">یک تیرانداز تاکتیکال ۵ در ۵ با قابلیت‌های منحصربه‌فرد هر عامل. تیم‌ات را بچین و دشمن را نابود کن.</p>
-        <div class="hero__cta-group">
+        <div class="hero__cta-group" id="hero-cta-group">
           <button class="btn btn--primary btn--lg">
-            مشاهده
+            <span id="hero-cta-label">مشاهده</span>
             <span class="material-symbols-outlined">arrow_forward</span>
           </button>
         </div>
@@ -373,6 +388,7 @@
         <div class="hero-thumb hero-thumb--active" data-thumb="0"
           data-title="VALORANT"
           data-subtitle="آمادگی، دقت، پیروزی"
+          data-cta="1" data-cta-label="بازی کن"
           data-desc="یک تیرانداز تاکتیکال ۵ در ۵ با قابلیت‌های منحصربه‌فرد هر عامل. تیم‌ات را بچین و دشمن را نابود کن.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGecMXMN8YYF9xX6b1xeYKW6RHyktldnEuraMrdRkFVRCtoI7yRSBG8TN_t9vkxRiu6trez6jWkXpCcD_H9Um9tiBPJ2qcHLr_p7F-FkgUo-mn3Hxwbd-4iclFUzcJ9F2UWl62bcXGRY--hh2RuiXDlz8EjlW3inLUNs2l3FHtB_a10_CbbG0VNn60ao4LOhzjc0z_-_yrucNwuEjy4uqCASPcdq-rx3zzg9YPYjv35W1XdawStvhh6TJjvxZmHr7DEB_Wv96fPFl_qg" alt="Valorant">
@@ -383,6 +399,7 @@
         <div class="hero-thumb" data-thumb="1"
           data-title="ELDEN RING"
           data-subtitle="ارباب حلقه‌های درهم شکسته"
+          data-cta="0"
           data-desc="در سرزمین میانه سفری بی‌مانند آغاز کن. یک اثر ماندگار از FromSoftware که هر گوشه‌اش رازی پنهان دارد.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxOBHhg8sjZ0_-4UX7Z7o-kYimVtCOOGHwwNTK19I6x2sA9P0YW4yLjxIhyyY1MrQ9PfkaF6K7pkLV_YOQjZSqZRPNUEkrtv0nGD4imqkoEBnuNHm8K4LdagVWuUuOHBjBmOIozjI_nLaSIN_QrYINTc3YdL_KfS5EsLzTr0alc9TzRAVy5Em26EiJKhE2znLj-uQx0rDgnJ7jqvHItCY0PZNE46_cTvgvpvQdWN_Bo9VgvoRthlSbWLeRRravurhDE1wxxrFpeQ3Qmg" alt="Elden Ring">
@@ -392,6 +409,7 @@
         <div class="hero-thumb" data-thumb="2"
           data-title="STARFIELD"
           data-subtitle="فضا بی‌نهایت است"
+          data-cta="1" data-cta-label="مشاهده"
           data-desc="هزار سیاره منتظر کاوش تو هستند. مأموریت‌ها، کشف‌ها و نبردهای فضایی در مقیاسی که تا به حال ندیده‌ای.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBylsqfiAiQefJ0m7o53oZcmavZI4kYuPVY49PEeSYqwxlGHQZQ9CZUjG0X7HpsFkkSpTHRjghYgF0Of_StYj31ZUjLwNYAlshzd5iRlAlsmNtOpThBpWNqJ7K7KHhcw97rbmSoDm0jxAp3tEVhLzsGXmxdTlN-u0TCTJjj56Kr0uqt2MnAP3obBZ3FgLiFh9gejdvFu9Vx0fdy39HKVFLXnHsSKyRDbHFRkLx1S_hM3xyr9wqxqVSNCQsyb7PxQZydfA-MGTmDB2msXg" alt="Starfield">
@@ -401,6 +419,7 @@
         <div class="hero-thumb" data-thumb="3"
           data-title="CYBERPUNK 2077"
           data-subtitle="آینده‌ای که رویایش را داری"
+          data-cta="0"
           data-desc="شهر Night City، جایی که رویاها به کابوس تبدیل می‌شوند. به عنوان V سرنوشت خود را در این دنیای دیستوپیک رقم بزن.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPq5PpUPBKLbzxver0TL2yhYuIrzA4UfevjpTSWTEvwzJARj5NtpxVhSaLbAEm0Bx0iAxixxMesEu7PGLW-gZmbJVizCWXsQCOZYycMYPTu8Wob2lbi69yrVp-rcXDBT7qVUNsFERgDKU8p7-EI8dvvEoz1d80hfE07Bs6sVKmDG_OXrWTpfRGEgzo-OzzHqSuepomqsdHLbHZ8tI_Lka-Sg7KfbbK3ZtRl_IC_upEaFV1d_XRIwsOqYC96Hroo5e08Hdyw2mnlF15sw" alt="Cyberpunk 2077">
@@ -410,6 +429,7 @@
         <div class="hero-thumb" data-thumb="4"
           data-title="THE LAST OF US"
           data-subtitle="بقا تنها معنی زندگی است"
+          data-cta="1" data-cta-label="بازی کن"
           data-desc="در دنیایی پس از آخرالزمان، Joel و Ellie باید از میان خطرات بگذرند. داستانی تکان‌دهنده از عشق و بقا.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtkxz-f8qRBZoWQMOe814-mTdy9o1Sp_ljn9tftPL9O5vdVTNmNA3ZuTCt5fPFEiy0-1dhJQoj1PMBCXJxJXk1Gna7D0q4NWm75OUeapjdux8PYFOQW3JjG5po7ufLrva2fSAK6WZmyeAh4605TaJUYoHIHWphnXPASD5ab_iZv8PJtGioFmEiKEYFjLgExDWWvx-zG_hmC-rLpp_HlLHQvbzSnb87uX86e_ybo6rXx_UUPZjVqWPRpq7YX7BCiGZCYvq0c3RoO2L0Bg" alt="The Last of Us">
@@ -419,6 +439,7 @@
         <div class="hero-thumb" data-thumb="5"
           data-title="DEAD SPACE"
           data-subtitle="ترس از اعماق فضا"
+          data-cta="0"
           data-desc="در ایستگاه فضایی USG Ishimura هیچ‌کس صدای فریاد تو را نمی‌شنود. آماده مواجهه با کابوسی باش که انتظارش را نداری.">
           <div class="hero-thumb__frame">
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xv9-G239d6bfXCp4AYTIKN4iIduIhvpJJkb88qgBBXu-7F66vuXAzJ4NkFLQVPHZHyI364iYvWpfKRlqbvfzZ8svEQPB-xr_6a8hiV2Z7auAT7N4EWMw6_BHxunvicZPvJ0-VHzZIDWiRgt7lvaeuxGKCV3Mh8l46CooVRu_4EN5K2zwRkMlP6sgDdE0Iyb3W0JjT1MBBhSSHvlz6EXy4iO9t20H2OWDm1B4mQWIs02NBP6dxF-bAmn3C8XgDQv3q8AlMdE6_bF2tw" alt="Dead Space">
@@ -428,6 +449,7 @@
         <div class="hero-thumb" data-thumb="6"
           data-title="شاپ ماشین آهنی"
           data-subtitle="خرید آیتم‌های دوتا 2"
+          data-cta="1" data-cta-label="ورود به فروشگاه"
           data-desc="آیتم‌های کمیاب، باندل‌ها، اسکین‌ها و آیتم‌های ویژه — تحویل سریع، پرداخت امن و موجودی متنوع. همین حالا خرید کن!">
           <div class="hero-thumb__frame">
             <img src="assets/shop-banner.png" alt="شاپ ماشین آهنی">
@@ -1500,6 +1522,12 @@
         <button class="btn btn--primary btn--block profile-form__save" id="profile-save">
           <span class="material-symbols-outlined">save</span>
           ثبت تغییر
+        </button>
+
+        <!-- تنظیم رمز عبور -->
+        <button class="btn btn--ghost btn--block profile-form__pass" id="profile-set-pass">
+          <span class="material-symbols-outlined">lock</span>
+          تنظیم رمز عبور
         </button>
 
         <!-- toast feedback -->
@@ -2799,6 +2827,35 @@
       <button class="btn btn--ghost" id="confirm-no">انصراف</button>
       <button class="btn btn--primary" id="confirm-yes"></button>
     </div>
+  </div>
+</div>
+
+<!-- ========== مودال تنظیم رمز عبور ========== -->
+<div class="pass-modal" id="pass-modal" hidden>
+  <div class="pass-box">
+    <button class="pass-box__close" id="pass-close"><span class="material-symbols-outlined">close</span></button>
+    <div class="pass-box__title">تنظیم رمز عبور</div>
+    <p class="pass-box__sub">برای اولین بار رمز عبور خود را تنظیم کنید</p>
+
+    <div class="pass-rules">رمز عبور باید حداقل ۸ کاراکتر باشد و شامل حروف، عدد و نشانه (مثل @ یا !) باشد.</div>
+
+    <label class="pass-field">
+      <span class="material-symbols-outlined">lock</span>
+      <input type="password" id="pass-new" placeholder="رمز عبور جدید" autocomplete="new-password">
+      <button type="button" class="pass-eye" data-eye="pass-new"><span class="material-symbols-outlined">visibility</span></button>
+    </label>
+    <label class="pass-field">
+      <span class="material-symbols-outlined">lock_reset</span>
+      <input type="password" id="pass-confirm" placeholder="تکرار رمز عبور" autocomplete="new-password">
+      <button type="button" class="pass-eye" data-eye="pass-confirm"><span class="material-symbols-outlined">visibility</span></button>
+    </label>
+
+    <input type="text" id="pass-code" class="pass-code-input" inputmode="numeric" maxlength="5" placeholder="کد پیامک‌شده" disabled>
+    <button class="pass-send-btn pass-send-btn--block" id="pass-send">ارسال کد</button>
+
+    <div class="pass-err" id="pass-err" hidden></div>
+
+    <button class="pass-submit" id="pass-submit" disabled>ثبت رمز عبور</button>
   </div>
 </div>
 

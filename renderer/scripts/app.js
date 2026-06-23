@@ -731,9 +731,17 @@ function initOtpLogin() {
   if (!screen) { if (splash) splash.classList.remove('splash--pending'); return; }
 
   const stepPhone = document.getElementById('otp-step-phone');
+  const stepPass = document.getElementById('otp-step-pass');
   const stepCode = document.getElementById('otp-step-code');
+  const passInput = document.getElementById('otp-pass-input');
+  const passErr = document.getElementById('otp-pass-err');
+  const passPhone = document.getElementById('otp-pass-phone');
   const phoneInput = document.getElementById('otp-phone-input');
   const phoneErr = document.getElementById('otp-phone-err');
+
+  function showStep(el) {
+    [stepPhone, stepPass, stepCode].forEach((s) => { if (s) s.hidden = (s !== el); });
+  }
   const codeErr = document.getElementById('otp-code-err');
   const digits = Array.from(document.querySelectorAll('.otp-digit'));
   const phoneDisplay = document.getElementById('otp-phone-display');
@@ -761,20 +769,52 @@ function initOtpLogin() {
     }, 1000);
   }
 
-  function gotoCode() {
+  function phoneLabel() {
     const phone = phoneInput.value.trim();
-    if (phone.length < 10) { phoneErr.hidden = false; return; }
-    phoneDisplay.textContent = '۰' + faNum(phone);
-    stepPhone.hidden = true;
-    stepCode.hidden = false;
+    return phone ? '۰' + faNum(phone) : 'شمارهٔ شما';
+  }
+
+  // رفتن به صفحهٔ کد پیامک (رمز موقت)
+  function gotoCode() {
+    phoneDisplay.textContent = phoneLabel();
+    showStep(stepCode);
     digits.forEach((d) => (d.value = ''));
     codeErr.hidden = true;
     startTimer();
     setTimeout(() => digits[0].focus(), 50);
   }
 
-  document.getElementById('otp-send-btn').addEventListener('click', gotoCode);
-  phoneInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') gotoCode(); });
+  // دکمهٔ «ورود» مرحلهٔ شماره — تصمیم بر اساس کاربر جدید/قدیمی
+  function onPhoneSubmit() {
+    const phone = phoneInput.value.trim();
+    if (phone) {
+      // کاربر قدیمی (رمز دارد) → ورود با رمز عبور
+      passPhone.textContent = phoneLabel();
+      passInput.value = '';
+      passErr.hidden = true;
+      showStep(stepPass);
+      setTimeout(() => passInput.focus(), 50);
+    } else {
+      // کاربر جدید (رمز ندارد) → فقط رمز موقت (کد پیامک)
+      gotoCode();
+    }
+  }
+
+  document.getElementById('otp-send-btn').addEventListener('click', onPhoneSubmit);
+  phoneInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') onPhoneSubmit(); });
+
+  // مرحلهٔ رمز عبور
+  function passLogin() {
+    if (!passInput.value) { passErr.hidden = false; return; } // حالت توسعه: هر رمزی قبول
+    clearInterval(timerId);
+    screen.classList.add('otp-screen--hidden');
+    runSplashThenApp(splash);
+  }
+  document.getElementById('otp-pass-login').addEventListener('click', passLogin);
+  passInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') passLogin(); });
+  passInput.addEventListener('input', () => { passErr.hidden = true; });
+  document.getElementById('otp-use-otp').addEventListener('click', gotoCode); // ورود با رمز موقت
+  document.getElementById('otp-pass-back').addEventListener('click', () => showStep(stepPhone));
 
   // ورودی‌های کد — پرش خودکار
   digits.forEach((d, i) => {
@@ -796,9 +836,7 @@ function initOtpLogin() {
   });
 
   function verify() {
-    const code = digits.map((d) => d.value).join('');
-    if (code.length < digits.length) { codeErr.hidden = false; return; }
-    // دمو: هر کدی پذیرفته می‌شود
+    // حالت توسعه: بدون کد هم تأیید کار می‌کند
     clearInterval(timerId);
     screen.classList.add('otp-screen--hidden');
     runSplashThenApp(splash);
@@ -807,9 +845,9 @@ function initOtpLogin() {
 
   resendBtn.addEventListener('click', () => { if (!resendBtn.disabled) startTimer(); });
   document.getElementById('otp-back-btn').addEventListener('click', () => {
-    stepCode.hidden = true;
-    stepPhone.hidden = false;
     clearInterval(timerId);
+    // اگر کاربر قدیمی است (شماره دارد) برگرد به رمز عبور، وگرنه به شماره
+    showStep(phoneInput.value.trim() ? stepPass : stepPhone);
   });
 }
 
@@ -818,6 +856,89 @@ function runSplashThenApp(splash) {
   splash.classList.remove('splash--pending'); // نمایش + شروع انیمیشن نور
   setTimeout(() => splash.classList.add('splash--hidden'), 3000);
   setTimeout(() => splash.remove(), 3700);
+}
+
+// ============================================
+// تنظیم رمز عبور (پاپ‌اپ، با کد تأیید پیامکی)
+// ============================================
+function initSetPassword() {
+  const modal = document.getElementById('pass-modal');
+  if (!modal) return;
+  const newP = document.getElementById('pass-new');
+  const confirmP = document.getElementById('pass-confirm');
+  const codeInput = document.getElementById('pass-code');
+  const sendBtn = document.getElementById('pass-send');
+  const submitBtn = document.getElementById('pass-submit');
+  const err = document.getElementById('pass-err');
+  let codeSent = false;
+
+  function showErr(m) { err.textContent = m; err.hidden = false; }
+  function clearErr() { err.hidden = true; }
+
+  function open() {
+    newP.value = ''; confirmP.value = ''; codeInput.value = '';
+    codeInput.disabled = true; submitBtn.disabled = true;
+    sendBtn.disabled = false; sendBtn.textContent = 'ارسال کد';
+    codeSent = false; clearErr();
+    modal.hidden = false;
+    setTimeout(() => newP.focus(), 50);
+  }
+  function close() { modal.hidden = true; }
+
+  document.getElementById('profile-set-pass')?.addEventListener('click', open);
+  document.getElementById('pass-close').addEventListener('click', close);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+
+  codeInput.addEventListener('input', () => {
+    codeInput.value = codeInput.value.replace(/\D/g, '');
+    submitBtn.disabled = codeInput.value.length < 5;
+  });
+
+  // چشم نمایش/مخفی رمز
+  modal.querySelectorAll('.pass-eye').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const inp = document.getElementById(btn.dataset.eye);
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      btn.querySelector('.material-symbols-outlined').textContent = show ? 'visibility_off' : 'visibility';
+    });
+  });
+
+  // اعتبارسنجی رمز: حداقل ۸ کاراکتر + حرف + عدد + نشانه
+  function passValid(p) {
+    return p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9]/.test(p);
+  }
+
+  // ارسال کد — اول رمز و تکرارش را اعتبارسنجی می‌کند
+  sendBtn.addEventListener('click', () => {
+    clearErr();
+    const p = newP.value;
+    if (!passValid(p)) { showErr('رمز عبور باید حداقل ۸ کاراکتر و شامل حروف، عدد و نشانه باشد.'); return; }
+    if (p !== confirmP.value) { showErr('رمز عبور و تکرار آن یکسان نیستند.'); return; }
+    // دمو: کد ارسال شد
+    codeSent = true;
+    codeInput.disabled = false;
+    codeInput.focus();
+    let t = 30;
+    sendBtn.disabled = true;
+    const fmt = () => `ارسال مجدد (${faNum(t)})`;
+    sendBtn.textContent = fmt();
+    const timer = setInterval(() => {
+      t -= 1; sendBtn.textContent = t > 0 ? fmt() : 'ارسال مجدد کد';
+      if (t <= 0) { clearInterval(timer); sendBtn.disabled = false; }
+    }, 1000);
+  });
+
+  // ثبت نهایی
+  submitBtn.addEventListener('click', () => {
+    clearErr();
+    if (!codeSent) { showErr('ابتدا کد تأیید را دریافت کنید.'); return; }
+    if (!passValid(newP.value) || newP.value !== confirmP.value) { showErr('رمز عبور معتبر نیست.'); return; }
+    if (codeInput.value.length < 5) { showErr('کد تأیید را کامل وارد کنید.'); return; }
+    // دمو: هر کدی پذیرفته می‌شود
+    close();
+    alert('رمز عبور با موفقیت تنظیم شد.');
+  });
 }
 
 // ============================================
@@ -1647,6 +1768,8 @@ function initHeroThumbs() {
   const heroTitle  = document.getElementById('hero-title');
   const heroSub    = document.getElementById('hero-subtitle');
   const heroDesc   = document.getElementById('hero-desc');
+  const heroCta    = document.getElementById('hero-cta-group');
+  const heroCtaLbl = document.getElementById('hero-cta-label');
 
   function activateThumb(thumb) {
     // active state
@@ -1674,6 +1797,13 @@ function initHeroThumbs() {
     if (heroTitle)  heroTitle.textContent  = thumb.dataset.title   || '';
     if (heroSub)    heroSub.textContent    = thumb.dataset.subtitle || '';
     if (heroDesc)   heroDesc.textContent   = thumb.dataset.desc     || '';
+
+    // دکمهٔ مشاهده فقط روی بنرهایی که data-cta="1" دارند
+    if (heroCta) {
+      const hasCta = thumb.dataset.cta === '1';
+      heroCta.style.display = hasCta ? '' : 'none';
+      if (hasCta && heroCtaLbl) heroCtaLbl.textContent = thumb.dataset.ctaLabel || 'مشاهده';
+    }
   }
 
   // چرخش خودکار هر ۵ ثانیه — کلیک دستی تایمر رو ریست می‌کنه
@@ -3624,6 +3754,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (f) window.__openAvatarCropper(f, applyUserAvatar);
     profCardInput.value = '';
   });
+
+  initSetPassword();
 
   // خروج از حساب کاربری (دکمهٔ بالا-چپ صفحهٔ پروفایل)
   document.getElementById('profile-logout-btn')?.addEventListener('click', () => {

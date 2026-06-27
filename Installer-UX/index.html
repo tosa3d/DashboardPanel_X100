@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نصب x100</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+<div class="desktop-bg">
+  <div class="installer">
+
+    <!-- ══ Sidebar (right in RTL) ══ -->
+    <aside class="installer__sidebar">
+      <div class="sidebar__logo">
+        <div class="sidebar__logo-icon">♨</div>
+        <div>
+          <div class="sidebar__logo-name">x100</div>
+          <div class="sidebar__logo-sub">گیمینگ لانچر</div>
+        </div>
+      </div>
+
+      <nav class="sidebar__steps">
+        <div class="sidebar__step sidebar__step--active" data-step="1">
+          <div class="sidebar__step-num">۱</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">احراز هویت</div>
+            <div class="sidebar__step-sub">تایید شماره موبایل</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="2">
+          <div class="sidebar__step-num">۲</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">نام کاربری</div>
+            <div class="sidebar__step-sub">انتخاب یوزرنیم</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="3">
+          <div class="sidebar__step-num">۳</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">تنظیمات نصب</div>
+            <div class="sidebar__step-sub">محل و پیکربندی</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="4">
+          <div class="sidebar__step-num">۴</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">دانلود و نصب</div>
+            <div class="sidebar__step-sub">دریافت فایل‌ها</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="5">
+          <div class="sidebar__step-num">۵</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">خوش‌آمدگویی</div>
+            <div class="sidebar__step-sub">پیش‌نیازها</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="6">
+          <div class="sidebar__step-num">۶</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">بررسی Steam</div>
+            <div class="sidebar__step-sub">شناسایی / نصب</div>
+          </div>
+        </div>
+
+        <div class="sidebar__step" data-step="7">
+          <div class="sidebar__step-num">۷</div>
+          <div class="sidebar__step-info">
+            <div class="sidebar__step-title">اتصال Steam</div>
+            <div class="sidebar__step-sub">احراز هویت</div>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar__footer">نسخه ۱.۰.۰</div>
+    </aside>
+
+    <!-- ══ Main Content (left in RTL) ══ -->
+    <main class="installer__main">
+
+      <!-- ── Step 1: احراز هویت ── -->
+      <div class="panel" id="panel-1">
+        <div class="panel__head">
+          <h2 class="panel__title">احراز هویت</h2>
+          <p class="panel__desc">برای شروع نصب، شماره موبایل خود را وارد کنید. یک کد تایید برای شما ارسال می‌شود.</p>
+        </div>
+
+        <!-- زیر-مرحله ۱: ورود شماره -->
+        <div id="otp-phone-step">
+          <div class="field">
+            <label class="field__label">شماره موبایل</label>
+            <div class="field__input-wrap field__input-wrap--ltr">
+              <span class="material-icons-round field__icon-ltr">phone_android</span>
+              <input type="tel" id="phone-input" class="field__input field__input--ltr"
+                     placeholder="09xxxxxxxxx" maxlength="11" dir="ltr">
+            </div>
+            <span class="field__hint">مثال: 09121234567</span>
+          </div>
+
+          <button class="btn btn--primary btn--full" id="send-otp-btn">
+            <span class="material-icons-round">sms</span>
+            ارسال کد تایید
+          </button>
+
+          <div class="otp-demo-note">
+            <span class="material-icons-round">info</span>
+            پروتوتایپ: هر شماره‌ای معتبر است — کد تایید: <b dir="ltr">123456</b>
+          </div>
+        </div>
+
+        <!-- زیر-مرحله ۲: وارد کردن کد -->
+        <div id="otp-code-step" hidden>
+          <div class="otp-info">
+            کد ۶ رقمی به شماره <span id="otp-phone-display" dir="ltr">09--</span> ارسال شد
+          </div>
+
+          <div class="otp-boxes" dir="ltr">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric" autocomplete="one-time-code">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
+            <input class="otp-box" type="text" maxlength="1" inputmode="numeric">
+          </div>
+
+          <div class="otp-resend">
+            <span id="otp-timer-wrap">ارسال مجدد تا <b id="otp-countdown">۶۰</b> ثانیه دیگر</span>
+            <button id="resend-btn" class="link-btn" hidden>ارسال مجدد کد</button>
+          </div>
+
+          <button class="btn btn--primary btn--full" id="verify-otp-btn">
+            <span class="material-icons-round">verified</span>
+            تایید کد
+          </button>
+
+          <button class="link-btn link-btn--center" id="change-phone-btn">تغییر شماره موبایل</button>
+        </div>
+      </div>
+
+      <!-- ── Step 2: نام کاربری ── -->
+      <div class="panel" id="panel-2" hidden>
+        <div class="panel__head">
+          <h2 class="panel__title">انتخاب نام کاربری</h2>
+          <p class="panel__desc">نام کاربری شما در پروفایل و جامعه x100 نمایش داده می‌شود.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">نام کاربری</label>
+          <div class="field__input-wrap field__input-wrap--ltr">
+            <span class="material-icons-round field__icon-ltr">alternate_email</span>
+            <input type="text" id="username-input" class="field__input field__input--ltr"
+                   placeholder="my_username" dir="ltr" maxlength="20" autocomplete="off">
+            <span class="field__status-icon material-icons-round" id="username-status-icon"></span>
+          </div>
+        </div>
+
+        <div class="rules-box" id="username-rules">
+          <div class="rule" id="rule-length">
+            <span class="rule__icon material-icons-round">radio_button_unchecked</span>
+            <span>حداقل ۵ کاراکتر</span>
+          </div>
+          <div class="rule" id="rule-chars">
+            <span class="rule__icon material-icons-round">radio_button_unchecked</span>
+            <span>فقط حروف انگلیسی، عدد و آندرلاین (_)</span>
+          </div>
+          <div class="rule" id="rule-available">
+            <span class="rule__icon material-icons-round">radio_button_unchecked</span>
+            <span id="rule-available-text">تکراری نباشد</span>
+          </div>
+        </div>
+
+        <div class="panel__actions">
+          <div class="panel__actions__group">
+            <button class="btn btn--primary" id="next-from-2" disabled>
+              ادامه
+              <span class="material-icons-round">arrow_back</span>
+            </button>
+          </div>
+          <div class="panel__actions__group">
+            <button class="btn btn--ghost" id="back-from-2">
+              <span class="material-icons-round">arrow_forward</span>
+              بازگشت
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 3: تنظیمات نصب ── -->
+      <div class="panel" id="panel-3" hidden>
+        <div class="panel__head">
+          <h2 class="panel__title">تنظیمات نصب</h2>
+          <p class="panel__desc">محل نصب لانچر x100 را مشخص کنید و گزینه‌های دلخواه را انتخاب نمایید.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">محل نصب</label>
+          <div class="field__input-wrap field__input-wrap--ltr">
+            <span class="material-icons-round field__icon-ltr">folder_open</span>
+            <input type="text" id="install-path" class="field__input field__input--ltr"
+                   value="C:\Program Files\BokharPaz" dir="ltr" readonly>
+            <button class="field__inline-btn" id="browse-btn">مرور</button>
+          </div>
+          <div class="field__meta">
+            <span class="material-icons-round">storage</span>
+            <span>فضای مورد نیاز: <b>۴۵۰ مگابایت</b> &nbsp;|&nbsp; فضای موجود: <span id="disk-free" class="disk-free">۱۲۰ گیگابایت</span></span>
+          </div>
+        </div>
+
+        <div class="install-opts">
+          <label class="checkbox-row">
+            <input type="checkbox" id="opt-desktop" checked>
+            <span class="checkbox-custom"></span>
+            ایجاد میانبر روی دسکتاپ
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="opt-startmenu" checked>
+            <span class="checkbox-custom"></span>
+            افزودن به منوی استارت
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="opt-autostart">
+            <span class="checkbox-custom"></span>
+            اجرای خودکار هنگام ورود به ویندوز
+          </label>
+        </div>
+
+        <div class="panel__actions">
+          <div class="panel__actions__group">
+            <button class="btn btn--primary" id="install-btn">
+              <span class="material-icons-round">download</span>
+              نصب
+            </button>
+            <button class="btn btn--text" id="cancel-btn">لغو</button>
+          </div>
+          <div class="panel__actions__group">
+            <button class="btn btn--help" id="help-btn">
+              <span class="material-icons-round">help_outline</span>
+              مشکل دارم
+            </button>
+            <button class="btn btn--ghost" id="back-from-3">
+              <span class="material-icons-round">arrow_forward</span>
+              بازگشت
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 4: دانلود و نصب ── -->
+      <div class="panel" id="panel-4" hidden>
+        <div class="panel__head panel__head--compact">
+          <h2 class="panel__title" id="dl-main-title">در حال دانلود و نصب</h2>
+          <p class="panel__desc" id="dl-status-text">در حال اتصال به سرور x100...</p>
+        </div>
+
+        <!-- فاز ۱: دانلود فایل‌ها -->
+        <div class="dl-phase" id="dl-phase-download">
+          <div class="dl-phase__label">
+            <span class="material-icons-round dl-phase__icon" id="dl-phase1-icon">download</span>
+            <span class="dl-phase__title">دانلود فایل‌ها</span>
+            <span class="dl-phase__badge dl-phase__badge--active" id="dl-phase1-badge">در حال دانلود</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar">
+              <div class="progress-bar__fill" id="dl-fill" style="width:0%"></div>
+            </div>
+            <div class="progress-bar__pct" id="dl-pct">۰٪</div>
+          </div>
+          <div class="dl-meta" dir="ltr">
+            <span id="dl-speed">— MB/s</span>
+            <span id="dl-size">0 / 450 MB</span>
+          </div>
+        </div>
+
+        <!-- فاز ۲: نصب لانچر — تا پایان دانلود خاکستری است -->
+        <div class="dl-phase dl-phase--pending" id="dl-phase-install">
+          <div class="dl-phase__label">
+            <span class="material-icons-round dl-phase__icon dl-phase__icon--install" id="dl-phase2-icon">settings</span>
+            <span class="dl-phase__title">نصب لانچر</span>
+            <span class="dl-phase__badge dl-phase__badge--pending" id="dl-phase2-badge">در انتظار دانلود</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar">
+              <div class="progress-bar__fill progress-bar__fill--install" id="install-fill" style="width:0%"></div>
+            </div>
+            <div class="progress-bar__pct" id="install-pct">۰٪</div>
+          </div>
+          <div class="dl-meta">
+            <span id="install-status">پس از اتمام دانلود شروع می‌شود...</span>
+          </div>
+        </div>
+
+        <!-- لاگ ترمینال -->
+        <div class="dl-log" id="dl-log">
+          <div class="dl-log__item dl-log__item--active">▶ راه‌اندازی فرآیند نصب...</div>
+        </div>
+
+        <!-- بعد از اتمام هر دو فاز -->
+        <div id="dl-done-area" hidden>
+          <div class="dl-done-banner">
+            <span class="material-icons-round">check_circle</span>
+            <span>x100 با موفقیت نصب شد!</span>
+          </div>
+          <button class="btn btn--primary btn--full btn--lg" id="launch-btn">
+            ادامه — تنظیمات اولیه
+            <span class="material-icons-round">arrow_back</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Step 5: خوش‌آمدگویی / Onboarding ── -->
+      <div class="panel" id="panel-5" hidden>
+        <div class="panel__head">
+          <h2 class="panel__title">آماده‌اید؟ 🎮</h2>
+          <p class="panel__desc">x100 به‌صورت خودکار کتابخانه بازی‌های شما را مدیریت می‌کند. چند نکته مهم:</p>
+        </div>
+
+        <div class="onboard-cards">
+          <div class="onboard-card">
+            <div class="onboard-card__icon-wrap onboard-card__icon-wrap--red">
+              <span class="material-icons-round">search</span>
+            </div>
+            <div class="onboard-card__body">
+              <div class="onboard-card__title">شناسایی خودکار بازی‌های Steam</div>
+              <div class="onboard-card__desc">x100 تمام بازی‌های نصب‌شده روی Steam را به‌طور خودکار پیدا کرده و به کتابخانه شما اضافه می‌کند.</div>
+            </div>
+          </div>
+          <div class="onboard-card">
+            <div class="onboard-card__icon-wrap onboard-card__icon-wrap--blue">
+              <span class="material-icons-round">download</span>
+            </div>
+            <div class="onboard-card__body">
+              <div class="onboard-card__title">نصب خودکار Steam (در صورت نیاز)</div>
+              <div class="onboard-card__desc">اگر Steam روی سیستم شما نصب نباشد، x100 آن را در مرحله بعد دانلود و نصب می‌کند.</div>
+            </div>
+          </div>
+          <div class="onboard-card">
+            <div class="onboard-card__icon-wrap onboard-card__icon-wrap--green">
+              <span class="material-icons-round">cloud_download</span>
+            </div>
+            <div class="onboard-card__body">
+              <div class="onboard-card__title">سرور اختصاصی با سرعت بالا</div>
+              <div class="onboard-card__desc">بازی‌هایی که در x100 خریداری کرده‌اید از سرور اختصاصی ایران با سرعت و پایداری بیشتر دانلود می‌شوند.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel__actions">
+          <div class="panel__actions__group">
+            <button class="btn btn--primary" id="next-from-5">
+              بعدی
+              <span class="material-icons-round">arrow_back</span>
+            </button>
+          </div>
+          <div class="panel__actions__group">
+            <button class="btn btn--ghost" id="back-from-5">
+              <span class="material-icons-round">arrow_forward</span>
+              بازگشت
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 6: بررسی Steam ── -->
+      <div class="panel" id="panel-6" hidden>
+        <div class="panel__head panel__head--compact">
+          <h2 class="panel__title">بررسی وضعیت Steam</h2>
+          <p class="panel__desc">ابتدا وضعیت نصب Steam را بررسی کنید. بدون Steam امکان اتصال اکانت وجود ندارد.</p>
+        </div>
+
+        <!-- کارت وضعیت Steam -->
+        <div class="steam-card">
+          <div class="steam-card__header">
+            <div class="steam-card__logo">
+              <svg viewBox="0 0 24 24" width="26" height="26">
+                <path fill="#c6d4df" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/>
+              </svg>
+            </div>
+            <div class="steam-card__info">
+              <div class="steam-card__name">Steam Client</div>
+              <div class="steam-card__meta" id="steam-card-meta">وضعیت: بررسی نشده</div>
+            </div>
+            <div class="steam-card__badge steam-card__badge--unknown" id="steam-card-badge">ناشناخته</div>
+          </div>
+
+          <!-- مسیر نصب — فقط وقتی Steam پیدا شد -->
+          <div class="steam-card__path-row" id="steam-path-row" hidden>
+            <span class="material-icons-round">folder_open</span>
+            <span id="steam-path-val" dir="ltr">—</span>
+          </div>
+
+          <!-- دکمه بررسی (وضعیت عوض میشه) -->
+          <button class="btn btn--check btn--full" id="check-steam-btn">
+            <span class="material-icons-round" id="check-btn-icon">search</span>
+            <span id="check-btn-text">بررسی Steam</span>
+          </button>
+
+          <!-- فقط وقتی Steam نصب نیست -->
+          <div id="steam-missing-actions" hidden>
+            <div class="steam-missing-msg">
+              <span class="material-icons-round">warning</span>
+              Steam روی سیستم شما نصب نیست — برای ادامه باید نصب شود.
+            </div>
+            <button class="btn btn--primary btn--full" id="install-steam-btn">
+              <span class="material-icons-round">download</span>
+              نصب Steam از سرور x100
+            </button>
+          </div>
+        </div>
+
+        <!-- کنترل پروتوتایپ -->
+        <div class="proto-bar">
+          <span class="material-icons-round proto-bar__icon">science</span>
+          <span class="proto-bar__label">پروتوتایپ:</span>
+          <button class="proto-btn proto-btn--active" id="scenario-a-btn" onclick="setScenario('a')">Steam نصب است</button>
+          <button class="proto-btn" id="scenario-b-btn" onclick="setScenario('b')">Steam نیست</button>
+        </div>
+
+        <div class="panel__actions">
+          <div class="panel__actions__group">
+            <button class="btn btn--primary" id="connect-steam-btn" disabled>
+              اتصال اکانت
+              <span class="material-icons-round">arrow_back</span>
+            </button>
+          </div>
+          <div class="panel__actions__group">
+            <button class="btn btn--ghost" id="back-from-6">
+              <span class="material-icons-round">arrow_forward</span>
+              بازگشت
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 7: اتصال Steam ── -->
+      <div class="panel" id="panel-7" hidden>
+        <div class="panel__head panel__head--compact">
+          <h2 class="panel__title">اتصال اکانت Steam</h2>
+          <p class="panel__desc">برای شناسایی بازی‌های خریداری‌شده، اکانت Steam خود را متصل کنید.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="config-tabs">
+          <button class="config-tab config-tab--active" data-tab="general">
+            <span class="material-icons-round">tune</span>
+            General
+          </button>
+          <button class="config-tab" data-tab="connect">
+            <span class="material-icons-round">link</span>
+            Connect Account
+          </button>
+        </div>
+
+        <!-- General Tab -->
+        <div class="config-panel" id="tab-general">
+          <div class="config-section__title">تنظیمات وارد کردن بازی‌ها</div>
+          <div class="config-options">
+            <label class="checkbox-row checkbox-row--stacked">
+              <input type="checkbox" id="opt-import-games" checked>
+              <span class="checkbox-custom"></span>
+              <div>
+                <div class="checkbox-row__title">Import installed games</div>
+                <div class="checkbox-row__sub">بازی‌های نصب‌شده روی Steam به کتابخانه x100 اضافه می‌شوند</div>
+              </div>
+            </label>
+            <label class="checkbox-row checkbox-row--stacked">
+              <input type="checkbox" id="opt-sync-saves" checked>
+              <span class="checkbox-custom"></span>
+              <div>
+                <div class="checkbox-row__title">Sync cloud saves</div>
+                <div class="checkbox-row__sub">ذخیره‌های ابری بازی‌ها با Steam همگام‌سازی می‌شوند</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Connect Account Tab -->
+        <div class="config-panel" id="tab-connect" hidden>
+          <div class="config-section__title">روش احراز هویت را انتخاب کنید</div>
+          <div class="auth-methods">
+            <div class="auth-method auth-method--selected" data-method="web">
+              <span class="material-icons-round auth-method__icon">open_in_browser</span>
+              <div class="auth-method__body">
+                <div class="auth-method__title">Web Login</div>
+                <div class="auth-method__desc">پنجره مرورگر باز می‌شود — ساده‌ترین روش</div>
+              </div>
+              <span class="auth-method__check material-icons-round">check_circle</span>
+            </div>
+            <div class="auth-method" data-method="api">
+              <span class="material-icons-round auth-method__icon">vpn_key</span>
+              <div class="auth-method__body">
+                <div class="auth-method__title">API Key Login</div>
+                <div class="auth-method__desc">وارد کردن کلید API از صفحه Steam Developer</div>
+              </div>
+              <span class="auth-method__check material-icons-round"></span>
+            </div>
+          </div>
+
+          <!-- Detail: Web Login -->
+          <div class="auth-detail" id="auth-detail-web">
+            <button class="btn btn--steam btn--full" id="authenticate-btn">
+              <svg viewBox="0 0 24 24" width="17" height="17">
+                <path fill="currentColor" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/>
+              </svg>
+              Authenticate with Steam
+            </button>
+            <div class="auth-status" id="auth-web-status" hidden></div>
+          </div>
+
+          <!-- Detail: API Key -->
+          <div class="auth-detail" id="auth-detail-api" hidden>
+            <div class="field">
+              <label class="field__label">Steam Web API Key</label>
+              <div class="field__input-wrap field__input-wrap--ltr">
+                <span class="material-icons-round field__icon-ltr">vpn_key</span>
+                <input type="text" id="api-key-input" class="field__input field__input--ltr"
+                       placeholder="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" dir="ltr" maxlength="32">
+              </div>
+              <span class="field__hint">از <b>steamcommunity.com/dev/apikey</b> دریافت کنید</span>
+            </div>
+            <button class="btn btn--primary btn--full" id="api-key-submit">
+              <span class="material-icons-round">check</span>
+              تایید کلید API
+            </button>
+            <div class="auth-status" id="auth-api-status" hidden></div>
+          </div>
+
+        </div>
+
+        <div class="panel__actions">
+          <div class="panel__actions__group">
+            <button class="btn btn--primary" id="finish-btn">
+              <span class="material-icons-round">rocket_launch</span>
+              ورود به x100
+            </button>
+            <button class="btn btn--text" id="skip-auth-btn">رد کردن</button>
+          </div>
+          <div class="panel__actions__group">
+            <button class="btn btn--ghost" id="back-from-7">
+              <span class="material-icons-round">arrow_forward</span>
+              بازگشت
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ══ Steam Install Modal ══ -->
+  <div class="steam-modal-overlay" id="steam-modal" hidden>
+    <div class="steam-modal">
+      <div class="steam-modal__head">
+        <div class="steam-modal__title">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#c6d4df" d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/>
+          </svg>
+          نصب Steam از سرور x100
+        </div>
+        <p class="steam-modal__desc" id="modal-status-text">در حال دانلود Steam از سرور اختصاصی...</p>
+      </div>
+
+      <!-- نوار دانلود -->
+      <div class="dl-phase" id="modal-dl-phase">
+        <div class="dl-phase__label">
+          <span class="material-icons-round dl-phase__icon">download</span>
+          <span class="dl-phase__title">SteamSetup.exe</span>
+          <span class="dl-phase__badge dl-phase__badge--active" id="modal-dl-badge">در حال دانلود</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar">
+            <div class="progress-bar__fill" id="modal-dl-fill" style="width:0%"></div>
+          </div>
+          <div class="progress-bar__pct" id="modal-dl-pct">۰٪</div>
+        </div>
+        <div class="dl-meta" dir="ltr">
+          <span id="modal-dl-speed">— MB/s</span>
+          <span id="modal-dl-size">0 / 3.2 MB</span>
+        </div>
+      </div>
+
+      <!-- دانلود تموم شد — کاربر خودش نصب می‌کنه -->
+      <div id="modal-done-area" hidden>
+        <div class="dl-done-banner">
+          <span class="material-icons-round">check_circle</span>
+          <div>
+            <div>فایل SteamSetup.exe دانلود شد</div>
+            <div class="modal-done-sub">برای نصب روی فایل دوبار کلیک کنید و ویزارد Steam را دنبال کنید.</div>
+          </div>
+        </div>
+        <div class="modal-done-actions">
+          <button class="btn btn--primary" id="modal-run-btn">
+            <span class="material-icons-round">play_arrow</span>
+            اجرای SteamSetup.exe
+          </button>
+          <button class="btn btn--ghost" id="modal-close-btn">بستن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="scripts/app.js"></script>
+</body>
+</html>

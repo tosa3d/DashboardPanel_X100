@@ -5,9 +5,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --primary:       #ff1e3c;
-  --primary-dim:   rgba(255, 30, 60, 0.12);
-  --primary-hover: rgba(255, 30, 60, 0.20);
+  --primary:       #26bbff;
+  --primary-dim:   rgba(38, 187, 255, 0.12);
+  --primary-hover: #72d3ff;
   --bg:            #0a0a0d;
   --surface:       #131316;
   --surface-alt:   #1a1a1f;
@@ -48,7 +48,7 @@ html, body {
   justify-content: center;
   padding: 40px 20px;
   background:
-    radial-gradient(ellipse 60% 50% at 15% 60%, rgba(255,30,60,0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 50% at 15% 60%, rgba(38,187,255,0.06) 0%, transparent 100%),
     radial-gradient(ellipse 50% 40% at 85% 20%, rgba(80,40,200,0.05) 0%, transparent 100%),
     var(--bg);
 }
@@ -93,7 +93,7 @@ html, body {
 .sidebar__logo-icon {
   font-size: 34px;
   line-height: 1;
-  filter: drop-shadow(0 0 8px rgba(255,30,60,0.4));
+  filter: drop-shadow(0 0 8px rgba(38,187,255,0.4));
 }
 
 .sidebar__logo-name {
@@ -182,7 +182,7 @@ html, body {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
-  box-shadow: 0 0 14px rgba(255,30,60,0.35);
+  box-shadow: 0 0 14px rgba(38,187,255,0.35);
 }
 .sidebar__step--active .sidebar__step-title { color: var(--text); }
 .sidebar__step--active .sidebar__step-sub   { color: var(--text-dim); opacity: 1; }
@@ -318,7 +318,7 @@ html, body {
 
 .field__input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255,30,60,0.1);
+  box-shadow: 0 0 0 3px rgba(38,187,255,0.1);
 }
 
 .field__input::placeholder { color: var(--text-muted); }
@@ -424,7 +424,7 @@ html, body {
 }
 .otp-box:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255,30,60,0.1);
+  box-shadow: 0 0 0 3px rgba(38,187,255,0.1);
 }
 .otp-box.otp-box--filled {
   border-color: rgba(34,197,94,0.4);
@@ -432,7 +432,7 @@ html, body {
 }
 .otp-box.otp-box--err {
   border-color: var(--primary);
-  background: rgba(255,30,60,0.06);
+  background: rgba(38,187,255,0.06);
   animation: shake 0.3s ease;
 }
 
@@ -550,7 +550,7 @@ html, body {
 
 .progress-bar__fill {
   height: 100%;
-  background: linear-gradient(90deg, #ff1e3c, #ff6b35);
+  background: linear-gradient(90deg, #26bbff, #72d3ff);
   border-radius: var(--r-full);
   transition: width 0.4s ease;
   position: relative;
@@ -740,7 +740,7 @@ html, body {
   flex-shrink: 0;
 }
 .onboard-card__icon-wrap .material-icons-round { font-size: 20px !important; }
-.onboard-card__icon-wrap--red   { background: rgba(255,30,60,0.12);   color: var(--primary); }
+.onboard-card__icon-wrap--red   { background: rgba(38,187,255,0.12);   color: var(--primary); }
 .onboard-card__icon-wrap--blue  { background: rgba(59,130,246,0.12);  color: #60a5fa; }
 .onboard-card__icon-wrap--green { background: var(--green-dim);       color: var(--green); }
 
@@ -966,7 +966,7 @@ html, body {
 .steam-card__badge--missing {
   background: var(--primary-dim);
   color: var(--primary);
-  border: 1px solid rgba(255,30,60,0.25);
+  border: 1px solid rgba(38,187,255,0.25);
 }
 
 /* Install path row */
@@ -1020,7 +1020,7 @@ html, body {
 }
 .btn--check--missing {
   background: var(--primary-dim) !important;
-  border-color: rgba(255,30,60,0.3) !important;
+  border-color: rgba(38,187,255,0.3) !important;
   color: var(--primary) !important;
 }
 
@@ -1248,7 +1248,7 @@ html, body {
 }
 .auth-method:hover { border-color: var(--border-soft); background: var(--surface-raised); }
 .auth-method--selected {
-  border-color: rgba(255,30,60,0.35);
+  border-color: rgba(38,187,255,0.35);
   background: var(--primary-dim);
 }
 .auth-method__icon {
@@ -1286,7 +1286,7 @@ html, body {
 }
 .auth-status .material-icons-round { font-size: 18px !important; }
 .auth-status--ok  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-.auth-status--err { background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(255,30,60,0.2); }
+.auth-status--err { background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(38,187,255,0.2); }
 
 /* Steam auth button */
 .btn--steam {
@@ -1336,8 +1336,8 @@ html, body {
   color: #fff;
 }
 .btn--primary:hover:not(:disabled) {
-  background: #e5182f;
-  box-shadow: 0 4px 18px rgba(255,30,60,0.32);
+  background: var(--primary-hover);
+  box-shadow: 0 4px 18px rgba(38,187,255,0.32);
   transform: translateY(-1px);
 }
 .btn--primary:disabled {

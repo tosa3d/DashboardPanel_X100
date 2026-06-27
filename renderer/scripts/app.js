@@ -2655,12 +2655,28 @@ function initProfilePage() {
     if (displayName) displayName.textContent = saved;
   }
 
+  // نام کاربری به‌صورت پیش‌فرض فریز (فقط‌خواندنی) است؛ با آیکون مداد قابل ویرایش می‌شود
+  const editBtn = $('#profile-nickname-edit');
+  const setFrozen = (frozen) => {
+    nicknameInput.readOnly = frozen;
+    nicknameInput.classList.toggle('profile-form__input--frozen', frozen);
+    if (editBtn) {
+      const ic = editBtn.querySelector('.material-symbols-outlined');
+      if (ic) ic.textContent = frozen ? 'edit' : 'lock_open';
+      editBtn.classList.toggle('profile-form__edit--active', !frozen);
+      editBtn.title = frozen ? 'ویرایش نام کاربری' : 'قفل کردن';
+    }
+    if (!frozen) { nicknameInput.focus(); nicknameInput.select(); }
+  };
+  setFrozen(true);
+  if (editBtn) editBtn.addEventListener('click', () => setFrozen(nicknameInput.readOnly !== true ? true : false));
+
   saveBtn.addEventListener('click', () => {
     const nickname = nicknameInput.value.trim();
 
     // Require non-empty value
     if (!nickname) {
-      nicknameInput.focus();
+      setFrozen(false);
       nicknameInput.classList.add('profile-form__input--error');
       nicknameInput.addEventListener('input', () =>
         nicknameInput.classList.remove('profile-form__input--error'),
@@ -2674,6 +2690,9 @@ function initProfilePage() {
 
     // Update displayed name in card
     if (displayName) displayName.textContent = nickname;
+
+    // پس از ذخیره دوباره فریز شود
+    setFrozen(true);
 
     // Show toast, hide after 2.5s
     if (toast) {

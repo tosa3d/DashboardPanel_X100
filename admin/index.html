@@ -120,6 +120,13 @@
           <option value="streamer">استریمر</option>
           <option value="admin">ادمین کانال</option>
         </select>
+        <select class="toolbar__select" id="filter-tier">
+          <option value="all">وضعیت خرید: همه</option>
+          <option value="free">رایگان</option>
+          <option value="bronze">برنزی</option>
+          <option value="silver">نقره‌ای</option>
+          <option value="gold">طلایی</option>
+        </select>
         <select class="toolbar__select" id="sort-by">
           <option value="name">مرتب‌سازی: نام</option>
           <option value="joined">تاریخ عضویت</option>
@@ -135,6 +142,7 @@
               <th>کاربر</th>
               <th>شماره تلفن</th>
               <th>وضعیت</th>
+              <th>وضعیت خرید</th>
               <th>سکه X</th>
               <th>عضویت</th>
               <th>عملیات</th>
@@ -150,18 +158,11 @@
       <div class="users-pane" data-usub="avatars">
         <div class="avatar-stats" id="avatar-stats"></div>
         <div class="toolbar">
-          <span class="toolbar__count" style="font-weight:700;color:var(--text)"><span class="material-icons-outlined" style="vertical-align:-5px;color:var(--primary)">smart_toy</span> بررسی هوشمند آواتار</span>
-          <select class="toolbar__select" id="avatar-filter">
-            <option value="suspicious">مشکوک (نیاز به بررسی)</option>
-            <option value="reported">گزارش‌شده توسط کاربران</option>
-            <option value="autoApproved">تأیید خودکار AI</option>
-            <option value="autoRejected">رد خودکار AI</option>
-            <option value="approved">تأیید نهایی</option>
-            <option value="rejected">رد نهایی</option>
-            <option value="all">همه</option>
+          <select class="toolbar__select" id="avatar-seen">
+            <option value="all">وضعیت مشاهده: همه</option>
+            <option value="unseen">دیده‌نشده</option>
+            <option value="seen">دیده‌شده</option>
           </select>
-          <button type="button" class="btn-primary btn-primary--sm" id="avatar-simulate"><span class="material-icons-outlined">cloud_upload</span>شبیه‌سازی آپلود</button>
-          <button type="button" class="btn-ghost btn-ghost--sm" id="avatar-report"><span class="material-icons-outlined">flag</span>شبیه‌سازی گزارش</button>
           <span class="toolbar__count" id="avatar-count"></span>
         </div>
         <div class="avatar-grid" id="avatar-grid"></div>

@@ -1470,21 +1470,27 @@
           </div>
         </div>
 
-        <!-- نیک‌نیم -->
+        <!-- نام کاربری -->
         <div class="profile-form__field">
           <label class="profile-form__label" for="profile-nickname">
             <span class="material-symbols-outlined">badge</span>
-            نیک‌نیم
+            نام کاربری
           </label>
-          <input
-            id="profile-nickname"
-            class="profile-form__input"
-            type="text"
-            placeholder="نیک‌نیم خود را وارد کنید…"
-            maxlength="32"
-            autocomplete="off"
-            spellcheck="false"
-          >
+          <div class="profile-form__input-wrap" id="profile-nickname-wrap">
+            <input
+              id="profile-nickname"
+              class="profile-form__input"
+              type="text"
+              placeholder="نام کاربری خود را وارد کنید…"
+              maxlength="32"
+              autocomplete="off"
+              spellcheck="false"
+              readonly
+            >
+            <button type="button" class="profile-form__edit" id="profile-nickname-edit" title="ویرایش نام کاربری" aria-label="ویرایش نام کاربری">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
+          </div>
           <p class="profile-form__hint">این نام در بخش‌های عمومی لانچر نمایش داده می‌شود</p>
         </div>
 

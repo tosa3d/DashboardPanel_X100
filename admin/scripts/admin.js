@@ -11,22 +11,77 @@ const faPrice = (n) => faNum(n.toLocaleString('en-US'));
 
 // ---------- داده‌های نمونه کاربران ----------
 const USERS = [
-  { id: 1, name: 'احسان رضایی', handle: '@ehsan_gamer', phone: '0912 345 6789', role: 'streamer', status: 'online', coins: 1480000, joined: '2024-02-11', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop' },
-  { id: 2, name: 'نرگس احمدی', handle: '@narges_gamer', phone: '0935 112 4400', role: 'creator', status: 'online', coins: 2750000, joined: '2024-05-03', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop' },
-  { id: 3, name: 'آرش کریمی', handle: '@ArashGG', phone: '0901 887 6655', role: 'player', status: 'online', coins: 540000, joined: '2023-11-20', avatar: 'https://i.pravatar.cc/80?u=arash' },
-  { id: 4, name: 'سارا محمدی', handle: '@SaraPlay', phone: '0919 220 1133', role: 'streamer', status: 'offline', coins: 1920000, joined: '2024-01-08', avatar: 'https://i.pravatar.cc/80?u=sara' },
-  { id: 5, name: 'میلاد نوری', handle: '@MiladPro', phone: '0937 654 3210', role: 'creator', status: 'offline', coins: 880000, joined: '2024-07-15', avatar: 'https://i.pravatar.cc/80?u=milad88' },
-  { id: 6, name: 'علی غفاری', handle: '@GhostSniper', phone: '0902 333 7788', role: 'player', status: 'banned', coins: 12000, joined: '2025-01-22', avatar: 'https://i.pravatar.cc/80?u=ghost' },
-  { id: 7, name: 'زیرک حسینی', handle: '@Zirak90', phone: '0938 909 0011', role: 'player', status: 'offline', coins: 320000, joined: '2024-09-30', avatar: 'https://i.pravatar.cc/80?u=zirak9' },
-  { id: 8, name: 'پیمان شریفی', handle: '@NightWolf_IR', phone: '0991 445 6677', role: 'player', status: 'online', coins: 67000, joined: '2025-03-14', avatar: 'https://i.pravatar.cc/80?u=wolf7' },
-  { id: 9, name: 'مدیر سیستم', handle: '@admin', phone: '0910 000 0001', role: 'admin', status: 'online', coins: 0, joined: '2023-01-01', avatar: 'https://i.pravatar.cc/80?u=adminx' },
-  { id: 10, name: 'رضا تهرانی', handle: '@RezaT', phone: '0913 778 9900', role: 'player', status: 'offline', coins: 145000, joined: '2024-12-05', avatar: 'https://i.pravatar.cc/80?u=reza' },
-  { id: 11, name: 'مریم اکبری', handle: '@MaryGamer', phone: '0922 556 7788', role: 'player', status: 'online', coins: 1100000, joined: '2024-04-19', avatar: 'https://i.pravatar.cc/80?u=maryam' },
-  { id: 12, name: 'کاوه مرادی', handle: '@KavehX', phone: '0903 121 3141', role: 'player', status: 'banned', coins: 5000, joined: '2025-02-28', avatar: 'https://i.pravatar.cc/80?u=kaveh' },
+  { id: 1, name: 'احسان رضایی', handle: '@ehsan_gamer', phone: '0912 345 6789', role: 'streamer', status: 'online', tier: 'gold', coins: 1480000, joined: '2024-02-11', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop' },
+  { id: 2, name: 'نرگس احمدی', handle: '@narges_gamer', phone: '0935 112 4400', role: 'creator', status: 'online', tier: 'gold', coins: 2750000, joined: '2024-05-03', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop' },
+  { id: 3, name: 'آرش کریمی', handle: '@ArashGG', phone: '0901 887 6655', role: 'player', status: 'online', tier: 'silver', coins: 540000, joined: '2023-11-20', avatar: 'https://i.pravatar.cc/80?u=arash' },
+  { id: 4, name: 'سارا محمدی', handle: '@SaraPlay', phone: '0919 220 1133', role: 'streamer', status: 'offline', tier: 'gold', coins: 1920000, joined: '2024-01-08', avatar: 'https://i.pravatar.cc/80?u=sara' },
+  { id: 5, name: 'میلاد نوری', handle: '@MiladPro', phone: '0937 654 3210', role: 'creator', status: 'offline', tier: 'silver', coins: 880000, joined: '2024-07-15', avatar: 'https://i.pravatar.cc/80?u=milad88' },
+  { id: 6, name: 'علی غفاری', handle: '@GhostSniper', phone: '0902 333 7788', role: 'player', status: 'banned', tier: 'free', coins: 12000, joined: '2025-01-22', avatar: 'https://i.pravatar.cc/80?u=ghost' },
+  { id: 7, name: 'زیرک حسینی', handle: '@Zirak90', phone: '0938 909 0011', role: 'player', status: 'offline', tier: 'bronze', coins: 320000, joined: '2024-09-30', avatar: 'https://i.pravatar.cc/80?u=zirak9' },
+  { id: 8, name: 'پیمان شریفی', handle: '@NightWolf_IR', phone: '0991 445 6677', role: 'player', status: 'online', tier: 'free', coins: 67000, joined: '2025-03-14', avatar: 'https://i.pravatar.cc/80?u=wolf7' },
+  { id: 9, name: 'مدیر سیستم', handle: '@admin', phone: '0910 000 0001', role: 'admin', status: 'online', tier: 'gold', coins: 0, joined: '2023-01-01', avatar: 'https://i.pravatar.cc/80?u=adminx' },
+  { id: 10, name: 'رضا تهرانی', handle: '@RezaT', phone: '0913 778 9900', role: 'player', status: 'offline', tier: 'bronze', coins: 145000, joined: '2024-12-05', avatar: 'https://i.pravatar.cc/80?u=reza' },
+  { id: 11, name: 'مریم اکبری', handle: '@MaryGamer', phone: '0922 556 7788', role: 'player', status: 'online', tier: 'silver', coins: 1100000, joined: '2024-04-19', avatar: 'https://i.pravatar.cc/80?u=maryam' },
+  { id: 12, name: 'کاوه مرادی', handle: '@KavehX', phone: '0903 121 3141', role: 'player', status: 'banned', tier: 'free', coins: 5000, joined: '2025-02-28', avatar: 'https://i.pravatar.cc/80?u=kaveh' },
 ];
+
+// ============================================
+// User Store — هویت کاربر (مطابق Epic: OTP + Username + Steam)
+// قاعدهٔ کلیدی: نام اصلی پروفایل همیشه «username» (Launcher) است؛
+// هویت Steam ثانویه و کاملاً جداگانه ذخیره می‌شود و هرگز جای username را نمی‌گیرد
+// (US-PROF-05 / US-PROF-07 / US-PROF-09).
+// ============================================
+const STEAM_IDENTITIES = {
+  1:  { steamId: '76561198114470011', accountName: 'ehsan_tf2',    photoUrl: 'https://i.pravatar.cc/80?u=steam1',  profileUrl: 'https://steamcommunity.com/id/ehsan' },
+  3:  { steamId: '76561198114471157', accountName: 'ArashGG_live', photoUrl: 'https://i.pravatar.cc/80?u=steam3',  profileUrl: 'https://steamcommunity.com/id/arashgg' },
+  5:  { steamId: '76561198114470055', accountName: 'milad_dota',   photoUrl: 'https://i.pravatar.cc/80?u=steam5',  profileUrl: 'https://steamcommunity.com/id/miladpro' },
+  8:  { steamId: '76561198114470088', accountName: 'NightWolf',    photoUrl: 'https://i.pravatar.cc/80?u=steam8',  profileUrl: 'https://steamcommunity.com/id/nightwolf' },
+  11: { steamId: '76561198114470111', accountName: 'mary_csgo',    photoUrl: 'https://i.pravatar.cc/80?u=steam11', profileUrl: 'https://steamcommunity.com/id/marygamer' },
+};
+const INCOMPLETE_PROFILES = [7, 12]; // OTP تأیید شده ولی هنوز Username انتخاب نشده (US-PROF-10)
+
+// رکورد هر کاربر:
+// { id, phone(OTP), username(نام اصلی پروفایل), avatarUrl, profileStatus, createdAt,
+//   steam: null | { steamId, accountName, photoUrl, profileUrl } }  ← هویت ثانویه
+const USER_STORE = USERS.map((u) => {
+  const incomplete = INCOMPLETE_PROFILES.includes(u.id);
+  return {
+    id: u.id,
+    phone: u.phone,                                          // شناسهٔ OTP / حساب پایه (US-PROF-01)
+    username: incomplete ? '' : u.handle.replace(/^@/, ''),  // نام اصلی پروفایل، انتخاب کاربر (US-PROF-03/05)
+    avatarUrl: u.avatar,
+    profileStatus: incomplete ? 'incomplete' : 'completed',  // (US-PROF-02 / US-PROF-10)
+    createdAt: u.joined,
+    steam: STEAM_IDENTITIES[u.id] || null,                   // هویت Steam اختیاری و جداگانه (US-PROF-06/08/09)
+  };
+});
+
+const UserStore = {
+  all: () => USER_STORE,
+  byId: (id) => USER_STORE.find((u) => u.id === Number(id)) || null,
+  // نام نمایشی همیشه Username است، نه نام Steam
+  displayName: (u) => (u && u.username) ? u.username : 'کاربر بدون نام',
+  steamName: (u) => (u && u.steam) ? u.steam.accountName : '',
+  hasSteam: (u) => !!(u && u.steam),
+  isComplete: (u) => !!u && u.profileStatus === 'completed' && !!u.username,
+  // جستجو: Username (اصلی) + شمارهٔ موبایل + نام Steam (ثانویه)
+  search: (q) => {
+    const query = enNum((q || '').trim().toLowerCase());
+    const digits = query.replace(/\D/g, '');
+    return USER_STORE.filter((u) => {
+      if (!query) return true;
+      if ((u.username || '').toLowerCase().includes(query)) return true;
+      if (u.steam && (u.steam.accountName || '').toLowerCase().includes(query)) return true;
+      if (digits.length >= 2 && enNum(u.phone).replace(/\D/g, '').includes(digits)) return true;
+      return false;
+    });
+  },
+};
 
 const ROLE_LABEL = { player: 'بازیکن', creator: 'تولید کننده محتوا', streamer: 'استریمر', admin: 'ادمین کانال' };
 const STATUS_LABEL = { online: 'آنلاین', offline: 'آفلاین', banned: 'مسدود' };
+// وضعیت خرید / اشتراک کاربر
+const TIER_LABEL = { free: 'رایگان', bronze: 'برنزی', silver: 'نقره‌ای', gold: 'طلایی' };
 
 // ---------- مشخصات سیستم بازیکن ----------
 // چند پیکربندی واقعی؛ به‌صورت قطعی بر اساس شناسه کاربر اختصاص داده می‌شود
@@ -186,12 +241,13 @@ let AVATAR_REVIEWS = [
   { id: 1, userId: 3,  name: 'آرش کریمی',  username: '@ArashGG',      imageUrl: 'https://i.pravatar.cc/300?u=arashnew', status: 'suspicious', createdAt: '۲ ساعت پیش', reason: '', ai: { verdict: 'suspicious', score: 58, note: 'احتمال محتوای نامناسب — نیاز به بررسی انسانی' } },
   { id: 2, userId: 8,  name: 'پیمان شریفی', username: '@NightWolf_IR', imageUrl: 'https://i.pravatar.cc/300?u=wolfnew',  status: 'suspicious', createdAt: '۵ ساعت پیش', reason: '', ai: { verdict: 'suspicious', score: 47, note: 'متن/لوگوی ناشناس روی تصویر' } },
   { id: 3, userId: 11, name: 'مریم اکبری', username: '@MaryGamer',    imageUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop', status: 'autoApproved', createdAt: 'دیروز', reason: '', ai: { verdict: 'safe', score: 94, note: 'تصویر چهرهٔ سالم تشخیص داده شد' } },
-  { id: 4, userId: 5,  name: 'میلاد نوری', username: '@MiladPro',     imageUrl: 'https://i.pravatar.cc/300?u=miladnew', status: 'approved', createdAt: '۲ روز پیش', reason: '', ai: { verdict: 'suspicious', score: 61, note: 'پس از بررسی انسانی تأیید شد' } },
+  { id: 4, userId: 5,  name: 'میلاد نوری', username: '@MiladPro',     imageUrl: 'https://i.pravatar.cc/300?u=miladnew', status: 'approved', createdAt: '۲ روز پیش', reason: '', seen: true, ai: { verdict: 'suspicious', score: 61, note: 'پس از بررسی انسانی تأیید شد' } },
   { id: 5, userId: 12, name: 'کاوه مرادی', username: '@KavehX',       imageUrl: 'https://i.pravatar.cc/300?u=kavehnew', status: 'autoRejected', createdAt: '۳ روز پیش', reason: 'محتوای نامناسب با اطمینان بالا', ai: { verdict: 'unsafe', score: 91, note: 'محتوای نامناسب با اطمینان بالا' } },
   { id: 6, userId: 1, name: 'احسان رضایی', username: '@ehsan_gamer', imageUrl: 'https://i.pravatar.cc/300?u=ehsanrep', status: 'reported', createdAt: '۱ ساعت پیش', reason: '', reportCount: 4, ai: { verdict: 'safe', score: 88, note: 'AI سالم تشخیص داد، اما کاربران گزارش کرده‌اند' } },
   { id: 7, userId: 4, name: 'سارا محمدی', username: '@SaraPlay', imageUrl: 'https://i.pravatar.cc/300?u=sararep', status: 'reported', createdAt: '۳ ساعت پیش', reason: '', reportCount: 2, ai: { verdict: 'safe', score: 90, note: 'گزارش‌شده توسط کاربران' } },
 ];
 let avatarFilter = 'suspicious';
+let avatarSeen = 'all';
 let avatarSeq = 8;
 
 // شبیه‌سازی موتور بررسی هوش مصنوعی روی یک آپلود جدید
@@ -233,7 +289,9 @@ function renderAvatarReviews() {
 
   const grid = document.getElementById('avatar-grid');
   if (!grid) return;
-  const rows = avatarFilter === 'all' ? AVATAR_REVIEWS : AVATAR_REVIEWS.filter((a) => a.status === avatarFilter);
+  let rows = avatarFilter === 'all' ? AVATAR_REVIEWS : AVATAR_REVIEWS.filter((a) => a.status === avatarFilter);
+  if (avatarSeen === 'seen') rows = rows.filter((a) => a.seen);
+  else if (avatarSeen === 'unseen') rows = rows.filter((a) => !a.seen);
   document.getElementById('avatar-count').textContent = `${faNum(rows.length)} مورد`;
   if (!rows.length) {
     grid.innerHTML = '<div class="empty-state">موردی در این وضعیت نیست</div>';
@@ -251,6 +309,7 @@ function renderAvatarReviews() {
       <div class="avatar-review__body">
         <div class="avatar-review__name">${a.name} <span class="avatar-review__handle">${a.username}</span></div>
         <span class="avatar-review__status" style="color:${st.color}">● ${st.label}</span>
+        <button type="button" class="avatar-seen-chip ${a.seen ? 'avatar-seen-chip--on' : ''}" data-act="toggleseen"><span class="material-icons-outlined">${a.seen ? 'visibility' : 'visibility_off'}</span>${a.seen ? 'دیده‌شده' : 'دیده‌نشده'}</button>
         ${a.reportCount ? `<div class="avatar-review__report"><span class="material-icons-outlined">flag</span>${faNum(a.reportCount)} گزارش کاربر</div>` : ''}
         <div class="avatar-review__ai"><span class="material-icons-outlined">smart_toy</span>هوش مصنوعی: <b style="color:${av.color}">${av.label}</b> · ${faNum(ai.score)}٪ اطمینان</div>
         ${ai.note ? `<div class="avatar-review__ainote">${ai.note}</div>` : ''}
@@ -271,12 +330,15 @@ function renderAvatarReviews() {
       const a = AVATAR_REVIEWS.find((x) => x.id === Number(card.dataset.aid));
       if (!a) return;
       if (btn.dataset.act === 'approve') {
-        a.status = 'approved'; a.reason = '';
+        a.status = 'approved'; a.reason = ''; a.seen = true;
         renderAvatarReviews();
       } else if (btn.dataset.act === 'reject') {
         const reason = prompt('دلیل رد عکس (به کاربر نمایش داده می‌شود):', (a.ai && a.ai.note) || 'عکس نامناسب است');
         if (reason === null) return;
-        a.status = 'rejected'; a.reason = reason.trim() || 'عکس تأیید نشد';
+        a.status = 'rejected'; a.reason = reason.trim() || 'عکس تأیید نشد'; a.seen = true;
+        renderAvatarReviews();
+      } else if (btn.dataset.act === 'toggleseen') {
+        a.seen = !a.seen;
         renderAvatarReviews();
       } else if (btn.dataset.act === 'profile') {
         openUserModal(Number(card.dataset.uid));
@@ -286,42 +348,8 @@ function renderAvatarReviews() {
 }
 
 function initAvatarReviews() {
-  const filter = document.getElementById('avatar-filter');
-  if (filter) filter.addEventListener('change', (e) => { avatarFilter = e.target.value; renderAvatarReviews(); });
-
-  // شبیه‌سازی آپلود کاربر → بررسی فوری AI و قرارگیری در وضعیت مناسب
-  const sim = document.getElementById('avatar-simulate');
-  if (sim) sim.addEventListener('click', () => {
-    const u = USERS[Math.floor(Math.random() * USERS.length)];
-    const v = runAiVerdict();
-    AVATAR_REVIEWS.unshift({
-      id: avatarSeq++, userId: u.id, name: u.name, username: u.handle,
-      imageUrl: 'https://i.pravatar.cc/300?u=sim' + avatarSeq + Math.floor(Math.random() * 9999),
-      status: v.status, createdAt: 'هم‌اکنون',
-      reason: v.status === 'autoRejected' ? v.note : '',
-      ai: { verdict: v.verdict, score: v.score, note: v.note },
-    });
-    avatarFilter = v.status;
-    if (filter) filter.value = v.status;
-    renderAvatarReviews();
-  });
-
-  // شبیه‌سازی گزارش کاربر روی یک عکس تأییدشده
-  const rep = document.getElementById('avatar-report');
-  if (rep) rep.addEventListener('click', () => {
-    const candidates = AVATAR_REVIEWS.filter((a) => a.status === 'autoApproved' || a.status === 'approved');
-    let target = candidates[Math.floor(Math.random() * candidates.length)];
-    if (!target) {
-      const u = USERS[Math.floor(Math.random() * USERS.length)];
-      target = { id: avatarSeq++, userId: u.id, name: u.name, username: u.handle, imageUrl: 'https://i.pravatar.cc/300?u=rep' + avatarSeq, status: 'autoApproved', createdAt: 'دیروز', reason: '', reportCount: 0, ai: { verdict: 'safe', score: 90, note: '' } };
-      AVATAR_REVIEWS.unshift(target);
-    }
-    target.reportCount = (target.reportCount || 0) + 1;
-    target.status = 'reported';
-    avatarFilter = 'reported';
-    if (filter) filter.value = 'reported';
-    renderAvatarReviews();
-  });
+  const seen = document.getElementById('avatar-seen');
+  if (seen) seen.addEventListener('change', (e) => { avatarSeen = e.target.value; renderAvatarReviews(); });
 
   renderAvatarReviews();
 }
@@ -359,8 +387,9 @@ function initUsers() {
   const search = document.getElementById('user-search');
   const fStatus = document.getElementById('filter-status');
   const fRole = document.getElementById('filter-role');
+  const fTier = document.getElementById('filter-tier');
   const sortBy = document.getElementById('sort-by');
-  [search, fStatus, fRole, sortBy].forEach((el) => {
+  [search, fStatus, fRole, fTier, sortBy].forEach((el) => {
     el.addEventListener('input', renderUsers);
     el.addEventListener('change', renderUsers);
   });
@@ -393,6 +422,7 @@ function openUserModal(uid) {
       <div class="umodal-row"><span>شماره تلفن</span><b style="direction:ltr">${u.phone}</b></div>
       <div class="umodal-row"><span>نقش</span><b>${ROLE_LABEL[u.role]}</b></div>
       <div class="umodal-row"><span>وضعیت</span><b>${STATUS_LABEL[u.status]}</b></div>
+      <div class="umodal-row"><span>وضعیت خرید</span><b><span class="tier-badge tier-badge--${u.tier || 'free'}">${TIER_LABEL[u.tier || 'free']}</span></b></div>
       <div class="umodal-row"><span>موجودی سکه X</span><b style="color:var(--gold);direction:ltr">${faPrice(u.coins)}</b></div>
       <div class="umodal-row"><span>شناسه Steam</span><b style="direction:ltr">${steam}</b></div>
       <div class="umodal-row"><span>تاریخ عضویت</span><b style="direction:ltr">${faNum(u.joined)}</b></div>
@@ -463,13 +493,15 @@ function renderUsers() {
   const q = document.getElementById('user-search').value.trim().toLowerCase();
   const fStatus = document.getElementById('filter-status').value;
   const fRole = document.getElementById('filter-role').value;
+  const fTier = document.getElementById('filter-tier').value;
   const sortBy = document.getElementById('sort-by').value;
 
   let rows = USERS.filter((u) => {
     const matchQ = !q || u.name.toLowerCase().includes(q) || u.handle.toLowerCase().includes(q) || u.phone.replace(/\s/g, '').includes(q.replace(/\s/g, ''));
     const matchStatus = fStatus === 'all' || u.status === fStatus;
     const matchRole = fRole === 'all' || u.role === fRole;
-    return matchQ && matchStatus && matchRole;
+    const matchTier = fTier === 'all' || (u.tier || 'free') === fTier;
+    return matchQ && matchStatus && matchRole && matchTier;
   });
 
   rows.sort((a, b) => {
@@ -504,6 +536,7 @@ function renderUsers() {
       </td>
       <td class="cell-email">${u.phone}</td>
       <td><span class="status-badge status-badge--${u.status}">${STATUS_LABEL[u.status]}</span></td>
+      <td><span class="tier-badge tier-badge--${u.tier || 'free'}">${TIER_LABEL[u.tier || 'free']}</span></td>
       <td class="cell-coins">${faPrice(u.coins)}</td>
       <td style="direction:ltr;text-align:right;color:var(--text-dim);font-size:12px">${faNum(u.joined)}</td>
       <td>
@@ -1578,10 +1611,10 @@ const _notifNow = Date.now();
 let NOTIFICATIONS = [
   { id: 1, scope: 'public', userName: '', title: 'فصل جدید آغاز شد', text: 'فصل سوم با جوایز و رویدادهای ویژه شروع شد — همین حالا وارد شوید!', type: 'news', tags: ['tournament'], ts: _notifNow - 40 * 60 * 1000 },
   { id: 5, scope: 'public', userName: '', title: 'استریم ویژهٔ آخر هفته', text: 'پنجشنبه ساعت ۲۱ منتظرتان هستیم.', type: 'news', tags: ['stream'], ts: _notifNow - 2 * 3600 * 1000 },
-  { id: 2, scope: 'private', userId: 3, userName: 'آرش کریمی', userHandle: '@ArashGG', userPhone: '0901 887 6655', title: 'جایزهٔ شما آماده است', text: '۵۰۰ سکهٔ X به حساب شما اضافه شد.', type: 'reward', tags: ['general'], ts: _notifNow - 8 * 3600 * 1000 },
-  { id: 6, scope: 'private', userId: 8, userName: 'پیمان شریفی', userHandle: '@NightWolf_IR', userPhone: '0991 445 6677', title: 'تأیید پروفایل', text: 'اطلاعات حساب شما با موفقیت تأیید شد.', type: 'news', tags: [], ts: _notifNow - 5 * 3600 * 1000 },
+  { id: 2, scope: 'private', userId: 3, userName: 'ArashGG', userSteam: 'ArashGG_live', userPhone: '0901 887 6655', title: 'جایزهٔ شما آماده است', text: '۵۰۰ سکهٔ X به حساب شما اضافه شد.', type: 'reward', tags: ['general'], ts: _notifNow - 8 * 3600 * 1000 },
+  { id: 6, scope: 'private', userId: 8, userName: 'NightWolf_IR', userSteam: 'NightWolf', userPhone: '0991 445 6677', title: 'تأیید پروفایل', text: 'اطلاعات حساب شما با موفقیت تأیید شد.', type: 'news', tags: [], ts: _notifNow - 5 * 3600 * 1000 },
   { id: 3, scope: 'public', userName: '', title: 'به‌روزرسانی لانچر', text: 'نسخهٔ ۱.۴ لانچر منتشر شد؛ همین حالا آپدیت کنید.', type: 'news', tags: ['general'], ts: _notifNow - 3 * 24 * 3600 * 1000 },
-  { id: 4, scope: 'private', userId: 11, userName: 'مریم اکبری', userHandle: '@MaryGamer', userPhone: '0922 556 7788', title: 'هشدار امنیتی', text: 'ورود ناشناس به حساب شما شناسایی شد.', type: 'warning', tags: [], ts: _notifNow - 12 * 24 * 3600 * 1000 },
+  { id: 4, scope: 'private', userId: 11, userName: 'MaryGamer', userSteam: 'mary_csgo', userPhone: '0922 556 7788', title: 'هشدار امنیتی', text: 'ورود ناشناس به حساب شما شناسایی شد.', type: 'warning', tags: [], ts: _notifNow - 12 * 24 * 3600 * 1000 },
 ];
 let notifScope = 'public';
 let notifTargetId = null;
@@ -1664,25 +1697,20 @@ function setNotifHistTab(tab) {
 function renderNotifUserList(q) {
   const list = document.getElementById('notif-user-list');
   if (!list) return;
-  const query = enNum((q || '').trim().toLowerCase());
-  const qDigits = query.replace(/\D/g, '');
-  const rows = USERS.filter((u) => {
-    if (!query) return true;
-    const handle = u.handle.toLowerCase();
-    const byText = u.name.toLowerCase().includes(query) || handle.includes(query) || handle.replace('@', '').includes(query);
-    const byPhone = qDigits.length >= 2 && enNum(u.phone).replace(/\D/g, '').includes(qDigits);
-    return byText || byPhone;
-  });
-  list.innerHTML = rows.slice(0, 8).map((u) => `
+  const rows = UserStore.search(q);
+  list.innerHTML = rows.slice(0, 8).map((u) => {
+    const name = UserStore.displayName(u);
+    const steam = UserStore.steamName(u);
+    return `
     <button type="button" class="notif-user ${notifTargetId === u.id ? 'notif-user--active' : ''}" data-uid="${u.id}">
-      <img src="${u.avatar}" alt="">
+      <img src="${u.avatarUrl}" alt="">
       <div class="notif-user__meta">
-        <div class="notif-user__name">${u.name}</div>
-        <div class="notif-user__handle">${u.handle} <span class="notif-user__phone">${u.phone}</span></div>
+        <div class="notif-user__name">${name}${u.profileStatus === 'incomplete' ? ' <span class="notif-user__tag">پروفایل ناقص</span>' : ''}</div>
+        <div class="notif-user__handle"><span class="notif-user__phone">${u.phone}</span>${steam ? ` · <span class="notif-user__steam"><span class="material-icons-outlined">sports_esports</span>Steam: ${steam}</span>` : ''}</div>
       </div>
       ${notifTargetId === u.id ? '<span class="material-icons-outlined">check_circle</span>' : ''}
-    </button>
-  `).join('') || '<div class="empty-state" style="padding:18px">کاربری یافت نشد</div>';
+    </button>`;
+  }).join('') || '<div class="empty-state" style="padding:18px">کاربری یافت نشد</div>';
   list.querySelectorAll('[data-uid]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const uid = Number(btn.dataset.uid);
@@ -1706,8 +1734,7 @@ function renderNotifications() {
     // برای پیام خصوصی: نام، نام کاربری و شمارهٔ تلفن گیرنده هم جستجو می‌شود
     if (n.scope === 'private') {
       if ((n.userName || '').toLowerCase().includes(q)) return true;
-      const h = (n.userHandle || '').toLowerCase();
-      if (h.includes(q) || h.replace('@', '').includes(q)) return true;
+      if ((n.userSteam || '').toLowerCase().includes(q)) return true;
       if (qDigits.length >= 2 && enNum(n.userPhone || '').replace(/\D/g, '').includes(qDigits)) return true;
     }
     return false;
@@ -1736,7 +1763,7 @@ function renderNotifications() {
           <span class="notif-type-badge" style="color:${ty.color}">${ty.label}</span>
           ${n.scope === 'public'
             ? '<span class="notif-scope-badge notif-scope-badge--pub">عمومی</span>'
-            : `<span class="notif-scope-badge notif-scope-badge--prv">خصوصی</span><button type="button" class="notif-recipient" data-uid="${n.userId}" title="مشاهدهٔ پروفایل کاربر"><span class="material-icons-outlined">account_circle</span>${n.userName}</button>`}
+            : `<span class="notif-scope-badge notif-scope-badge--prv">خصوصی</span><button type="button" class="notif-recipient" data-uid="${n.userId}" title="مشاهدهٔ پروفایل کاربر"><span class="material-icons-outlined">account_circle</span>${(UserStore.byId(n.userId) ? UserStore.displayName(UserStore.byId(n.userId)) : n.userName)}</button>`}
         </div>
         ${tagBadges ? `<div class="notif-item__tags">${tagBadges}</div>` : ''}
         <div class="notif-item__text">${n.text}</div>
@@ -1762,7 +1789,7 @@ function renderNotifications() {
       } else if (btn.dataset.act === 'edit') {
         openNotifEdit(n);
       } else if (btn.dataset.act === 'resend') {
-        openNotifPreview({ scope: n.scope, userId: n.userId, userName: n.userName, userHandle: n.userHandle, userPhone: n.userPhone, title: n.title, text: n.text, type: n.type, tags: (n.tags || []).slice() }, false);
+        openNotifPreview({ scope: n.scope, userId: n.userId, userName: n.userName, userPhone: n.userPhone, userSteam: n.userSteam, title: n.title, text: n.text, type: n.type, tags: (n.tags || []).slice() }, false);
       }
     });
   });
@@ -1796,6 +1823,7 @@ function openNotifPreview(data, fromForm) {
     </div>
     <div class="notif-preview__meta">
       <span><b>مخاطب:</b> ${data.scope === 'public' ? 'همهٔ کاربران' : data.userName}</span>
+      ${data.scope === 'private' && data.userSteam ? `<span><b>Steam (ثانویه):</b> ${data.userSteam}</span>` : ''}
       <span><b>نوع:</b> ${ty.label}</span>
       <span><b>تگ‌ها:</b> ${tags.length ? tags.map((t) => NOTIF_TAG_LIST[t]).join('، ') : '—'}</span>
       <span><b>زمان ارسال:</b> ${data.scheduledAt ? fmtSchedule(data.scheduledAt) : 'فوری'}</span>
@@ -1809,7 +1837,7 @@ function closeNotifPreview() {
 function confirmNotifSend() {
   if (!pendingNotif) return;
   const d = pendingNotif;
-  NOTIFICATIONS.unshift({ id: Date.now(), scope: d.scope, userId: d.userId || null, userName: d.userName, userHandle: d.userHandle || '', userPhone: d.userPhone || '', title: d.title, text: d.text, type: d.type, tags: (d.tags || []).slice(), scheduledAt: d.scheduledAt || '', ts: Date.now() });
+  NOTIFICATIONS.unshift({ id: Date.now(), scope: d.scope, userId: d.userId || null, userName: d.userName, userPhone: d.userPhone || '', userSteam: d.userSteam || '', title: d.title, text: d.text, type: d.type, tags: (d.tags || []).slice(), scheduledAt: d.scheduledAt || '', ts: Date.now() });
   const scope = d.scope;
   const fromForm = d.fromForm;
   closeNotifPreview();
@@ -1864,13 +1892,13 @@ function initNotif() {
     const scheduled = schedToggle.checked;
     const schedAt = document.getElementById('notif-schedule-at').value;
     if (scheduled && !schedAt) { alert('لطفاً زمان ارسال را انتخاب کنید.'); return; }
-    const u = notifScope === 'private' ? USERS.find((x) => x.id === notifTargetId) : null;
+    const u = notifScope === 'private' ? UserStore.byId(notifTargetId) : null;
     openNotifPreview({
       scope: notifScope,
       userId: u ? u.id : null,
-      userName: u ? u.name : '',
-      userHandle: u ? u.handle : '',
+      userName: u ? UserStore.displayName(u) : '',
       userPhone: u ? u.phone : '',
+      userSteam: u ? UserStore.steamName(u) : '',
       title: document.getElementById('notif-title').value.trim(),
       text: document.getElementById('notif-text').value.trim(),
       type: document.getElementById('notif-type').value,

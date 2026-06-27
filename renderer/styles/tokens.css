@@ -24,7 +24,8 @@
   --color-outline-variant: #3a545a;
 
   /* --- Primary (Turquoise) --- */
-  --color-primary: #00bcd4;
+  --color-primary: #26bbff;
+  --color-primary-hover: #72d3ff;
   --color-primary-soft: #a3ecf5;
   --color-primary-container: #0097a7;
   --color-on-primary: #ffffff;

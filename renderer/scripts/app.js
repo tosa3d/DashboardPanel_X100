@@ -864,35 +864,81 @@ function runSplashThenApp(splash) {
 function initSetPassword() {
   const modal = document.getElementById('pass-modal');
   if (!modal) return;
+  const currentP = document.getElementById('pass-current');
   const newP = document.getElementById('pass-new');
   const confirmP = document.getElementById('pass-confirm');
+  const otpBtn = document.getElementById('pass-use-otp');
+  const otpWrap = document.getElementById('pass-otp-wrap');
   const codeInput = document.getElementById('pass-code');
   const sendBtn = document.getElementById('pass-send');
   const submitBtn = document.getElementById('pass-submit');
   const err = document.getElementById('pass-err');
-  let codeSent = false;
+  const currentWrap = document.getElementById('pass-current-wrap');
+  const confirmWrap = document.getElementById('pass-confirm-wrap');
+  const savedPasswordKey = 'x100_current_password';
+  let currentPassword = localStorage.getItem(savedPasswordKey) || 'X100@1234';
+  let otpMode = false;
+  let otpCode = '';
+  let otpVerified = false;
+  let otpTimer = null;
 
   function showErr(m) { err.textContent = m; err.hidden = false; }
   function clearErr() { err.hidden = true; }
+  function isStrongPassword(p) {
+    return p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p);
+  }
+  function refreshSubmitState() {
+    submitBtn.disabled = otpMode
+      ? !(otpVerified && newP.value)
+      : !(currentP.value && newP.value && confirmP.value);
+  }
+  function setOtpMode(on) {
+    otpMode = on;
+    otpVerified = false;
+    otpCode = '';
+    codeInput.value = '';
+    currentWrap.hidden = on;
+    confirmWrap.hidden = on;
+    otpWrap.hidden = !on;
+    otpBtn.textContent = on ? 'تغییر با رمز فعلی' : 'تغییر رمز با OTP';
+    refreshSubmitState();
+  }
+  function startOtpTimer() {
+    let left = 30;
+    sendBtn.disabled = true;
+    sendBtn.textContent = `ارسال مجدد (${faNum(left)})`;
+    clearInterval(otpTimer);
+    otpTimer = setInterval(() => {
+      left -= 1;
+      if (left <= 0) {
+        clearInterval(otpTimer);
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'ارسال کد';
+        return;
+      }
+      sendBtn.textContent = `ارسال مجدد (${faNum(left)})`;
+    }, 1000);
+  }
 
   function open() {
-    newP.value = ''; confirmP.value = ''; codeInput.value = '';
-    codeInput.disabled = true; submitBtn.disabled = true;
-    sendBtn.disabled = false; sendBtn.textContent = 'ارسال کد';
-    codeSent = false; clearErr();
+    currentP.value = '';
+    newP.value = '';
+    confirmP.value = '';
+    codeInput.value = '';
+    otpCode = '';
+    otpVerified = false;
+    submitBtn.disabled = true;
+    clearErr();
+    setOtpMode(false);
     modal.hidden = false;
-    setTimeout(() => newP.focus(), 50);
+    setTimeout(() => currentP.focus(), 50);
   }
   function close() { modal.hidden = true; }
 
   document.getElementById('profile-set-pass')?.addEventListener('click', open);
   document.getElementById('pass-close').addEventListener('click', close);
   modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
-
-  codeInput.addEventListener('input', () => {
-    codeInput.value = codeInput.value.replace(/\D/g, '');
-    submitBtn.disabled = codeInput.value.length < 5;
-  });
+  otpBtn.addEventListener('click', () => setOtpMode(!otpMode));
 
   // چشم نمایش/مخفی رمز
   modal.querySelectorAll('.pass-eye').forEach((btn) => {
@@ -904,40 +950,41 @@ function initSetPassword() {
     });
   });
 
-  // اعتبارسنجی رمز: حداقل ۸ کاراکتر + حرف + عدد + نشانه
-  function passValid(p) {
-    return p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9]/.test(p);
-  }
-
-  // ارسال کد — اول رمز و تکرارش را اعتبارسنجی می‌کند
-  sendBtn.addEventListener('click', () => {
-    clearErr();
-    const p = newP.value;
-    if (!passValid(p)) { showErr('رمز عبور باید حداقل ۸ کاراکتر و شامل حروف، عدد و نشانه باشد.'); return; }
-    if (p !== confirmP.value) { showErr('رمز عبور و تکرار آن یکسان نیستند.'); return; }
-    // دمو: کد ارسال شد
-    codeSent = true;
-    codeInput.disabled = false;
-    codeInput.focus();
-    let t = 30;
-    sendBtn.disabled = true;
-    const fmt = () => `ارسال مجدد (${faNum(t)})`;
-    sendBtn.textContent = fmt();
-    const timer = setInterval(() => {
-      t -= 1; sendBtn.textContent = t > 0 ? fmt() : 'ارسال مجدد کد';
-      if (t <= 0) { clearInterval(timer); sendBtn.disabled = false; }
-    }, 1000);
+  [currentP, newP, confirmP].forEach((input) => {
+    input.addEventListener('input', () => {
+      clearErr();
+      refreshSubmitState();
+    });
   });
 
-  // ثبت نهایی
+  codeInput.addEventListener('input', () => {
+    codeInput.value = codeInput.value.replace(/\D/g, '');
+    otpVerified = codeInput.value.length === 6 && codeInput.value === otpCode;
+    refreshSubmitState();
+  });
+
+  sendBtn.addEventListener('click', () => {
+    clearErr();
+    if (!otpMode && currentP.value !== currentPassword) { showErr('رمز عبور فعلی اشتباه است.'); return; }
+    otpCode = '123456';
+    otpVerified = false;
+    codeInput.value = '';
+    codeInput.focus();
+    alert('کد OTP برای تغییر رمز ارسال شد');
+    startOtpTimer();
+  });
+
   submitBtn.addEventListener('click', () => {
     clearErr();
-    if (!codeSent) { showErr('ابتدا کد تأیید را دریافت کنید.'); return; }
-    if (!passValid(newP.value) || newP.value !== confirmP.value) { showErr('رمز عبور معتبر نیست.'); return; }
-    if (codeInput.value.length < 5) { showErr('کد تأیید را کامل وارد کنید.'); return; }
-    // دمو: هر کدی پذیرفته می‌شود
+    if (!otpMode && currentP.value !== currentPassword) { showErr('رمز عبور فعلی اشتباه است.'); return; }
+    if (!isStrongPassword(newP.value)) { showErr('رمز جدید باید حداقل ۸ کاراکتر و شامل حروف و عدد باشد.'); return; }
+    if (!otpMode && newP.value === currentP.value) { showErr('رمز جدید نباید با رمز فعلی یکسان باشد.'); return; }
+    if (!otpMode && newP.value !== confirmP.value) { showErr('عدم تطابق'); return; }
+    if (!otpVerified) { showErr('کد OTP معتبر نیست.'); return; }
+    currentPassword = newP.value;
+    localStorage.setItem(savedPasswordKey, currentPassword);
     close();
-    alert('رمز عبور با موفقیت تنظیم شد.');
+    alert('رمز عبور با موفقیت تغییر یافت');
   });
 }
 

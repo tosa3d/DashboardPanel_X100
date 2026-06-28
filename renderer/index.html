@@ -2840,28 +2840,37 @@
 <div class="pass-modal" id="pass-modal" hidden>
   <div class="pass-box">
     <button class="pass-box__close" id="pass-close"><span class="material-symbols-outlined">close</span></button>
-    <div class="pass-box__title">تنظیم رمز عبور</div>
-    <p class="pass-box__sub">برای اولین بار رمز عبور خود را تنظیم کنید</p>
+    <div class="pass-box__title">تغییر رمز عبور</div>
+    <p class="pass-box__sub">رمز فعلی را وارد کنید یا با OTP رمز جدید را ثبت کنید</p>
+    <button type="button" class="pass-alt" id="pass-use-otp">تغییر رمز با OTP</button>
 
-    <div class="pass-rules">رمز عبور باید حداقل ۸ کاراکتر باشد و شامل حروف، عدد و نشانه (مثل @ یا !) باشد.</div>
+    <div class="pass-rules">رمز جدید باید حداقل ۸ کاراکتر باشد و شامل حروف و عدد باشد.</div>
+
+    <label class="pass-field" id="pass-current-wrap">
+      <span class="material-symbols-outlined">lock</span>
+      <input type="password" id="pass-current" placeholder="رمز عبور فعلی" autocomplete="current-password">
+      <button type="button" class="pass-eye" data-eye="pass-current"><span class="material-symbols-outlined">visibility</span></button>
+    </label>
 
     <label class="pass-field">
       <span class="material-symbols-outlined">lock</span>
       <input type="password" id="pass-new" placeholder="رمز عبور جدید" autocomplete="new-password">
       <button type="button" class="pass-eye" data-eye="pass-new"><span class="material-symbols-outlined">visibility</span></button>
     </label>
-    <label class="pass-field">
+    <label class="pass-field" id="pass-confirm-wrap">
       <span class="material-symbols-outlined">lock_reset</span>
       <input type="password" id="pass-confirm" placeholder="تکرار رمز عبور" autocomplete="new-password">
       <button type="button" class="pass-eye" data-eye="pass-confirm"><span class="material-symbols-outlined">visibility</span></button>
     </label>
 
-    <input type="text" id="pass-code" class="pass-code-input" inputmode="numeric" maxlength="5" placeholder="کد پیامک‌شده" disabled>
-    <button class="pass-send-btn pass-send-btn--block" id="pass-send">ارسال کد</button>
+    <div id="pass-otp-wrap" hidden>
+      <input type="text" id="pass-code" class="pass-code-input" inputmode="numeric" maxlength="6" placeholder="کد OTP شش رقمی">
+      <button class="pass-send-btn pass-send-btn--block" id="pass-send">ارسال کد</button>
+    </div>
 
     <div class="pass-err" id="pass-err" hidden></div>
 
-    <button class="pass-submit" id="pass-submit" disabled>ثبت رمز عبور</button>
+    <button class="pass-submit" id="pass-submit" disabled>ثبت رمز جدید</button>
   </div>
 </div>
 

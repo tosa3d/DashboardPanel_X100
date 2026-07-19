@@ -24,7 +24,7 @@
   --font-fa: "Vazirmatn", Tahoma, sans-serif;
   --font-display: "Syne", "Vazirmatn", sans-serif;
   --shell: 1440px;
-  --header-height: 66px;
+  --header-height: 0px;
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 24px;
@@ -1327,7 +1327,7 @@ button {
 
 @media (max-width: 980px) {
   :root {
-    --header-height: 64px;
+    --header-height: 0px;
   }
 
   .site-nav {
@@ -2024,6 +2024,7 @@ button {
   color: var(--text);
   background: #080a0d;
   border-top: 1px solid rgba(38, 187, 255, 0.18);
+  padding-bottom: 84px;
 }
 
 .doping-footer::before {

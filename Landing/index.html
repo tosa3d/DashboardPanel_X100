@@ -17,31 +17,6 @@
 <body>
   <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
-  <header class="site-header" id="top">
-    <div class="site-header__inner shell">
-      <div class="site-header__action">
-        <a class="button button--primary button--header" href="#download">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/>
-          </svg>
-          <span>دانلود لانچر</span>
-        </a>
-        <a class="button button--subscription button--header" href="#subscription">
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="m4 8 4 4 4-7 4 7 4-4-2 10H6L4 8Zm3 10h10"/>
-          </svg>
-          <span>خرید اشتراک</span>
-        </a>
-      </div>
-
-      <a class="brand" href="#top" aria-label="DoPing، صفحه اصلی">
-        <span class="brand__logo" aria-hidden="true">
-          <img src="Contant/Icon.png" alt="">
-        </span>
-      </a>
-    </div>
-  </header>
-
   <main id="main-content">
     <section class="hero" aria-labelledby="hero-heading">
       <div class="gaming-hero" data-gaming-hero>
@@ -59,6 +34,7 @@
         <div class="gaming-hero__camera" data-hero-camera>
           <div class="gaming-hero__center" data-hero-center>
             <div class="gaming-hero__copy">
+              <p class="gaming-hero__brand-word">دوپینگ</p>
               <p class="gaming-hero__eyebrow" aria-hidden="true"><span></span><i></i><span></span></p>
               <h1 class="gaming-hero__title" id="hero-heading">
                 <span>همه چیز</span>
@@ -66,33 +42,24 @@
               </h1>
               <p class="gaming-hero__description">تجربه‌ای قدرتمند و یکپارچه برای دانلود، آپدیت و لذت بردن از بازی‌های آنلاین با بهترین کیفیت و پایین‌ترین پینگ.</p>
             </div>
-            <div class="gaming-hero__actions">
-              <a class="gaming-hero__button gaming-hero__button--primary" href="#download">
-                دانلود لانچر
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
-              </a>
-              <a class="gaming-hero__button gaming-hero__button--secondary" href="#hero-features">
-                بیشتر بدانید
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
-              </a>
-            </div>
+            <div class="gaming-hero__features" id="hero-features" data-hero-features aria-label="امکانات لانچر"></div>
           </div>
 
         </div>
 
-        <div class="gaming-hero__features" id="hero-features" data-hero-features aria-label="امکانات لانچر"></div>
+        <div class="gaming-hero__actions">
+          <a class="gaming-hero__button gaming-hero__button--primary" href="#download">
+            دانلود لانچر
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
+          </a>
+          <a class="gaming-hero__button gaming-hero__button--secondary" href="#subscription">
+            خرید اشتراک
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m4 8 4 4 4-7 4 7 4-4-2 10H6L4 8Zm3 10h10"/></svg>
+          </a>
+        </div>
       </div>
     </section>
 
-
-    <section class="tournament-showcase reveal" id="tournaments" aria-labelledby="tournament-title">
-      <div class="tournament-showcase__content">
-        <img src="Contant/jam.png" alt="" aria-hidden="true">
-        <span>رقابت‌های DoPing</span>
-        <h2 id="tournament-title">مسابقات اختصاصی و جوایز</h2>
-        <p>در رقابت‌های اختصاصی DoPing شرکت کنید، مهارت خود را به چالش بکشید و جوایز ویژه دریافت کنید.</p>
-      </div>
-    </section>
 
     <section class="launcher-games shell reveal" id="games" aria-labelledby="launcher-games-title">
       <div class="launcher-games__header">

@@ -21,7 +21,6 @@
   overflow: hidden;
   color: #f7f5ff;
   background: #03040d;
-  isolation: isolate;
   perspective: none;
 }
 
@@ -215,7 +214,7 @@
   z-index: 5;
   top: 45%;
   left: 50%;
-  width: min(520px, 38vw);
+  width: min(980px, 84vw);
   text-align: center;
   opacity: 0;
   transform: translate(-50%, -50%) translate3d(var(--hero-center-x), calc(var(--hero-center-y) + var(--hero-enter-y)), 90px);
@@ -231,6 +230,35 @@
 .gaming-hero__copy {
   transform: translate3d(var(--hero-copy-x), var(--hero-copy-y), 32px);
   transform-style: preserve-3d;
+}
+
+.gaming-hero__logo {
+  display: block;
+  width: 90px;
+  height: 66px;
+  margin: 0 auto 14px;
+  background-color: #1fe0c4;
+  -webkit-mask-image: url("../Contant/Icon.png");
+  mask-image: url("../Contant/Icon.png");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: top center;
+  mask-position: top center;
+  -webkit-mask-size: 90px auto;
+  mask-size: 90px auto;
+  mask-mode: alpha;
+  filter: drop-shadow(0 6px 18px rgba(31, 224, 196, 0.45));
+}
+
+.gaming-hero__brand-word {
+  margin: 0 0 14px;
+  color: #f5f4fa;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 1.8vw, 28px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-shadow: 0 0 18px rgba(38, 187, 255, 0.55), 0 8px 30px rgba(0, 0, 0, 0.6);
 }
 
 .gaming-hero__center::before,
@@ -327,20 +355,25 @@
 }
 
 .gaming-hero__actions {
-  --hero-actions-enter-y: 12px;
+  position: fixed;
+  z-index: 300;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 27px;
+  padding: 16px clamp(16px, 4vw, 40px);
+  background: linear-gradient(180deg, rgba(5, 6, 13, 0) 0%, rgba(5, 6, 13, 0.85) 45%, rgba(5, 6, 13, 0.96) 100%);
   opacity: 0;
-  transform: translate3d(var(--hero-actions-x), calc(var(--hero-actions-y) + var(--hero-actions-enter-y)), 58px);
+  transform: translateY(12px);
   transition: opacity 480ms ease 300ms, transform 560ms cubic-bezier(0.16, 1, 0.3, 1) 300ms;
 }
 
 .gaming-hero.is-ready .gaming-hero__actions {
-  --hero-actions-enter-y: 0px;
   opacity: 1;
+  transform: translateY(0);
 }
 
 .gaming-hero__button {
@@ -850,7 +883,7 @@
   background-color: #08090c;
   background-image:
     linear-gradient(180deg, rgba(8, 9, 12, 0.05), rgba(8, 12, 18, 0.24) 68%, rgba(4, 5, 10, 0.6)),
-    url("../Contant/BG1.png");
+    url("../Contant/BG2.png");
   background-position: center, center;
   background-repeat: no-repeat;
   background-size: cover, auto 82%;
@@ -869,20 +902,17 @@
 
 /* Flat feature cards, framed and overlaid directly on the hero artwork (same section as the background). */
 .gaming-hero__features {
-  position: absolute;
+  position: static;
   z-index: 6;
-  left: 50%;
-  bottom: clamp(3%, 4vw, 5%);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(10px, 1.1vw, 16px);
-  width: min(980px, 82%);
+  width: 100%;
+  margin: 64px auto 0;
   padding: clamp(10px, 1.1vw, 16px);
-  background: linear-gradient(180deg, rgba(10, 13, 26, 0.38), rgba(5, 6, 13, 0.6));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: none;
+  border: none;
   border-radius: 22px;
-  backdrop-filter: blur(14px) saturate(1.1);
-  transform: translateX(-50%);
   direction: ltr;
 }
 
@@ -892,9 +922,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: clamp(150px, 10.5vw, 180px);
-  padding: clamp(16px, 1.6vw, 22px) 14px 18px;
+  gap: 8px;
+  min-height: clamp(110px, 7.5vw, 136px);
+  padding: clamp(12px, 1.1vw, 16px) 12px 14px;
   text-align: center;
   direction: rtl;
   background: linear-gradient(180deg, rgba(22, 26, 48, 0.72), rgba(9, 11, 22, 0.78));
@@ -924,16 +954,16 @@
 
 .gaming-hero__feature-icon {
   display: grid;
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   place-items: center;
   background: radial-gradient(circle, color-mix(in srgb, var(--feature-accent, #26bbff) 22%, transparent), transparent 70%);
   border-radius: 14px;
 }
 
 .gaming-hero__feature-icon img {
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
   filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.5));
 }
@@ -983,74 +1013,6 @@
   stroke-linecap: round;
 }
 
-.tournament-showcase {
-  position: relative;
-  display: grid;
-  min-height: clamp(700px, 56.25vw, 820px);
-  overflow: hidden;
-  padding: 70px 40px 120px;
-  background: #080a0d url("../Contant/BG2.png") center bottom / cover no-repeat;
-  border-block: 1px solid rgba(255, 255, 255, 0.1);
-  place-items: start center;
-  isolation: isolate;
-}
-
-.tournament-showcase::before {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(3, 5, 10, 0.58), rgba(3, 5, 10, 0.08) 55%, rgba(3, 5, 10, 0.4)),
-    linear-gradient(90deg, rgba(3, 5, 10, 0.12), transparent 35%, transparent 65%, rgba(3, 5, 10, 0.12));
-  content: "";
-}
-
-.tournament-showcase__content {
-  display: flex;
-  width: min(100%, 720px);
-  align-items: center;
-  flex-direction: column;
-  padding: 0 24px;
-  color: #ffffff;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  backdrop-filter: none;
-  text-align: center;
-}
-
-.tournament-showcase__content img {
-  width: 70px;
-  height: 70px;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 22px rgba(77, 82, 255, 0.55));
-}
-
-.tournament-showcase__content > span {
-  margin-top: 5px;
-  color: var(--primary-hover);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.tournament-showcase__content h2 {
-  margin: 7px 0 8px;
-  font-size: clamp(34px, 4vw, 58px);
-  font-weight: 900;
-  letter-spacing: -0.055em;
-  line-height: 1.2;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.95), 0 12px 34px rgba(0, 0, 0, 0.8);
-}
-
-.tournament-showcase__content p {
-  max-width: 540px;
-  margin: 0;
-  color: rgba(244, 247, 255, 0.9);
-  font-size: 14px;
-  line-height: 1.9;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
-}
 
 @keyframes gaming-star-pulse {
   0%, 100% { opacity: 0.18; transform: scale(0.8); }
@@ -1191,12 +1153,13 @@
   }
 
   .gaming-hero__actions {
-    flex-direction: column;
-    margin-top: 24px;
+    gap: 10px;
+    padding: 12px 16px;
   }
 
   .gaming-hero__button {
-    width: min(100%, 310px);
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .gaming-hero__cards {

@@ -18,7 +18,7 @@
 <!-- ========== ورود با OTP (قبل از لودینگ) ========== -->
 <div class="otp-screen" id="otp-screen">
   <div class="otp-card">
-    <div class="otp-brand">x100</div>
+    <img class="otp-brand" src="assets/logo.png" alt="x100">
 
     <!-- مرحله ۱: شماره موبایل -->
     <div class="otp-step" id="otp-step-phone">
@@ -72,7 +72,7 @@
 
 <!-- ========== اسپلش لودینگ اولیه ========== -->
 <div class="splash splash--pending" id="app-splash">
-  <div class="splash__logo">x100</div>
+  <img class="splash__logo" src="assets/logo.png" alt="x100">
   <div class="splash__beam"><div class="splash__beam-fill"></div></div>
 </div>
 
@@ -80,7 +80,7 @@
 <header class="app-header">
   <!-- Right: Brand & User -->
   <div class="app-header__group">
-    <h1 class="app-header__brand">x100</h1>
+    <img class="app-header__brand" src="assets/logo.png" alt="x100">
     <div class="app-header__user">
       <div class="app-header__user-col" id="hdr-avatar-btn" style="cursor:pointer" title="پروفایل">
         <div class="app-header__avatar">
@@ -1692,6 +1692,27 @@
       <div class="tour-empty" id="tour-all-empty" hidden>تورنومنتی با این فیلتر یافت نشد</div>
     </div>
 
+    <!-- پنل مدیریت تورنومنت‌های ثبت‌نام‌شده -->
+    <div class="tour-pane" data-tpane="registrations" hidden>
+      <button class="tour-back" id="tour-registrations-back"><span class="material-symbols-outlined">arrow_forward</span>بازگشت به مسابقات</button>
+      <div class="tb__head tour-manage__head">
+        <div>
+          <h2 class="tb__title">تورنومنت‌های من</h2>
+          <p class="tb__sub">ثبت‌نام‌ها، ترکیب انتخاب‌شده و وضعیت پرداخت را اینجا مدیریت کن</p>
+        </div>
+        <div class="tour-manage__tools">
+          <select class="tour-select" id="tour-registrations-filter" aria-label="فیلتر تورنومنت‌های من">
+            <option value="all">همه تورنومنت‌ها</option>
+            <option value="upcoming">تورنومنت‌های پیش رو</option>
+            <option value="ended">تورنومنت‌های اتمام رسیده</option>
+          </select>
+          <span class="tour-manage__count" id="tour-registrations-count"></span>
+        </div>
+      </div>
+      <div class="tour-manage-list" id="tour-registrations-list"></div>
+      <div class="tb-empty" id="tour-registrations-empty" hidden>هنوز در تورنومنتی ثبت‌نام نکرده‌ای</div>
+    </div>
+
     <!-- پنل ساخت تیم -->
     <div class="tour-pane" data-tpane="team" hidden>
       <div class="tb">
@@ -1726,6 +1747,11 @@
   <div class="tmodal" id="tour-detail-body"></div>
 </div>
 
+<!-- مراحل ثبت‌نام در تورنومنت -->
+<div class="tmodal-overlay" id="tour-registration-modal" hidden>
+  <div class="tmodal tmodal--registration" id="tour-registration-body"></div>
+</div>
+
 <!-- مودال مدیریت تیم -->
 <div class="tmodal-overlay" id="team-modal" hidden>
   <div class="tmodal tmodal--team" id="team-modal-body"></div>
@@ -1745,6 +1771,16 @@
     <span class="material-symbols-outlined placeholder-page__icon">construction</span>
     <h2 class="placeholder-page__title">به زودی</h2>
     <p class="placeholder-page__desc">این بخش در حال توسعه است</p>
+  </div>
+</div>
+
+
+<!-- ============================================
+     PAGE: DEV VIDEO (shop / streaming placeholder)
+     ============================================ -->
+<div class="page" data-page="dev-video">
+  <div class="dev-video-page">
+    <video class="dev-video-page__video" src="assets/In Development Clip.mp4" autoplay loop muted playsinline disablepictureinpicture></video>
   </div>
 </div>
 

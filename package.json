@@ -12,11 +12,15 @@
     "dist:portable": "electron-builder --win portable",
     "dist:installer": "electron-builder --win nsis"
   },
-  "keywords": ["gaming", "launcher", "electron"],
+  "keywords": [
+    "gaming",
+    "launcher",
+    "electron"
+  ],
   "author": "Shekan",
   "license": "UNLICENSED",
   "devDependencies": {
-    "electron": "^33.0.0",
+    "electron": "^33.4.11",
     "electron-builder": "^25.1.8"
   },
   "build": {
@@ -34,8 +38,18 @@
     ],
     "win": {
       "target": [
-        { "target": "portable", "arch": ["x64"] },
-        { "target": "nsis", "arch": ["x64"] }
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "artifactName": "${productName}-${version}-${arch}.${ext}"
     },

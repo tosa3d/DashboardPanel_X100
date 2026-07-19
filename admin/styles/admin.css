@@ -1,6 +1,14 @@
 /* ============================================
    پنل مدیریت x100 — Admin Dashboard
    ============================================ */
+@font-face {
+  font-family: 'Estedad';
+  src: url('../../Font/Estedad-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   --bg: #0b0b10;
   --bg-2: #0f0f15;
@@ -22,7 +30,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 [hidden] { display: none !important; }
 body {
-  font-family: 'Vazirmatn', system-ui, sans-serif;
+  font-family: 'Estedad', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   direction: rtl;

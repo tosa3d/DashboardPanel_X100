@@ -30,20 +30,46 @@ const ROUTES = {
   'game-detail': 'game-detail',
   tournaments: 'tournaments',
   // بقیه فعلاً به placeholder میرن
-  shop: 'placeholder',
-  streaming: 'placeholder',
+  shop: 'dev-video',
+  streaming: 'dev-video',
   community: 'community',
   downloads: 'downloads',
   profile: 'profile',
   settings: 'placeholder',
 };
 
-function showPage(pageName) {
+function showPage(pageName, { resetRoot = false, communityTab = null } = {}) {
   const target = ROUTES[pageName] || 'placeholder';
   $$('.page').forEach((p) => p.classList.remove('page--active'));
   const page = $(`.page[data-page="${target}"]`);
   if (page) page.classList.add('page--active');
+  if (resetRoot) resetPageRoot(pageName, { communityTab });
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetPageRoot(pageName, { communityTab = null } = {}) {
+  const target = ROUTES[pageName] || 'placeholder';
+  const page = $(`.page[data-page="${target}"]`);
+  if (!page) return;
+
+  if (pageName === 'tournaments') {
+    showMatchesPane();
+    const scroller = page.querySelector('.tour-page');
+    if (scroller) scroller.scrollTop = 0;
+  }
+
+  if (pageName === 'community') {
+    ['comm-search-overlay', 'comm-req-overlay', 'comm-leave-popup'].forEach((id) => {
+      const overlay = document.getElementById(id);
+      if (overlay) overlay.hidden = true;
+    });
+    const tabId = communityTab || 'posts';
+    page.querySelector(`.comm-tab[data-ctab="${tabId}"]`)?.click();
+    if (tabId === 'posts') {
+      page.querySelector('.posts-nav-item[data-pnav="home"]')?.click();
+      page.querySelector('.prof-tab[data-ptab="posts"]')?.click();
+    }
+  }
 }
 
 // ============================================
@@ -62,7 +88,7 @@ function initSidebar() {
         const communityPage = document.querySelector('.page[data-page="community"]');
         if (communityPage) communityPage.dataset.pendingTab = item.dataset.commtab;
       }
-      showPage(route);
+      showPage(route, { resetRoot: true, communityTab: item.dataset.commtab || null });
     });
   });
 }
@@ -1106,6 +1132,9 @@ TOURNAMENTS.push(
 // وضعیت تیم کاربر (mock)
 let myTeam = null; // { name, desc, members:[{name,role,avatar}] }
 const registeredTours = new Set();
+const registrationRecords = new Map();
+let userWalletCoins = 1480;
+let registrationState = null;
 
 function initTournaments() {
   initTourHero();
@@ -1141,13 +1170,26 @@ function initTournaments() {
 
   // بازگشت از صفحهٔ ساخت تیم به مسابقات
   document.getElementById('tb-back')?.addEventListener('click', showMatchesPane);
+  document.getElementById('tour-registrations-back')?.addEventListener('click', showMatchesPane);
+  document.getElementById('tour-registrations-filter')?.addEventListener('change', renderRegisteredTournaments);
 
-  // بستن مودال‌ها
-  ['tour-detail-modal', 'team-modal', 'tb-popup'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('click', (e) => {
-      if (e.target.id === id) e.currentTarget.hidden = true;
+  // بستن مودال با ضربدر یا کلیک روی پس‌زمینه؛ handlerهای inline توسط CSP مسدود می‌شوند.
+  ['tour-detail-modal', 'tour-registration-modal', 'team-modal', 'tb-popup'].forEach((id) => {
+    const overlay = document.getElementById(id);
+    overlay?.addEventListener('click', (e) => {
+      const clickedClose = e.target.closest('.tmodal__close');
+      if (e.target === overlay || (clickedClose && overlay.contains(clickedClose))) {
+        closeTournamentOverlay(overlay);
+      }
     });
   });
+  renderWallet();
+}
+
+function closeTournamentOverlay(overlay) {
+  if (!overlay) return;
+  overlay.hidden = true;
+  if (overlay.id === 'tour-registration-modal') registrationState = null;
 }
 
 function showTourPane(name) {
@@ -1155,6 +1197,7 @@ function showTourPane(name) {
 }
 function showTeamPane() { showTourPane('team'); }
 function showMatchesPane() { showTourPane('matches'); }
+function showRegistrationsPane() { showTourPane('registrations'); renderRegisteredTournaments(); }
 
 // ── مسابقات زندهٔ مهم (۲ بنر، ۱۶:۹) ──
 const LIVE_MATCHES = [
@@ -1245,8 +1288,44 @@ function renderAllList() {
   list.querySelectorAll('.tour-card').forEach((card) => {
     const tid = Number(card.dataset.tid);
     card.querySelector('[data-act="detail"]').addEventListener('click', () => openTourDetail(tid));
-    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) joinTour(tid); });
+    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) openTournamentRegistration(tid); });
   });
+}
+
+function renderRegisteredTournaments() {
+  const list = document.getElementById('tour-registrations-list');
+  const empty = document.getElementById('tour-registrations-empty');
+  const count = document.getElementById('tour-registrations-count');
+  if (!list || !empty || !count) return;
+  const filter = document.getElementById('tour-registrations-filter')?.value || 'all';
+  const registered = TOURNAMENTS.filter((t) => registrationRecords.has(t.id));
+  const rows = registered.filter((t) => filter === 'all'
+    || (filter === 'upcoming' && (t.status === 'open' || t.status === 'soon'))
+    || (filter === 'ended' && t.status === 'ended'));
+  count.textContent = rows.length ? `${faNum(rows.length)} ثبت‌نام` : '';
+  if (!rows.length) {
+    list.innerHTML = '';
+    empty.hidden = false;
+    empty.textContent = registered.length ? 'تورنومنتی با این فیلتر یافت نشد' : 'هنوز در تورنومنتی ثبت‌نام نکرده‌ای';
+    return;
+  }
+  empty.hidden = true;
+  list.innerHTML = rows.map((t) => {
+    const record = registrationRecords.get(t.id);
+    const team = tbFindTeam(record.teamId);
+    const status = TOUR_STATUS[t.status];
+    return `
+      <article class="tour-manage-card">
+        <div class="tour-manage-card__cover" style="background-image:url('${t.img}')"><span class="tour-status tour-status--${status.cls}">${status.label}</span></div>
+        <div class="tour-manage-card__body">
+          <div class="tour-manage-card__top"><div><span class="tour-manage-card__game">${t.game}</span><h3>${t.name}</h3></div><span class="tour-manage-card__date"><span class="material-symbols-outlined">calendar_month</span>${t.date}</span></div>
+          <div class="tour-manage-card__info"><span><span class="material-symbols-outlined">shield</span>${team?.name || 'تیم انتخاب‌شده'}</span><span><span class="material-symbols-outlined">${record.cost ? 'account_balance_wallet' : 'verified'}</span>${record.cost ? `${faNum(record.cost)} X پرداخت شده` : 'ثبت‌نام رایگان'}</span></div>
+          <div class="tour-manage-card__players"><span>ترکیب ثبت‌شده</span><div>${record.memberNames.map((name) => `<b>${name}</b>`).join('')}</div></div>
+          <button class="tour-btn tour-btn--ghost" data-registration-detail="${t.id}">مشاهده جزئیات</button>
+        </div>
+      </article>`;
+  }).join('');
+  list.querySelectorAll('[data-registration-detail]').forEach((button) => button.addEventListener('click', () => openTourDetail(Number(button.dataset.registrationDetail))));
 }
 
 // ============================================
@@ -1302,7 +1381,7 @@ function initTeamBuilder() {
 function openCreateTeamPopup() {
   const gameOpts = tbGames().map((g) => `<option>${g}</option>`).join('');
   document.getElementById('tb-popup-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <h2 class="tmodal__title">ساخت تیم جدید</h2>
       <p class="tmodal__desc">نام تیم و بازی را وارد کن</p>
@@ -1322,12 +1401,17 @@ function openCreateTeamPopup() {
     team.game = document.getElementById('ct-game').value;
     tbTeams.unshift(team);
     document.getElementById('tb-popup').hidden = true;
-    renderTeams();
+    // تیم جدید نباید پشت فیلتر یا جستجوی قبلی پنهان بماند.
+    const search = document.getElementById('tb-search');
+    const gameFilter = document.getElementById('tb-filter-game');
+    if (search) search.value = '';
+    if (gameFilter) gameFilter.value = 'all';
+    renderTeams(team.id);
     renderMyTeam();
   });
 }
 
-function renderTeams() {
+function renderTeams(revealTeamId = null) {
   const wrap = document.getElementById('tb-teams');
   const empty = document.getElementById('tb-empty');
   if (!wrap) return;
@@ -1345,6 +1429,12 @@ function renderTeams() {
   if (empty) empty.hidden = true;
   wrap.innerHTML = rows.map((t) => teamAccordionHTML(t)).join('');
   rows.forEach((t) => bindTeamAccordion(t));
+  if (revealTeamId) {
+    const createdCard = wrap.querySelector(`.tb-team[data-team="${revealTeamId}"]`);
+    createdCard?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    createdCard?.classList.add('tb-team--new');
+    setTimeout(() => createdCard?.classList.remove('tb-team--new'), 900);
+  }
 }
 
 function teamAccordionHTML(t) {
@@ -1440,7 +1530,7 @@ function openFriendPicker(teamId) {
   const inTeam = new Set(t.members.map((s) => s.name));
   const available = FRIENDS.filter((f) => !inTeam.has(f.name));
   document.getElementById('tb-popup-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <h2 class="tmodal__title">دعوت هم‌تیمی</h2>
       <p class="tmodal__desc">یکی از دوستانت را برای ارسال درخواست انتخاب کن</p>
@@ -1467,7 +1557,7 @@ function openFriendPicker(teamId) {
 function openIncomingPopup(teamId) {
   const t = tbFindTeam(teamId); if (!t) return;
   document.getElementById('tb-popup-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <h2 class="tmodal__title">درخواست‌های دریافتی</h2>
       <p class="tmodal__desc">بازیکنانی که می‌خواهند به «${t.name || 'تیم'}» بپیوندند</p>
@@ -1492,7 +1582,7 @@ function openIncomingPopup(teamId) {
 function openSentPopup(teamId) {
   const t = tbFindTeam(teamId); if (!t) return;
   document.getElementById('tb-popup-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <h2 class="tmodal__title">درخواست‌های ارسالی</h2>
       <p class="tmodal__desc">دعوت‌هایی که فرستادی و در انتظار پاسخ‌اند</p>
@@ -1517,7 +1607,7 @@ function openHistoryPopup(teamId) {
   const wins = t.matches.filter((m) => m.result === 'win').length;
   const losses = t.matches.filter((m) => m.result === 'loss').length;
   document.getElementById('tb-popup-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tb-popup').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <h2 class="tmodal__title">تاریخچهٔ بازی‌های ${t.name || 'تیم'}</h2>
       <p class="tmodal__desc">${faNum(wins)} برد • ${faNum(losses)} باخت</p>
@@ -1572,6 +1662,8 @@ function initTourHero() {
 function tourCardHTML(t) {
   const st = TOUR_STATUS[t.status];
   const reg = registeredTours.has(t.id);
+  const unavailable = !canRegisterForTournament(t) || reg;
+  const joinLabel = reg ? 'ثبت‌نام شده ✓' : t.joined >= t.max ? 'ظرفیت تکمیل' : (t.status === 'open' ? 'ثبت‌نام' : 'ثبت‌نام بسته');
   return `
     <div class="tour-card" data-tid="${t.id}">
       <div class="tour-card__cover" style="background-image:url('${t.img}')">
@@ -1594,8 +1686,8 @@ function tourCardHTML(t) {
         </div>
         <div class="tour-card__actions">
           <button class="tour-btn tour-btn--ghost" data-act="detail">جزئیات</button>
-          <button class="tour-btn tour-btn--primary" data-act="join" ${t.status !== 'open' && t.status !== 'soon' ? 'disabled' : ''}>
-            ${reg ? 'ثبت‌نام شده ✓' : (t.status === 'open' ? 'ثبت‌نام' : st.label)}
+          <button class="tour-btn tour-btn--primary" data-act="join" ${unavailable ? 'disabled' : ''}>
+            ${joinLabel}
           </button>
         </div>
       </div>
@@ -1624,7 +1716,7 @@ function renderRail(id, rows) {
   rail.querySelectorAll('.tour-card').forEach((card) => {
     const tid = Number(card.dataset.tid);
     card.querySelector('[data-act="detail"]').addEventListener('click', () => openTourDetail(tid));
-    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) joinTour(tid); });
+    card.querySelector('[data-act="join"]').addEventListener('click', (e) => { if (!e.currentTarget.disabled) openTournamentRegistration(tid); });
   });
 }
 
@@ -1635,7 +1727,7 @@ function openTourDetail(tid) {
   const st = TOUR_STATUS[t.status];
   const reg = registeredTours.has(tid);
   document.getElementById('tour-detail-body').innerHTML = `
-    <button class="tmodal__close" onclick="document.getElementById('tour-detail-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__cover" style="background-image:url('${t.img}')">
       <span class="tour-status tour-status--${st.cls}">${st.label}</span>
     </div>
@@ -1652,30 +1744,251 @@ function openTourDetail(tid) {
         <div class="tmodal__item"><span>جایزه</span><b style="color:var(--color-accent-gold,#ffd700)">${t.prize}</b></div>
         <div class="tmodal__item"><span>ورودی</span><b>${t.entry === 'free' ? 'رایگان' : 'تیکت — ' + t.ticketPrice}</b></div>
       </div>
-      <button class="tour-btn tour-btn--primary tmodal__cta" ${t.status !== 'open' && t.status !== 'soon' ? 'disabled' : ''} id="tmodal-join">
-        ${reg ? 'ثبت‌نام شده ✓' : (t.status === 'open' ? 'ثبت‌نام در تورنومنت' : st.label)}
+      <button class="tour-btn tour-btn--primary tmodal__cta" ${!canRegisterForTournament(t) || reg ? 'disabled' : ''} id="tmodal-join">
+        ${reg ? 'ثبت‌نام شده ✓' : t.joined >= t.max ? 'ظرفیت تکمیل شده' : (t.status === 'open' ? 'شروع ثبت‌نام' : 'ثبت‌نام بسته')}
       </button>
     </div>`;
   document.getElementById('tour-detail-modal').hidden = false;
-  document.getElementById('tmodal-join')?.addEventListener('click', (e) => { if (!e.currentTarget.disabled) { joinTour(tid); document.getElementById('tour-detail-modal').hidden = true; } });
+  document.getElementById('tmodal-join')?.addEventListener('click', (e) => {
+    if (!e.currentTarget.disabled) {
+      document.getElementById('tour-detail-modal').hidden = true;
+      openTournamentRegistration(tid);
+    }
+  });
 }
 
-// ── ثبت‌نام در تورنومنت ──
-function joinTour(tid) {
+// ── ثبت‌نام در تورنومنت: مرور شرایط، انتخاب اعضا و پرداخت از کیف پول ──
+function renderWallet() {
+  const wallet = document.getElementById('user-currency');
+  if (wallet) wallet.textContent = faNum(userWalletCoins);
+}
+
+function canRegisterForTournament(t) {
+  return t.status === 'open' && t.joined < t.max;
+}
+
+function registrationMemberCount(t) {
+  return t.type === 'team' ? t.teamSize : 1;
+}
+
+function registrationCost(t) {
+  if (t.entry === 'free') return 0;
+  const toman = Number(String(t.ticketPrice || '')
+    .replace(/[۰-۹]/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit))
+    .replace(/[^\d]/g, ''));
+  return Number.isFinite(toman) ? Math.ceil(toman / 1000) : 0;
+}
+
+function activeTeamMembers(team) {
+  return team.members.filter((member) => member.captain || member.status === 'joined');
+}
+
+function matchingTeams(t) {
+  return tbTeams.filter((team) => team.game === t.game);
+}
+
+function closeTournamentRegistration() {
+  const modal = document.getElementById('tour-registration-modal');
+  if (modal) modal.hidden = true;
+  registrationState = null;
+}
+
+function openTournamentRegistration(tid) {
   const t = TOURNAMENTS.find((x) => x.id === tid);
   if (!t) return;
   if (registeredTours.has(tid)) { alert('قبلاً در این تورنومنت ثبت‌نام کرده‌اید.'); return; }
-  if (t.type === 'team' && !tbTeams.length) {
-    if (confirm('این تورنومنت تیمی است و شما تیمی ندارید. اکنون تیم بسازید؟')) { showTeamPane(); document.getElementById('tb-add-team')?.click(); }
+  if (!canRegisterForTournament(t)) {
+    alert(t.joined >= t.max ? 'ظرفیت این تورنومنت تکمیل شده است.' : 'ثبت‌نام این تورنومنت در دسترس نیست.');
     return;
   }
-  const cost = t.entry === 'free' ? 'به‌صورت رایگان' : `با پرداخت تیکت (${t.ticketPrice})`;
-  if (confirm(`ثبت‌نام در «${t.name}» ${cost} انجام شود؟`)) {
-    registeredTours.add(tid);
+  registrationState = { tid, step: 1, teamId: null, memberNames: [], message: '' };
+  document.getElementById('tour-registration-modal').hidden = false;
+  renderTournamentRegistration();
+}
+
+function registrationRules(t) {
+  const teamRule = t.type === 'team'
+    ? `باید دقیقاً ${faNum(t.teamSize)} بازیکن تأییدشده از یک تیم ${t.game} انتخاب شوند.`
+    : 'برای این مسابقه فقط یک بازیکن تأییدشده از یکی از تیم‌های شما انتخاب می‌شود.';
+  return [
+    'حضور و آماده‌بودن بازیکنان ۱۵ دقیقه پیش از شروع مسابقه الزامی است.',
+    teamRule,
+    `حساب کاربری بازی انتخاب‌شده باید برای ${t.game} معتبر و آمادهٔ رقابت باشد.`,
+    'رعایت قوانین بازی جوانمردانه و تصمیم داوران تورنومنت الزامی است.',
+  ];
+}
+
+function registrationProgress(step) {
+  return `
+    <div class="reg-progress" aria-label="مرحله ${faNum(step)} از ۲">
+      <span class="reg-progress__step ${step === 1 ? 'is-active' : 'is-done'}"><i>۱</i>بررسی</span>
+      <span class="reg-progress__line ${step === 2 ? 'is-done' : ''}"></span>
+      <span class="reg-progress__step ${step === 2 ? 'is-active' : ''}"><i>۲</i>ترکیب و پرداخت</span>
+    </div>`;
+}
+
+function renderTournamentRegistration() {
+  const t = TOURNAMENTS.find((x) => x.id === registrationState?.tid);
+  const body = document.getElementById('tour-registration-body');
+  if (!t || !body) { closeTournamentRegistration(); return; }
+  if (registrationState.step === 'success') { renderRegistrationSuccess(t, body); return; }
+  if (registrationState.step === 1) renderRegistrationOverview(t, body);
+  else renderRegistrationRoster(t, body);
+}
+
+function renderRegistrationOverview(t, body) {
+  const cost = registrationCost(t);
+  const participantLabel = t.type === 'team' ? `تیمی، ${faNum(t.teamSize)} نفره` : 'انفرادی، ۱ نفر';
+  body.innerHTML = `
+    <button class="tmodal__close" id="reg-close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
+    <div class="reg-hero" style="background-image:url('${t.img}')"><div class="reg-hero__shade"></div><span class="reg-hero__badge">ثبت‌نام تورنومنت</span><div class="reg-hero__title">${t.name}</div></div>
+    <div class="tmodal__pad reg-pad">
+      ${registrationProgress(1)}
+      <h2 class="tmodal__title">شرایط و جزئیات ثبت‌نام</h2>
+      <p class="tmodal__desc">پیش از انتخاب ترکیب، اطلاعات مسابقه و قوانین زیر را مرور و تأیید کن.</p>
+      <div class="reg-facts">
+        <div class="reg-fact"><span class="material-symbols-outlined">calendar_month</span><div><small>تاریخ برگزاری</small><b>${t.date}</b></div></div>
+        <div class="reg-fact"><span class="material-symbols-outlined">emoji_events</span><div><small>جوایز</small><b>${t.prize}</b></div></div>
+        <div class="reg-fact"><span class="material-symbols-outlined">groups</span><div><small>نوع مسابقه</small><b>${participantLabel}</b></div></div>
+        <div class="reg-fact"><span class="material-symbols-outlined">schema</span><div><small>فرمت</small><b>${t.format}</b></div></div>
+      </div>
+      <section class="reg-rules"><h3><span class="material-symbols-outlined">gavel</span>قوانین ثبت‌نام</h3><ul>${registrationRules(t).map((rule) => `<li>${rule}</li>`).join('')}</ul></section>
+      <div class="reg-cost ${cost ? 'reg-cost--paid' : ''}">
+        <span class="material-symbols-outlined">${cost ? 'account_balance_wallet' : 'verified'}</span>
+        <div><small>${cost ? 'هزینه ثبت‌نام از کیف پول لانچر' : 'هزینه ثبت‌نام'}</small><b>${cost ? `${faNum(cost)} X <em>(${t.ticketPrice})</em>` : 'رایگان'}</b></div>
+        <span class="reg-cost__wallet">موجودی: <strong>${faNum(userWalletCoins)} X</strong></span>
+      </div>
+      <button class="tour-btn tour-btn--primary tmodal__cta reg-next" id="reg-next">تأیید شرایط و انتخاب ترکیب <span class="material-symbols-outlined">arrow_back</span></button>
+    </div>`;
+  document.getElementById('reg-close').addEventListener('click', closeTournamentRegistration);
+  document.getElementById('reg-next').addEventListener('click', () => {
+    registrationState.step = 2;
+    registrationState.message = '';
+    renderTournamentRegistration();
+  });
+}
+
+function renderRegistrationRoster(t, body) {
+  const teams = matchingTeams(t);
+  const required = registrationMemberCount(t);
+  const selectedTeam = teams.find((team) => team.id === registrationState.teamId) || null;
+  if (!selectedTeam) registrationState.memberNames = [];
+  const selectedNames = new Set(registrationState.memberNames);
+  const cost = registrationCost(t);
+  const selectionReady = selectedTeam && selectedNames.size === required;
+  const canPay = selectionReady && (!cost || userWalletCoins >= cost);
+  const paymentLabel = cost ? `پرداخت ${faNum(cost)} X و ثبت‌نام` : 'تأیید ثبت‌نام رایگان';
+  const teamOptions = teams.length ? `
+    <div class="reg-team-options">${teams.map((team) => {
+      const activeCount = activeTeamMembers(team).length;
+      return `<button class="reg-team-option ${team.id === registrationState.teamId ? 'is-selected' : ''}" data-reg-team="${team.id}">
+        <span class="material-symbols-outlined">shield</span><span class="reg-team-option__name">${team.name || 'تیم بدون نام'}</span>
+        <span class="reg-team-option__meta">${faNum(activeCount)} عضو تأییدشده</span>
+        <span class="material-symbols-outlined reg-team-option__check">check_circle</span>
+      </button>`;
+    }).join('')}</div>` : `
+      <div class="reg-empty-team"><span class="material-symbols-outlined">group_off</span><b>تیم سازگار پیدا نشد</b><p>برای ${t.game} هنوز تیمی نساخته‌ای. ابتدا تیم بساز و اعضای موردنظرت را تأیید کن.</p><button class="tour-btn tour-btn--ghost" id="reg-manage-teams">مدیریت تیم‌ها</button></div>`;
+  const roster = selectedTeam ? `
+    <section class="reg-roster">
+      <div class="reg-roster__head"><div><h3>انتخاب بازیکنان</h3><p>دقیقاً ${faNum(required)} نفر را از «${selectedTeam.name || 'تیم بدون نام'}» انتخاب کن.</p></div><strong class="${selectedNames.size === required ? 'is-ready' : ''}">${faNum(selectedNames.size)} از ${faNum(required)} نفر</strong></div>
+      <div class="reg-player-grid">${selectedTeam.members.map((member) => {
+        const active = member.captain || member.status === 'joined';
+        const selected = selectedNames.has(member.name);
+        return `<button class="reg-player ${selected ? 'is-selected' : ''} ${!active ? 'is-pending' : ''}" data-reg-member="${member.name}" ${active ? '' : 'disabled'}>
+          <img src="${member.avatar}" alt=""><span class="reg-player__name">${member.name}</span><small>${member.captain ? 'کاپیتن' : active ? 'عضو تأییدشده' : 'در انتظار تأیید'}</small><span class="material-symbols-outlined reg-player__check">${selected ? 'check_circle' : 'radio_button_unchecked'}</span>
+        </button>`;
+      }).join('')}</div>
+    </section>` : '';
+  const message = registrationState.message || (!cost || userWalletCoins >= cost ? '' : `موجودی کیف پول برای پرداخت ${faNum(cost)} X کافی نیست.`);
+  body.innerHTML = `
+    <button class="tmodal__close" id="reg-close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
+    <div class="tmodal__pad reg-pad reg-pad--roster">
+      ${registrationProgress(2)}
+      <div class="reg-step-head"><div><span class="reg-step-head__game">${t.game}</span><h2 class="tmodal__title">ترکیب مسابقه را انتخاب کن</h2><p class="tmodal__desc">این مسابقه ${t.type === 'team' ? `${faNum(required)} نفره است` : 'انفرادی است'}؛ سپس ${cost ? 'هزینه را از کیف پول لانچر پرداخت کن.' : 'ثبت‌نام را نهایی کن.'}</p></div></div>
+      <section class="reg-team-section"><h3><span class="material-symbols-outlined">groups</span>انتخاب تیم ${t.type === 'team' ? '' : 'مبدأ'}</h3>${teamOptions}</section>
+      ${roster}
+      <div class="reg-payment-summary"><div><span>هزینه ثبت‌نام</span><b>${cost ? `${faNum(cost)} X` : 'رایگان'}</b></div><div><span>موجودی پس از ثبت‌نام</span><b>${faNum(Math.max(0, userWalletCoins - cost))} X</b></div></div>
+      <div class="reg-action-error" ${message ? '' : 'hidden'}>${message}</div>
+      <div class="reg-actions"><button class="tour-btn tour-btn--ghost" id="reg-back">بازگشت</button><button class="tour-btn tour-btn--primary" id="reg-pay" ${canPay ? '' : 'disabled'}>${paymentLabel}<span class="material-symbols-outlined">${cost ? 'lock' : 'check_circle'}</span></button></div>
+    </div>`;
+  document.getElementById('reg-close').addEventListener('click', closeTournamentRegistration);
+  document.getElementById('reg-back').addEventListener('click', () => { registrationState.step = 1; registrationState.message = ''; renderTournamentRegistration(); });
+  document.querySelectorAll('[data-reg-team]').forEach((button) => button.addEventListener('click', () => {
+    registrationState.teamId = Number(button.dataset.regTeam);
+    registrationState.memberNames = [];
+    registrationState.message = '';
+    renderTournamentRegistration();
+  }));
+  document.querySelectorAll('[data-reg-member]').forEach((button) => button.addEventListener('click', () => {
+    const name = button.dataset.regMember;
+    const next = new Set(registrationState.memberNames);
+    if (next.has(name)) {
+      next.delete(name);
+    } else if (next.size < required) {
+      next.add(name);
+    } else {
+      registrationState.message = `برای این تورنومنت فقط ${faNum(required)} بازیکن می‌توانی انتخاب کنی.`;
+      renderTournamentRegistration();
+      return;
+    }
+    registrationState.memberNames = [...next];
+    registrationState.message = '';
+    renderTournamentRegistration();
+  }));
+  document.getElementById('reg-manage-teams')?.addEventListener('click', () => {
+    closeTournamentRegistration();
+    showTeamPane();
+    const filter = document.getElementById('tb-filter-game');
+    if (filter) filter.value = t.game;
+    renderTeams();
+  });
+  document.getElementById('reg-pay').addEventListener('click', () => completeTournamentRegistration(t));
+}
+
+function completeTournamentRegistration(t) {
+  const selectedTeam = tbFindTeam(registrationState?.teamId);
+  const required = registrationMemberCount(t);
+  const activeNames = new Set(selectedTeam ? activeTeamMembers(selectedTeam).map((member) => member.name) : []);
+  const validSelection = registrationState?.memberNames?.length === required
+    && registrationState.memberNames.every((name) => activeNames.has(name));
+  const cost = registrationCost(t);
+  if (!canRegisterForTournament(t) || registeredTours.has(t.id)) {
+    registrationState.message = 'وضعیت تورنومنت تغییر کرده است؛ دوباره تلاش کن.';
+  } else if (!selectedTeam || selectedTeam.game !== t.game || !validSelection) {
+    registrationState.message = `باید دقیقاً ${faNum(required)} بازیکن تأییدشده از یک تیم ${t.game} انتخاب کنی.`;
+  } else if (userWalletCoins < cost) {
+    registrationState.message = 'موجودی کیف پول برای پرداخت هزینه ثبت‌نام کافی نیست.';
+  } else {
+    userWalletCoins -= cost;
+    registeredTours.add(t.id);
+    registrationRecords.set(t.id, { teamId: selectedTeam.id, memberNames: [...registrationState.memberNames], cost, registeredAt: new Date() });
     t.joined = Math.min(t.max, t.joined + 1);
+    renderWallet();
     renderRails();
     if (!document.querySelector('.tour-pane[data-tpane="all"]').hidden) renderAllList();
+    if (!document.querySelector('.tour-pane[data-tpane="registrations"]').hidden) renderRegisteredTournaments();
+    registrationState.step = 'success';
+    renderTournamentRegistration();
+    return;
   }
+  renderTournamentRegistration();
+}
+
+function renderRegistrationSuccess(t, body) {
+  const record = registrationRecords.get(t.id);
+  body.innerHTML = `
+    <button class="tmodal__close" id="reg-close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
+    <div class="reg-success">
+      <div class="reg-success__icon"><span class="material-symbols-outlined">check_circle</span></div>
+      <span class="reg-success__eyebrow">ثبت‌نام با موفقیت انجام شد</span>
+      <h2 class="tmodal__title">برای «${t.name}» آماده‌ای!</h2>
+      <p class="tmodal__desc">ترکیب انتخاب‌شده ثبت شد و جزئیات بعدی از طریق نوتیفیکیشن لانچر ارسال می‌شود.</p>
+      <div class="reg-success__card"><span class="material-symbols-outlined">groups</span><div><small>بازیکنان ثبت‌شده</small><b>${record.memberNames.join('، ')}</b></div></div>
+      <div class="reg-success__card"><span class="material-symbols-outlined">account_balance_wallet</span><div><small>${record.cost ? 'موجودی کیف پول پس از پرداخت' : 'هزینه ثبت‌نام'}</small><b>${record.cost ? `${faNum(userWalletCoins)} X` : 'رایگان'}</b></div></div>
+      <button class="tour-btn tour-btn--primary tmodal__cta" id="reg-done">متوجه شدم</button>
+    </div>`;
+  document.getElementById('reg-close').addEventListener('click', closeTournamentRegistration);
+  document.getElementById('reg-done').addEventListener('click', closeTournamentRegistration);
 }
 
 // ── تیم من ──
@@ -1692,11 +2005,11 @@ function renderMyTeam() {
         </div>
         <div class="myteam__actions">
           <button class="tour-btn tour-btn--primary" id="myteam-create"><span class="material-symbols-outlined">add</span>ساخت تیم</button>
-          <button class="tour-btn tour-btn--ghost" id="myteam-create-tour"><span class="material-symbols-outlined">emoji_events</span>ایجاد تورنومنت</button>
+          <button class="tour-btn tour-btn--ghost" id="myteam-manage-tours"><span class="material-symbols-outlined">manage_accounts</span>مدیریت تورنومنت‌ها</button>
         </div>
       </div>`;
     document.getElementById('myteam-create').addEventListener('click', () => { showTeamPane(); if (!tbTeams.length) document.getElementById('tb-add-team')?.click(); });
-    document.getElementById('myteam-create-tour').addEventListener('click', () => alert('ایجاد تورنومنت — به‌زودی'));
+    document.getElementById('myteam-manage-tours').addEventListener('click', showRegistrationsPane);
   } else {
     const names = tbTeams.map((t) => t.name || 'بدون نام').join('، ');
     wrap.innerHTML = `
@@ -1708,11 +2021,11 @@ function renderMyTeam() {
         </div>
         <div class="myteam__actions">
           <button class="tour-btn tour-btn--ghost" id="myteam-manage"><span class="material-symbols-outlined">settings</span>مدیریت تیم‌ها</button>
-          <button class="tour-btn tour-btn--primary" id="myteam-create-tour"><span class="material-symbols-outlined">emoji_events</span>ایجاد تورنومنت</button>
+          <button class="tour-btn tour-btn--primary" id="myteam-manage-tours"><span class="material-symbols-outlined">manage_accounts</span>مدیریت تورنومنت‌ها</button>
         </div>
       </div>`;
     document.getElementById('myteam-manage').addEventListener('click', showTeamPane);
-    document.getElementById('myteam-create-tour').addEventListener('click', () => alert('ایجاد تورنومنت — به‌زودی'));
+    document.getElementById('myteam-manage-tours').addEventListener('click', showRegistrationsPane);
   }
 }
 
@@ -1722,7 +2035,7 @@ function openTeamModal() {
   const body = document.getElementById('team-modal-body');
   if (!myTeam) {
     body.innerHTML = `
-      <button class="tmodal__close" onclick="document.getElementById('team-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+      <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
       <div class="tmodal__pad">
         <h2 class="tmodal__title">ساخت تیم جدید</h2>
         <label class="tfield"><span>نام تیم (۳ تا ۵۰ کاراکتر، منحصربه‌فرد)</span><input type="text" id="team-name" maxlength="50" placeholder="مثلاً Team Aurora"></label>
@@ -1748,7 +2061,7 @@ function openTeamModal() {
 function teamManageHTML() {
   const t = myTeam;
   return `
-    <button class="tmodal__close" onclick="document.getElementById('team-modal').hidden=true"><span class="material-symbols-outlined">close</span></button>
+    <button class="tmodal__close" aria-label="بستن"><span class="material-symbols-outlined">close</span></button>
     <div class="tmodal__pad">
       <div class="team-head">
         <div class="team-head__badge"><span class="material-symbols-outlined">shield</span></div>
@@ -2122,11 +2435,7 @@ function showGameDetail(gameName = '') {
   // Reset tabs to first (about)
   resetGdTabs();
 
-  // Navigate
-  $$('.page').forEach((p) => p.classList.remove('page--active'));
-  const page = $(`.page[data-page="game-detail"]`);
-  if (page) page.classList.add('page--active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showPage('game-detail');
 }
 
 // Track which page we came from so Back can return there
@@ -2217,15 +2526,15 @@ function initGameDetailPage() {
 
   // Back button
   $('#gd-back')?.addEventListener('click', () => {
-    $$('.page').forEach((p) => p.classList.remove('page--active'));
-    const prev = $(`.page[data-page="${_prevPage}"]`);
-    if (prev) prev.classList.add('page--active');
+    showPage(_prevPage);
   });
 
   // Wire clicks on EVERY game tile / game card / game poster
   function addGameClickListeners() {
     ['.game-tile', '.game-card', '.game-poster', '.match-card'].forEach((sel) => {
       $$(sel).forEach((el) => {
+        if (el.dataset.gameDetailBound === 'true') return;
+        el.dataset.gameDetailBound = 'true';
         el.addEventListener('click', () => {
           const activePage = $('.page--active');
           _prevPage = activePage ? activePage.dataset.page : 'home';

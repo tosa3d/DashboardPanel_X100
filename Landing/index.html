@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="لانچر گیمینگ DoPing؛ بازی‌ها، دانلودها و جامعه گیمرها در یک تجربه یکپارچه.">
+  <meta name="theme-color" content="#0b0d10">
+  <title>DoPing | لانچر برای گیمرها</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/gaming-hero.css">
+  <script src="scripts/app.js" defer></script>
+  <script src="scripts/gaming-hero.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
+
+  <header class="site-header" id="top">
+    <div class="site-header__inner shell">
+      <div class="site-header__action">
+        <a class="button button--primary button--header" href="#download">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/>
+          </svg>
+          <span>دانلود لانچر</span>
+        </a>
+        <a class="button button--subscription button--header" href="#subscription">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m4 8 4 4 4-7 4 7 4-4-2 10H6L4 8Zm3 10h10"/>
+          </svg>
+          <span>خرید اشتراک</span>
+        </a>
+      </div>
+
+      <a class="brand" href="#top" aria-label="DoPing، صفحه اصلی">
+        <span class="brand__logo" aria-hidden="true">
+          <img src="Contant/Icon.png" alt="">
+        </span>
+      </a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="gaming-hero" data-gaming-hero>
+        <div class="gaming-hero__background" data-hero-background aria-hidden="true">
+          <div class="gaming-hero__stars" data-hero-particles></div>
+          <div class="gaming-hero__horizon"></div>
+          <div class="gaming-hero__city">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <div class="gaming-hero__rock gaming-hero__rock--left"></div>
+          <div class="gaming-hero__rock gaming-hero__rock--right"></div>
+          <div class="gaming-hero__reflection"></div>
+        </div>
+
+        <div class="gaming-hero__camera" data-hero-camera>
+          <div class="gaming-hero__center" data-hero-center>
+            <div class="gaming-hero__copy">
+              <p class="gaming-hero__eyebrow" aria-hidden="true"><span></span><i></i><span></span></p>
+              <h1 class="gaming-hero__title" id="hero-heading">
+                <span>همه چیز</span>
+                <strong>برای بازی</strong>
+              </h1>
+              <p class="gaming-hero__description">تجربه‌ای قدرتمند و یکپارچه برای دانلود، آپدیت و لذت بردن از بازی‌های آنلاین با بهترین کیفیت و پایین‌ترین پینگ.</p>
+            </div>
+            <div class="gaming-hero__actions">
+              <a class="gaming-hero__button gaming-hero__button--primary" href="#download">
+                دانلود لانچر
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>
+              </a>
+              <a class="gaming-hero__button gaming-hero__button--secondary" href="#hero-features">
+                بیشتر بدانید
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="gaming-hero__features" id="hero-features" data-hero-features aria-label="امکانات لانچر"></div>
+      </div>
+    </section>
+
+
+    <section class="tournament-showcase reveal" id="tournaments" aria-labelledby="tournament-title">
+      <div class="tournament-showcase__content">
+        <img src="Contant/jam.png" alt="" aria-hidden="true">
+        <span>رقابت‌های DoPing</span>
+        <h2 id="tournament-title">مسابقات اختصاصی و جوایز</h2>
+        <p>در رقابت‌های اختصاصی DoPing شرکت کنید، مهارت خود را به چالش بکشید و جوایز ویژه دریافت کنید.</p>
+      </div>
+    </section>
+
+    <section class="launcher-games shell reveal" id="games" aria-labelledby="launcher-games-title">
+      <div class="launcher-games__header">
+        <h2 id="launcher-games-title">بازی‌ها</h2>
+        <button class="launcher-games__all" type="button">مشاهده همه</button>
+      </div>
+
+      <div class="launcher-games__grid">
+        <div class="launcher-games__large">
+          <article class="landing-game-tile landing-game-tile--large">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0WdbtrpkziQswii_djLXEyoeW3s-3RQfOvEr0Ta0SYRZ-LDyzAq-M5JjvtDBjwkxaB5rQZcqM0rWYOhexNqn0gL7icAAjO_tBIp3PcjcxGQj_Gh5tUjn7w8fBLOxyy16i8lCjTZMquG0_k4fzXFAPymbbkqxxsV5Ksn6lWF8mUKxHGM0rOZLf3PBjxTJrenijszCnH7Ke3qrLazBdnFZpW5kCuaGhXRy7sFl-_BBzH8ofMI_zbl5FPFn0u6emhoQFOdDJlXJKbFMMUg" alt="Counter-Strike 2">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info">
+              <h3 class="landing-game-tile__name">Counter-Strike 2</h3>
+              <div class="landing-game-tile__online"><span class="status-dot"></span>آنلاین 230K</div>
+            </div>
+          </article>
+        </div>
+
+        <div class="launcher-games__small">
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEX5UQTPDu2TmlO8W182rudOcsieILJwe6S9JR2VJaDPuEhl9tTziLbl-yqvo-xJtM23gT6qRjvrhms2rtUeSLDNoYPDA430HvHhpnfd1KitvpMQHioqTvpHSoOANymKfjZ2r94jNq-VOqbNOJhl5qLEI13H-UIzB8YxqyGHA16kQ7YlpmCRfW-NU4HlkaLxgmcfKK1VvgXIHuAUhvpTPkbBGwiQeipRI68T882KSg8PDsyaU4IWU4Xl5zltnk2HKfw-bjiETHUUhA7g" alt="DOTA 2">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">DOTA 2</span><span class="landing-game-tile__online">آنلاین 551K</span></div>
+          </article>
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHj5MQ1lVlmlKaRjizTLybN5cjFHmgJNbC4lOLnnnKDPbgn_UJRa5QHy0TXI1mrwYz9CWrt3C8HgmGpNqp7s9Nn-UHfuCW6YPi9AAcjqxZg0Y2cFKevEIJuA2lT7mkEYQsSCSAnwPVJk6r4DM7wDLeMZofWryxkhFBttJaEqba3R9Syys5r_a99nllRKb6MUV5XeXuTO070d5X7hJo_uMLEkzb7qo4-qGsVzgE-4wJAA0BJNCb2Hwa7zcGVJDKwpEgYjzqbxjDQHwOmA" alt="Forza Horizon 4">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">Forza Horizon 4</span><span class="landing-game-tile__online">آنلاین 92K</span></div>
+          </article>
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5JsRdxeZncuQztiYHDlQC344q_o4qTjJ704Ws2cNGP_T1ISPuf9yKp-IErz34h6Q6XOy-zSmFPw0OG5VEtM9tz8TRjEhIbNKiRNDv-jVT_U1L-RAW87AelZYHjE4V1a16-tEOsITd1oZYBupdg-EDzVEkhzabgWnp2I3FN8zyrjbaR6Tn_BcsWyJlku8nnNjTUC26GcbnWEr6J6YdV5fKkgi97PWEhhXeYau5rKEauGsA4XoZsR5F5fhCsVxPQAIdkLi3ij0n5Fl95w" alt="PUBG">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">PUBG</span><span class="landing-game-tile__online">آنلاین 186K</span></div>
+          </article>
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaHJuHOO9PuG6so2KUAfpFctC-sg5uZRJgBBYm0EUhzIfsmeODgPatQxopjXG97dfJdDLFHqIxVFk45JXmjdqrOo4FABhnSfJ0jlkeMG3MugC48_BVPrhNYNfGhuC-keX_4bpKBkj71kYMIuODATPitZCtwbySV-8eZagW16Q1Z-qmdX3d2-crxhmgBfJPCdJTo4wIbdxEvdQxo8_oHM7HoexIBMTTR72x6Vnighg-Ss8JEn6tqvpqxxuz31iZFa1_7KlF4NjV8DO4RA" alt="Valorant">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">Valorant</span><span class="landing-game-tile__online">آنلاین 146K</span></div>
+          </article>
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy_E--mxZl2aK-AfS7ZmnGNIIAeY-7YK9g47JMCoNn2PfypEVDDSFUEGlxAAvb3VWePHvQLpzHoUyB7MSbFxAUjttAFp__Q6tJWsdnW-3WODFehPk659X5OFh3eCW9kyi60TOnX8BUJM3W9-05npvrLxhgsZFd5moNln2ynNL1u9CB5lulrtWhVTwk7KnB9vp08hHcjNLlG8F3Eq6Koti7Lngq_DVhs85sYccyX-4GQkfhsgRe8nqNfrzBipv3GJ-oY0yJ7Fpa9w2qFQ" alt="Minecraft">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">Minecraft</span><span class="landing-game-tile__online">آنلاین 211K</span></div>
+          </article>
+          <article class="landing-game-tile">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoZhp-yADiqLPHpKBvHDEiGhuVHL41KZh9ZoYh1eHscTbRl2mGgFWXeSv6AlpuLhFBn_ukoEOW4VQuWnvq5LTX2LXVICPBnQTbz1HTgmUfEG8DRpcqWwukwFFuCxtzwKPyXh5yW5dGrVKFZO7RavDqfga32S2NvYSAMtQdLmRW_2qcuH3lblhp5R7uh-wr-MenbUxYyrOYZGisA0hF97YrdiMDpIF2WbatGu9wWecxobJtUEIPAV_1Uy9Xs5LhpV6lv0lvjFexw6kmPg" alt="League of Legends: Wild Rift">
+            <div class="landing-game-tile__overlay"></div>
+            <div class="landing-game-tile__info"><span class="landing-game-tile__name">League of Legends: Wild Rift</span><span class="landing-game-tile__online">آنلاین 169K</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="doping-footer" id="download">
+    <div class="shell">
+      <div class="doping-footer__main">
+        <a class="doping-footer__brand" href="#top" aria-label="DoPing، بازگشت به بالای صفحه">
+          <span class="brand__mark" aria-hidden="true"><i></i><i></i></span>
+          <span>
+            <strong>DoPing</strong>
+            <small>GAMING LAUNCHER</small>
+          </span>
+        </a>
+
+        <nav class="doping-footer__links" aria-label="لینک‌های مهم">
+          <a href="#about-us">درباره ما</a>
+          <a href="#support">پشتیبانی</a>
+          <a href="#driver-download">دانلود درایور</a>
+          <a href="#terms">قوانین استفاده</a>
+        </nav>
+
+        <div class="doping-footer__status">
+          <span><i></i> سرویس‌های DoPing فعال هستند</span>
+          <a href="#top">بازگشت به بالا</a>
+        </div>
+      </div>
+
+      <div class="doping-footer__bottom">
+        <p>کلیه حقوق مادی و معنوی این وب‌سایت و لانچر متعلق به DoPing است.</p>
+        <span dir="ltr">© 2026 DoPing. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

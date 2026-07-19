@@ -1396,6 +1396,22 @@
 }
 
 /* ============================================
+   DEV VIDEO PAGE (shop / streaming)
+   ============================================ */
+.dev-video-page {
+  min-height: calc(100vh - var(--header-height));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dev-video-page__video {
+  width: 100%;
+  height: calc(100vh - var(--header-height));
+  object-fit: contain;
+}
+
+/* ============================================
    CONNECTION PAGE
    ============================================ */
 .conn-page {
@@ -4072,8 +4088,8 @@
   text-align: center;
 }
 .otp-brand {
-  font-size: 40px; font-weight: 800; letter-spacing: -2px; color: #29c0e8;
-  text-shadow: 0 0 22px rgba(0,188,212,.7);
+  height: 56px; width: auto;
+  filter: drop-shadow(0 0 14px rgba(0,188,212,.7));
   margin-bottom: 18px;
 }
 .otp-title { font-size: 20px; font-weight: 700; color: var(--color-on-surface); }
@@ -4161,9 +4177,8 @@
 .splash--pending { display: none; }
 .splash--hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .splash__logo {
-  font-size: 92px; font-weight: 800; letter-spacing: -2px;
-  color: #29c0e8;
-  text-shadow: 0 0 18px rgba(0,188,212,.95), 0 0 42px rgba(0,188,212,.6), 0 0 90px rgba(0,188,212,.35);
+  height: 130px; width: auto;
+  filter: drop-shadow(0 0 18px rgba(0,188,212,.95)) drop-shadow(0 0 42px rgba(0,188,212,.6));
   animation: splashPulse 2s ease-in-out infinite;
 }
 @keyframes splashPulse {

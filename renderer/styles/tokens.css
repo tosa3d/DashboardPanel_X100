@@ -3,6 +3,14 @@
    منبع: DESIGN.md
    ============================================ */
 
+@font-face {
+  font-family: 'Estedad';
+  src: url('../../Font/Estedad-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   /* --- Surface / Background --- */
   --color-surface: #131316;
@@ -66,7 +74,7 @@
   --glass-blur: 20px;
 
   /* --- Typography --- */
-  --font-sans: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Estedad', 'Segoe UI', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
 
   --fs-display-lg: 48px;

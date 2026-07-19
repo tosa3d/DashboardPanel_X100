@@ -335,7 +335,7 @@ function startDownloadSimulation() {
   }
 
   // ── Phase 1: Download ────────────────────────────────────────────────────────
-  const dlDuration = 20 + Math.random() * 8;               // 20–28 ثانیه
+  const dlDuration = 5 + Math.random() * 2;                // 5–7 ثانیه برای پروتوتایپ
   const dlSpeed    = parseFloat((TOTAL_MB / dlDuration).toFixed(1));
   const dlInc      = (TOTAL_MB / dlDuration) * (TICK_MS / 1000);
   let   dlMB       = 0;
@@ -406,7 +406,7 @@ function startDownloadSimulation() {
     mainTitle.textContent  = 'در حال نصب لانچر';
     statusText.textContent = 'در حال استخراج و نصب فایل‌های لانچر...';
 
-    const INSTALL_DUR = 12 + Math.random() * 5;             // 12–17 ثانیه
+    const INSTALL_DUR = 3 + Math.random() * 2;              // 3–5 ثانیه برای پروتوتایپ
     const installInc  = 100 / (INSTALL_DUR / (TICK_MS / 1000));
     let   installVal  = 0;
     let   installLogIdx = 0;
@@ -591,7 +591,7 @@ $('install-steam-btn').addEventListener('click', () => {
 
 function startSteamModalDownload() {
   const TOTAL_MB = 3.2;
-  const DL_DUR   = 6 + Math.random() * 4;   // 6-10 ثانیه برای پروتوتایپ
+  const DL_DUR   = 1.5 + Math.random() * 1; // 1.5–2.5 ثانیه برای پروتوتایپ
   const SPEED    = parseFloat((TOTAL_MB / DL_DUR).toFixed(2));
   const TICK     = 300;
   const INC      = (TOTAL_MB / DL_DUR) * (TICK / 1000);

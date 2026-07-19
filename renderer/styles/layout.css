@@ -34,10 +34,8 @@
 }
 
 .app-header__brand {
-  font-size: 28px;
-  font-weight: var(--fw-bold);
-  color: var(--color-primary);
-  letter-spacing: -0.02em;
+  height: 52px;
+  width: auto;
   margin-left: var(--space-8);
 }
 
@@ -3064,6 +3062,29 @@
 /* لیست کارت‌ها */
 .tour-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-5); }
 .tour-empty { text-align: center; color: var(--color-outline); padding: 50px; font-size: 14px; }
+.tour-manage__head { align-items: center; }
+.tour-manage__tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tour-manage__count { flex-shrink: 0; border: 1px solid rgba(0,188,212,.28); border-radius: 99px; padding: 6px 11px; background: rgba(0,188,212,.08); color: var(--color-primary); font-size: 11px; font-weight: 800; }
+.tour-manage-list { display: flex; flex-direction: column; gap: 12px; }
+.tour-manage-card { display: grid; grid-template-columns: 180px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); background: var(--color-surface-container-low, #1b1b1e); }
+.tour-manage-card__cover { position: relative; min-height: 165px; background-size: cover; background-position: center; }
+.tour-manage-card__body { min-width: 0; padding: 15px 17px; }
+.tour-manage-card__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.tour-manage-card__game { color: var(--color-primary); font-size: 10px; font-weight: 800; }
+.tour-manage-card h3 { margin: 4px 0 0; color: var(--color-on-surface); font-size: 16px; }
+.tour-manage-card__date, .tour-manage-card__info span { display: inline-flex; align-items: center; gap: 5px; color: var(--color-on-surface-variant); font-size: 11px; }
+.tour-manage-card__date { white-space: nowrap; }
+.tour-manage-card .material-symbols-outlined { color: var(--color-primary); font-size: 16px; }
+.tour-manage-card__info { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 10px 0; margin-top: 10px; border-top: 1px solid var(--color-border-subtle); border-bottom: 1px solid var(--color-border-subtle); }
+.tour-manage-card__players { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 11px 0; color: var(--color-on-surface-variant); font-size: 11px; }
+.tour-manage-card__players > div { display: flex; flex-wrap: wrap; gap: 5px; }
+.tour-manage-card__players b { border-radius: 99px; padding: 3px 8px; background: rgba(0,188,212,.1); color: var(--color-on-surface); font-size: 10px; font-weight: 700; }
+.tour-manage-card .tour-btn { padding: 7px 12px; font-size: 11px; }
+@media (max-width: 560px) {
+  .tour-manage-card { grid-template-columns: 1fr; }
+  .tour-manage-card__cover { min-height: 115px; }
+  .tour-manage-card__top { flex-direction: column; }
+}
 .tour-card { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); overflow: hidden; transition: border-color .15s, transform .15s; }
 .tour-card:hover { border-color: var(--color-primary); transform: translateY(-3px); }
 .tour-card__cover { position: relative; aspect-ratio: 16/9; background-size: cover; background-position: center; background-color: #15151d; }
@@ -3110,6 +3131,110 @@
 .tmodal__item span { font-size: 12px; color: var(--color-on-surface-variant); }
 .tmodal__item b { font-size: 13px; color: var(--color-on-surface); }
 .tmodal__cta { width: 100%; margin-top: 4px; }
+
+/* مراحل ثبت‌نام: مرور قوانین، انتخاب ترکیب و پرداخت کیف پول */
+.tmodal--registration { width: 660px; }
+.reg-hero { height: 185px; position: relative; display: flex; flex-direction: column; justify-content: flex-end; padding: 24px; background-size: cover; background-position: center; overflow: hidden; }
+.reg-hero__shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,12,16,.25), rgba(4,12,16,.95)); }
+.reg-hero__badge, .reg-hero__title { position: relative; z-index: 1; }
+.reg-hero__badge { align-self: flex-start; background: var(--color-primary); color: #042b30; border-radius: 99px; padding: 4px 10px; font-size: 11px; font-weight: 800; margin-bottom: 8px; }
+.reg-hero__title { color: #fff; font-size: 25px; font-weight: 900; text-shadow: 0 2px 12px rgba(0,0,0,.45); }
+.reg-pad { padding-top: 20px; }
+.reg-progress { display: flex; align-items: center; margin-bottom: 20px; color: var(--color-outline); font-size: 11px; font-weight: 700; }
+.reg-progress__step { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.reg-progress__step i { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-outline); border-radius: 50%; font-style: normal; }
+.reg-progress__step.is-active { color: var(--color-primary); }
+.reg-progress__step.is-active i { color: #042b30; background: var(--color-primary); border-color: var(--color-primary); }
+.reg-progress__step.is-done { color: #7ee5f1; }
+.reg-progress__step.is-done i { background: rgba(0,188,212,.2); border-color: var(--color-primary); }
+.reg-progress__line { flex: 1; height: 1px; margin: 0 10px; background: var(--color-border-soft); }
+.reg-progress__line.is-done { background: var(--color-primary); }
+.reg-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 0 0 16px; }
+.reg-fact { display: flex; align-items: center; gap: 10px; min-width: 0; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 11px; padding: 11px; }
+.reg-fact > .material-symbols-outlined { color: var(--color-primary); font-size: 20px; }
+.reg-fact div { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.reg-fact small, .reg-cost small, .reg-success__card small { color: var(--color-on-surface-variant); font-size: 10px; }
+.reg-fact b { color: var(--color-on-surface); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reg-rules { border: 1px solid rgba(0,188,212,.18); background: rgba(0,188,212,.045); border-radius: 12px; padding: 13px 14px; margin-bottom: 14px; }
+.reg-rules h3, .reg-team-section > h3, .reg-roster h3 { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--color-on-surface); }
+.reg-rules h3 .material-symbols-outlined, .reg-team-section > h3 .material-symbols-outlined { color: var(--color-primary); font-size: 18px; }
+.reg-rules ul { padding: 0 18px 0 0; margin: 10px 0 0; color: var(--color-on-surface-variant); font-size: 11px; line-height: 1.85; }
+.reg-rules li::marker { color: var(--color-primary); }
+.reg-cost { display: flex; align-items: center; gap: 10px; background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.18); border-radius: 11px; padding: 11px 13px; }
+.reg-cost--paid { background: rgba(255,196,0,.08); border-color: rgba(255,196,0,.18); }
+.reg-cost > .material-symbols-outlined { color: #4ade80; font-size: 22px; }
+.reg-cost--paid > .material-symbols-outlined { color: #ffd24a; }
+.reg-cost > div { display: flex; flex-direction: column; gap: 2px; }
+.reg-cost b { color: var(--color-on-surface); font-size: 13px; }
+.reg-cost b em { font-size: 10px; font-weight: 500; font-style: normal; color: var(--color-on-surface-variant); }
+.reg-cost__wallet { margin-right: auto; color: var(--color-on-surface-variant); font-size: 11px; }
+.reg-cost__wallet strong { color: var(--color-on-surface); white-space: nowrap; }
+.reg-next { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 14px; }
+.reg-next .material-symbols-outlined { font-size: 18px; }
+.reg-pad--roster { padding-top: 22px; }
+.reg-step-head { margin-bottom: 16px; }
+.reg-step-head__game { display: inline-block; border-radius: 99px; padding: 3px 9px; margin-bottom: 7px; background: rgba(0,188,212,.12); color: var(--color-primary); font-size: 10px; font-weight: 800; }
+.reg-step-head .tmodal__desc { margin-bottom: 0; }
+.reg-team-section { margin-bottom: 16px; }
+.reg-team-section > h3 { margin-bottom: 10px; }
+.reg-team-options { display: flex; flex-direction: column; gap: 8px; }
+.reg-team-option { width: 100%; display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid var(--color-border-soft); background: var(--color-surface-container-low, #1b1b1e); border-radius: 10px; cursor: pointer; color: var(--color-on-surface); text-align: right; font-family: inherit; transition: border-color .15s, background .15s; }
+.reg-team-option:hover, .reg-team-option.is-selected { border-color: var(--color-primary); background: rgba(0,188,212,.08); }
+.reg-team-option > .material-symbols-outlined { color: var(--color-primary); font-size: 20px; }
+.reg-team-option__name { font-size: 13px; font-weight: 700; }
+.reg-team-option__meta { margin-right: auto; color: var(--color-on-surface-variant); font-size: 11px; }
+.reg-team-option__check { opacity: 0; color: var(--color-primary) !important; }
+.reg-team-option.is-selected .reg-team-option__check { opacity: 1; }
+.reg-empty-team { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 7px; border: 1px dashed var(--color-border-soft); border-radius: 12px; padding: 22px; color: var(--color-on-surface-variant); }
+.reg-empty-team > .material-symbols-outlined { color: var(--color-outline); font-size: 32px; }
+.reg-empty-team b { color: var(--color-on-surface); font-size: 13px; }
+.reg-empty-team p { margin: 0; font-size: 11px; line-height: 1.7; max-width: 350px; }
+.reg-empty-team .tour-btn { margin-top: 4px; }
+.reg-roster { border-top: 1px solid var(--color-border-subtle); padding-top: 15px; margin-top: 2px; }
+.reg-roster__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.reg-roster__head p { margin: 4px 0 0; color: var(--color-on-surface-variant); font-size: 11px; }
+.reg-roster__head > strong { flex-shrink: 0; color: var(--color-accent-gold, #ffd700); background: rgba(255,196,0,.1); border-radius: 99px; padding: 4px 8px; font-size: 10px; }
+.reg-roster__head > strong.is-ready { color: #4ade80; background: rgba(34,197,94,.12); }
+.reg-player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.reg-player { position: relative; min-width: 0; display: grid; grid-template-columns: 34px 1fr 18px; grid-template-rows: auto auto; align-items: center; column-gap: 8px; padding: 8px; background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-subtle); border-radius: 10px; color: var(--color-on-surface); cursor: pointer; text-align: right; font-family: inherit; transition: border-color .15s, background .15s; }
+.reg-player:hover { border-color: rgba(0,188,212,.6); }
+.reg-player.is-selected { border-color: var(--color-primary); background: rgba(0,188,212,.1); }
+.reg-player.is-pending { cursor: not-allowed; opacity: .52; }
+.reg-player img { grid-row: span 2; width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.reg-player__name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; font-weight: 700; }
+.reg-player small { font-size: 9px; color: var(--color-on-surface-variant); }
+.reg-player__check { grid-row: span 2; font-size: 18px; color: var(--color-outline); }
+.reg-player.is-selected .reg-player__check { color: var(--color-primary); }
+.reg-payment-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0 10px; }
+.reg-payment-summary > div { display: flex; justify-content: space-between; gap: 6px; padding: 9px 11px; border-radius: 9px; background: rgba(255,255,255,.035); color: var(--color-on-surface-variant); font-size: 10px; }
+.reg-payment-summary b { color: var(--color-on-surface); font-size: 12px; white-space: nowrap; }
+.reg-action-error { padding: 8px 10px; border: 1px solid rgba(229,56,59,.3); border-radius: 8px; background: rgba(229,56,59,.1); color: #ff9b9d; font-size: 11px; margin-bottom: 10px; }
+.reg-actions { display: flex; gap: 8px; }
+.reg-actions .tour-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.reg-actions .tour-btn--ghost { flex: 0 0 auto; }
+.reg-actions .tour-btn--primary { flex: 1; }
+.reg-actions .material-symbols-outlined { font-size: 17px; }
+.reg-success { display: flex; flex-direction: column; align-items: center; padding: 42px 32px 28px; text-align: center; }
+.reg-success__icon { width: 62px; height: 62px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-bottom: 14px; background: rgba(34,197,94,.13); color: #4ade80; box-shadow: 0 0 0 9px rgba(34,197,94,.05); }
+.reg-success__icon .material-symbols-outlined { font-size: 39px; }
+.reg-success__eyebrow { color: #4ade80; font-size: 11px; font-weight: 800; margin-bottom: 7px; }
+.reg-success .tmodal__desc { max-width: 410px; margin-bottom: 18px; }
+.reg-success__card { display: flex; width: 100%; align-items: center; gap: 10px; padding: 11px; margin-bottom: 8px; border: 1px solid var(--color-border-subtle); border-radius: 10px; background: var(--color-surface-container-low, #1b1b1e); text-align: right; }
+.reg-success__card > .material-symbols-outlined { color: var(--color-primary); font-size: 20px; }
+.reg-success__card div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.reg-success__card b { overflow: hidden; color: var(--color-on-surface); font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.reg-success .tmodal__cta { margin-top: 10px; }
+@media (max-width: 560px) {
+  .tmodal-overlay { padding: 10px; }
+  .reg-hero { height: 150px; padding: 18px; }
+  .reg-hero__title { font-size: 20px; }
+  .reg-facts, .reg-player-grid, .reg-payment-summary { grid-template-columns: 1fr; }
+  .reg-cost { align-items: flex-start; flex-wrap: wrap; }
+  .reg-cost__wallet { width: 100%; margin-right: 32px; }
+  .reg-team-option { flex-wrap: wrap; }
+  .reg-team-option__meta { margin-right: 29px; }
+  .reg-team-option__check { margin-right: auto; }
+}
 
 /* فیلدهای ساخت تیم */
 .tfield { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
@@ -3220,6 +3345,11 @@
 .tb-empty { text-align: center; color: var(--color-outline); padding: 40px; font-size: 14px; }
 .tb-teams { display: flex; flex-direction: column; gap: var(--space-4); }
 .tb-team { background: var(--color-surface-container-low, #1b1b1e); border: 1px solid var(--color-border-soft); border-radius: var(--radius-xl); overflow: hidden; }
+.tb-team--new { animation: team-created .9s ease-out; }
+@keyframes team-created {
+  0% { border-color: var(--color-primary); box-shadow: 0 0 0 0 rgba(0,188,212,.45); }
+  100% { border-color: var(--color-border-soft); box-shadow: 0 0 0 12px rgba(0,188,212,0); }
+}
 .tb-team__head { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px 6px 6px; }
 .tb-team__toggle { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; color: var(--color-on-surface); font-family: inherit; padding: 10px; text-align: right; }
 .tb-team__chev { color: var(--color-outline); transition: transform .2s; flex-shrink: 0; }

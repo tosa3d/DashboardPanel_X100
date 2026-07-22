@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src https: data:; img-src https: data:; script-src 'self'">
+  <title>چت خصوصی</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/floating.css">
+</head>
+<body class="chat-native">
+  <header class="float-header chat-header">
+    <div class="chat-person"><img id="chat-avatar" alt=""><div><strong id="chat-name"></strong><small id="chat-status"></small></div></div>
+    <div class="float-controls"><button data-minimize><span class="material-symbols-outlined">remove</span></button><button data-close><span class="material-symbols-outlined">close</span></button></div>
+  </header>
+  <main id="chat-messages" class="chat-messages"></main>
+  <footer class="chat-compose"><input id="chat-input" placeholder="پیام خصوصی..."><button id="chat-send"><span class="material-symbols-outlined">send</span></button></footer>
+  <script src="scripts/chat-window.js"></script>
+</body>
+</html>

@@ -3069,14 +3069,48 @@ function initProfilePage() {
 function initFriendsPanel() {
   const btn      = document.getElementById('hdr-friends-btn');
   const panel    = document.getElementById('friends-panel');
+  const chatTemplate = document.getElementById('friend-chat-window-template');
   const closeBtn = document.getElementById('friends-panel-close');
   if (!btn || !panel) return;
+
+  function makeDraggable(element, handle) {
+    if (!element || !handle) return;
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.target.closest('button, input')) return;
+      const rect = element.getBoundingClientRect();
+      const startX = e.clientX;
+      const startY = e.clientY;
+      handle.setPointerCapture(e.pointerId);
+
+      const move = (event) => {
+        const maxLeft = Math.max(0, window.innerWidth - element.offsetWidth);
+        const maxTop = Math.max(0, window.innerHeight - element.offsetHeight);
+        element.style.left = `${Math.min(maxLeft, Math.max(0, rect.left + event.clientX - startX))}px`;
+        element.style.top = `${Math.min(maxTop, Math.max(0, rect.top + event.clientY - startY))}px`;
+        element.style.right = 'auto';
+      };
+      const stop = () => {
+        handle.removeEventListener('pointermove', move);
+        handle.removeEventListener('pointerup', stop);
+        handle.removeEventListener('pointercancel', stop);
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', stop);
+      handle.addEventListener('pointercancel', stop);
+    });
+  }
+
+  makeDraggable(panel, panel.querySelector('.friends-panel__bar'));
 
   function openPanel()  { panel.classList.add('is-open'); }
   function closePanel() { panel.classList.remove('is-open'); }
 
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
+    if (window.windowAPI?.openFriends) {
+      window.windowAPI.openFriends();
+      return;
+    }
     panel.classList.contains('is-open') ? closePanel() : openPanel();
   });
   if (closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closePanel(); });
@@ -3128,30 +3162,74 @@ function initFriendsPanel() {
     ],
   };
 
-  let activeDmUid = null;
+  const openChats = new Map();
+
+  function createChatWindow(uid) {
+    if (!chatTemplate) return null;
+    const chatWindow = chatTemplate.cloneNode(true);
+    chatWindow.id = '';
+    chatWindow.hidden = false;
+    chatWindow.classList.remove('friend-chat-window--template');
+    chatWindow.dataset.uid = uid;
+    chatWindow.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+
+    const offset = openChats.size * 28;
+    chatWindow.style.right = `${370 + offset}px`;
+    chatWindow.style.top = `${110 + offset}px`;
+    document.body.appendChild(chatWindow);
+    makeDraggable(chatWindow, chatWindow.querySelector('.fr-dm-header'));
+
+    chatWindow.querySelector('.fr-dm-hbtn')?.addEventListener('click', () => {
+      openChats.delete(uid);
+      chatWindow.remove();
+    });
+
+    const input = chatWindow.querySelector('.fr-dm-input');
+    const send = () => {
+      if (!input?.value.trim()) return;
+      const text = input.value.trim();
+      const msgsEl = chatWindow.querySelector('.fr-dm-messages');
+      const div = document.createElement('div');
+      div.className = 'fr-dm-msg fr-dm-msg--me';
+      div.innerHTML = `<div class="fr-dm-msg-body"><div class="fr-dm-msg-text">${text}</div><div class="fr-dm-msg-time">همین الان</div></div>`;
+      msgsEl?.appendChild(div);
+      if (msgsEl) msgsEl.scrollTop = msgsEl.scrollHeight;
+      if (!dmHistory[uid]) dmHistory[uid] = [];
+      dmHistory[uid].push({ from: 'me', text, time: 'همین الان' });
+      input.value = '';
+      input.focus();
+    };
+    chatWindow.querySelector('.fr-dm-send')?.addEventListener('click', send);
+    input?.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+    openChats.set(uid, chatWindow);
+    return chatWindow;
+  }
 
   function openDm(uid) {
-    activeDmUid = uid;
     const item = panel.querySelector(`.fr-item[data-uid="${uid}"]`);
     if (!item) return;
+    const existingWindow = openChats.get(uid);
+    if (existingWindow) {
+      existingWindow.style.zIndex = String(301 + openChats.size);
+      existingWindow.querySelector('.fr-dm-input')?.focus();
+      return;
+    }
+    const chatWindow = createChatWindow(uid);
+    if (!chatWindow) return;
     const name   = item.dataset.name || uid;
     const status = item.dataset.status === 'online' ? 'آنلاین' : (item.dataset.game || 'آفلاین');
     const isOnline = item.dataset.status === 'online';
 
-    const ava    = document.getElementById('fr-dm-ava');
-    const dot    = document.getElementById('fr-dm-dot');
-    const nameEl = document.getElementById('fr-dm-name');
-    const statEl = document.getElementById('fr-dm-status');
-    const msgsEl = document.getElementById('fr-dm-messages');
-    const welcome = document.getElementById('fr-welcome');
-    const dmEl   = document.getElementById('fr-dm');
+    const ava    = chatWindow.querySelector('.fr-dm-ava');
+    const dot    = chatWindow.querySelector('.fr-dm-dot');
+    const nameEl = chatWindow.querySelector('.fr-dm-name');
+    const statEl = chatWindow.querySelector('.fr-dm-status');
+    const msgsEl = chatWindow.querySelector('.fr-dm-messages');
 
     if (ava)    ava.src = `https://i.pravatar.cc/40?u=${uid}`;
     if (dot)    { dot.className = 'fr-dm-dot' + (isOnline ? ' fr-dm-dot--online' : ''); }
     if (nameEl) nameEl.textContent = name;
     if (statEl) statEl.textContent = status;
-    if (welcome) welcome.hidden = true;
-    if (dmEl)   dmEl.hidden = false;
 
     // Render messages
     if (msgsEl) {
@@ -3171,58 +3249,21 @@ function initFriendsPanel() {
   // Open DM on friend item click
   panel.addEventListener('click', (e) => {
     const item = e.target.closest('.fr-item[data-uid]');
-    if (item && !e.target.closest('.fr-item__actions')) {
+    if (item && !e.target.closest('[data-action]:not([data-action="msg"])')) {
       openDm(item.dataset.uid);
     }
     // Accept/decline pending
-    const acceptBtn = e.target.closest('.fr-item__accept');
+    const acceptBtn = e.target.closest('[data-action="accept"]');
     if (acceptBtn) {
       const li = acceptBtn.closest('.fr-item');
       if (li) li.remove();
     }
-    const declineBtn = e.target.closest('.fr-item__decline');
+    const declineBtn = e.target.closest('[data-action="decline"]');
     if (declineBtn) {
       const li = declineBtn.closest('.fr-item');
       if (li) li.remove();
     }
   });
-
-  // Close DM
-  const dmCloseBtn = document.getElementById('fr-dm-close');
-  if (dmCloseBtn) {
-    dmCloseBtn.addEventListener('click', () => {
-      const dmEl = document.getElementById('fr-dm');
-      const welcome = document.getElementById('fr-welcome');
-      if (dmEl) dmEl.hidden = true;
-      if (welcome) welcome.hidden = false;
-      activeDmUid = null;
-    });
-  }
-
-  // Send DM
-  const dmInput = document.getElementById('fr-dm-input');
-  const dmSend  = document.getElementById('fr-dm-send');
-  function sendDm() {
-    if (!dmInput || !dmInput.value.trim()) return;
-    const text = dmInput.value.trim();
-    const msgsEl = document.getElementById('fr-dm-messages');
-    if (msgsEl) {
-      const div = document.createElement('div');
-      div.className = 'fr-dm-msg fr-dm-msg--me';
-      div.innerHTML = `<div class="fr-dm-msg-body"><div class="fr-dm-msg-text">${text}</div><div class="fr-dm-msg-time">همین الان</div></div>`;
-      msgsEl.appendChild(div);
-      msgsEl.scrollTop = msgsEl.scrollHeight;
-      // Store
-      if (activeDmUid) {
-        if (!dmHistory[activeDmUid]) dmHistory[activeDmUid] = [];
-        dmHistory[activeDmUid].push({ from: 'me', text, time: 'همین الان' });
-      }
-    }
-    dmInput.value = '';
-    dmInput.focus();
-  }
-  if (dmSend)  dmSend.addEventListener('click', sendDm);
-  if (dmInput) dmInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendDm(); });
 
   // Add friend search
   const addInput  = document.getElementById('fr-add-input');

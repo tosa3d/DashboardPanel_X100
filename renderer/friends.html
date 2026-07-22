@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data:; style-src 'self' 'unsafe-inline' https:; font-src https: data:; img-src https: data:; script-src 'self'">
+  <title>دوستان</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/floating.css">
+</head>
+<body>
+  <header class="float-header">
+    <strong><span class="material-symbols-outlined">group</span> دوستان</strong>
+    <div class="float-controls">
+      <button data-minimize><span class="material-symbols-outlined">remove</span></button>
+      <button data-close><span class="material-symbols-outlined">close</span></button>
+    </div>
+  </header>
+  <main class="friends-native">
+    <label class="float-search"><span class="material-symbols-outlined">search</span><input id="friend-search" placeholder="جستجوی دوستان..."></label>
+    <div class="float-tabs"><button class="active" data-filter="online">آنلاین</button><button data-filter="all">همه</button></div>
+    <div id="friend-list" class="friend-list"></div>
+  </main>
+  <script src="scripts/friends-window.js"></script>
+</body>
+</html>

@@ -1795,19 +1795,22 @@
 .sub-section__sub { font-size: 13px; color: var(--color-on-surface-variant); margin-top: 4px; }
 .sub-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
 }
 .sub-card {
   position: relative;
-  display: flex; flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(210px, .8fr) minmax(320px, 2fr) 150px;
+  align-items: center;
+  gap: var(--space-6);
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  padding: var(--space-6);
   transition: border-color .15s, transform .15s;
 }
-.sub-card:hover { transform: translateY(-3px); border-color: var(--color-outline); }
+.sub-card:hover { transform: translateX(-3px); border-color: var(--color-outline); }
 .sub-card--active { border-color: var(--color-primary); box-shadow: 0 0 0 1px var(--color-primary), 0 8px 28px rgba(0,188,212,.12); }
 .sub-card--gold { border-color: rgba(255,196,0,.35); }
 .sub-card__ribbon {
@@ -1815,20 +1818,29 @@
   background: #ffd24a; color: #3a2c00; font-size: 10px; font-weight: 800;
   padding: 3px 10px; border-radius: 20px;
 }
-.sub-card__head { display: flex; align-items: center; gap: 12px; margin-bottom: var(--space-4); }
+.sub-card__head { display: flex; align-items: center; gap: 14px; margin: 0; }
 .sub-card__icon { font-size: 40px !important; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(0,0,0,.4)); }
-.sub-card__name { font-size: 15px; font-weight: 700; color: var(--color-on-surface); }
-.sub-card__price { font-size: 12px; color: var(--color-on-surface-variant); margin-top: 2px; }
-.sub-card__features { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: flex; flex-direction: column; gap: 9px; flex: 1; }
+.sub-card__name { font-size: 16px; font-weight: 700; color: var(--color-on-surface); }
+.sub-card__price { font-size: 13px; color: var(--color-on-surface-variant); margin-top: 4px; }
+.sub-card__features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 12px 18px;
+  min-width: 0;
+}
 .sub-card__features li {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; color: var(--color-on-surface-variant);
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; line-height: 1.7; color: var(--color-on-surface-variant);
 }
 .sub-card__features .material-symbols-outlined { font-size: 17px; }
 .sub-card__features li .material-symbols-outlined { color: var(--color-accent-green, #22c55e); }
 .sub-card__features li.sub-feat--off { opacity: .55; }
 .sub-card__features li.sub-feat--off .material-symbols-outlined { color: var(--color-outline); }
 .sub-card__buy {
+  width: 100%;
   padding: 11px; border-radius: var(--radius-lg);
   background: var(--color-primary); color: #042b30;
   border: none; font-size: 14px; font-weight: 700; font-family: inherit;
@@ -1837,6 +1849,19 @@
 .sub-card__buy:hover { filter: brightness(1.1); }
 .sub-card__buy:disabled { background: rgba(255,255,255,0.07); color: var(--color-on-surface-variant); cursor: default; }
 .sub-card--gold .sub-card__buy { background: #ffd24a; }
+
+@media (max-width: 920px) {
+  .sub-card {
+    grid-template-columns: minmax(190px, .8fr) minmax(220px, 1.4fr);
+  }
+  .sub-card__buy { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .sub-section { padding: var(--space-4); }
+  .sub-card { display: flex; align-items: stretch; gap: var(--space-4); padding: var(--space-5); }
+  .sub-card__features { grid-template-columns: 1fr; }
+}
 
 
 /* === ردیف انتخاب سرویس + دکمه اتصال === */
